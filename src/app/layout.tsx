@@ -28,7 +28,7 @@ export default function RootLayout({
         <TRPCReactProvider cookies={cookies().toString()}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >

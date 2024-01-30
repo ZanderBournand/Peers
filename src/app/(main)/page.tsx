@@ -30,11 +30,10 @@ export default async function AuthButton() {
       <Button className="bg-red-500">Button</Button>
     </div>
   ) : (
-    <Link
-      href="/login"
-      className="bg-btn-background hover:bg-btn-background-hover flex rounded-md px-3 py-2 no-underline"
+    <span
+      className="bg-btn-background hover:bg-btn-background-hover flex rounded-md px-3 py-2 no-underline ml-12"
     >
-      Login sch00ol
-    </Link>
+      Welcome to Peers!
+    </span>
   );
 }

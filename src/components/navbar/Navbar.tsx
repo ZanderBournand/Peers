@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 
 const routes: { title: string; href: string }[] = [
-  { title: "Features", href: "#features" },
-  { title: "Resources", href: "#resources" },
-  { title: "Pricing", href: "#pricing" },
+  { title: "Discover", href: "/discover" },
+  { title: "My Events", href: "/myevents" },
+  { title: "Profile", href: "/profile" },
 ];
 
 const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -20,7 +20,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="border-b-border flex h-16 items-center justify-between border-b px-6 lg:px-14">
       <div className="flex items-center">
         <Link href={"/"} className="shrink-0">
-          <h1 className="text-accent-foreground text-2xl font-bold">devlink</h1>
+          <h1 className="text-accent-foreground text-2xl font-bold">Peers</h1>
         </Link>
         <div className="bg-background hidden w-full justify-end gap-1 px-4 py-2 sm:flex">
           {routes.map((route, index) => (
