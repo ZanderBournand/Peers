@@ -21,7 +21,7 @@ import { signUp } from "../actions";
 import OauthButton from "@/components/auth/OauthButton";
 
 const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().endsWith(".edu", "Only addresses from education institutions (.edu) are permitted"),
   password: z.string().min(6).max(100),
 });
 
@@ -51,7 +51,7 @@ export default function Login() {
   return (
     <div className="flex">
       <div className="bg-secondary/15 hidden h-screen grow lg:block" />
-      <div className="bg-background h-screen w-full lg:w-1/2">
+      <div className="bg-background h-screen w-full">
         <div className="flex h-full items-center justify-center">
           <div className="w-full max-w-md p-8">
             <h1 className="mb-4 text-2xl font-semibold">Sign up</h1>
