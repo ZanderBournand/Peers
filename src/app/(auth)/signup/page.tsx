@@ -21,7 +21,7 @@ import { signUp } from "../actions";
 import OauthButton from "@/components/auth/OauthButton";
 
 const registerSchema = z.object({
-  email: z.string().email().endsWith(".edu", "Only addresses from education institutions (.edu) are permitted"),
+  email: z.string().email().endsWith(".edu", "Only email addresses from educational institutions (.edu) are permitted"),
   password: z.string().min(6).max(100),
 });
 
