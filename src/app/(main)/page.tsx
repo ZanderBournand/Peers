@@ -1,37 +1,27 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default async function AuthButton() {
   const supabase = createClient(cookies());
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const signOut = async () => {
-    "use server";
-
-    const supabase = createClient(cookies());
-    await supabase.auth.signOut();
-    return redirect("/login");
-  };
-
   return user ? (
-    <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOut}>
-        <button className="bg-btn-background hover:bg-btn-background-hover rounded-md px-4 py-2 no-underline">
-          Logout
-        </button>
-      </form>
-      <Button className="bg-red-500">Button</Button>
+    <div className="mt-16 flex flex-col items-center justify-center">
+      <span>Hey, {user.email}!</span>
+      <Link href="/event/new">
+        <Button className="my-8" variant="outline">
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Create Event
+        </Button>
+      </Link>
     </div>
   ) : (
-    <span
-      className="bg-btn-background hover:bg-btn-background-hover flex rounded-md px-3 py-2 no-underline ml-12"
-    >
+    <span className="bg-btn-background hover:bg-btn-background-hover ml-12 flex rounded-md px-3 py-2 no-underline">
       Welcome to Peers!
     </span>
   );

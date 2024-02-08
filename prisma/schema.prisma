@@ -3,9 +3,59 @@ generator client {
 }
 
 datasource db {
-  provider    = "postgresql"
-  url         = env("DATABASE_URL")
-  directUrl   = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String @id
+  email     String @unique
+  firstName String
+  lastName  String
+
+  role   RoleType
+  skills String[]
+  bio    String
+
+  github   String?
+  linkedin String?
+  website  String?
+
+  adminOf  Organization[] @relation("Admins")
+  memberOf Organization[] @relation("Members")
+
+  hostEvents Event[] @relation("UserHost")
+  attends    Event[] @relation("Attendees")
+}
+
+model Organization {
+  id   String @id
+  name String
+
+  admins  User[] @relation("Admins")
+  members User[] @relation("Members")
+
+  hostEvents Event[] @relation("OrgHost")
+}
+
+model Event {
+  id    String @id @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
+  title String
+
+  location    String?
+  date        DateTime
+  description String
+  image       String?
+  type        EventType
+  duration    Int
+
+  userHostId String?
+  userHost   User?         @relation("UserHost", fields: [userHostId], references: [id])
+  orgHostId  String?
+  orgHost    Organization? @relation("OrgHost", fields: [orgHostId], references: [id])
+
+  attendees User[] @relation("Attendees")
 }
 
 enum RoleType {
@@ -15,16 +65,7 @@ enum RoleType {
   DESIGN
 }
 
-model Profile {
-  id        String   @id
-  createdAt DateTime @default(now()) @map("created_at")
-  email     String   @unique
-  firstName String   
-  lastName  String   
-  role      RoleType
-  skills    String[]
-  bio       String
-  github    String?
-  linkedin  String?
-  website   String?
+enum EventType {
+  ONLINE
+  IN_PERSON
 }

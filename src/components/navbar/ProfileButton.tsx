@@ -47,7 +47,7 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
       </Avatar>
 
       {menuOpen && (
-        <div className="bg-secondary absolute right-5 top-16 z-50 flex w-72 flex-col rounded-lg bg-opacity-80 p-4">
+        <div className="absolute right-5 top-16 z-50 flex w-72 flex-col rounded-lg bg-secondary bg-opacity-80 p-4">
           <div className="flex items-center">
             <div className="pr-4">
               <Avatar onClick={() => setMenuOpen(!menuOpen)}>
@@ -61,16 +61,16 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
             </div>
           </div>
           <hr className="my-2 border-t-2 border-slate-600" />
-          <p className="text-muted-foreground py-2 text-lg">
+          <p className="py-2 text-lg text-muted-foreground">
             <Link
               onClick={() => setMenuOpen(false)}
               className="hover:text-muted-foreground/70"
-              href="/profile"
+              href="/user"
             >
               Profile
             </Link>
           </p>
-          <p className="text-muted-foreground py-2 text-lg">
+          <p className="py-2 text-lg text-muted-foreground">
             <Link
               onClick={() => setMenuOpen(false)}
               className="hover:text-muted-foreground/70"
@@ -80,7 +80,7 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
             </Link>
           </p>
 
-          <div className="text-muted-foreground py-2 text-lg">
+          <div className="py-2 text-lg text-muted-foreground">
             <button
               className="hover:text-muted-foreground/70"
               onClick={() =>

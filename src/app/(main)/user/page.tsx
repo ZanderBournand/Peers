@@ -8,46 +8,46 @@ import {
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { api } from "@/trpc/server";
 
-export default async function ProfilePage() {
-  const profile = await api.profiles.getCurrent.query();
+export default async function UserPage() {
+  const user = await api.users.getCurrent.query();
 
-  if (!profile) return null;
+  if (!user) return null;
 
   return (
     <div className="flex w-full justify-center ">
       <Card className="mt-12 w-full max-w-xl">
         <CardHeader>
           <CardTitle>
-            {profile.firstName} {profile.firstName}
+            {user.firstName} {user.firstName}
           </CardTitle>
-          <CardDescription>{profile.email}</CardDescription>
+          <CardDescription>{user.email}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p>Role: {capitalizeFirstLetter(profile.role)}</p>
+          <p>Role: {capitalizeFirstLetter(user.role)}</p>
         </CardContent>
         <CardContent className="flex items-center">
           <p className="pr-1">Skills:</p>
-          {profile.skills.map((skill, index) => (
+          {user.skills.map((skill, index) => (
             <p
               key={index}
-              className="border-border w-min rounded-full border px-2 py-0.5"
+              className="w-min rounded-full border border-border px-2 py-0.5"
             >
               {skill}
             </p>
           ))}
         </CardContent>
         <CardContent>
-          <p>Bio: {profile.bio}</p>
+          <p>Bio: {user.bio}</p>
         </CardContent>
         <div className="flex">
           <CardContent>
-            <p>Github: {profile.github}</p>
+            <p>Github: {user.github}</p>
           </CardContent>
           <CardContent>
-            <p>Linkedin: {profile.linkedin}</p>
+            <p>Linkedin: {user.linkedin}</p>
           </CardContent>
           <CardContent>
-            <p>Website: {profile.website}</p>
+            <p>Website: {user.website}</p>
           </CardContent>
         </div>
       </Card>
