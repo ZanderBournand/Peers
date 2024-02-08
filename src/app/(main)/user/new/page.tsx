@@ -9,7 +9,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -25,24 +24,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { Textarea } from "@/components/ui/textarea";
-
 import { useFieldArray, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newProfileSchema } from "@/lib/validators/newProfile";
-
+import { newUserSchema } from "@/lib/validators/newUser";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { capitalizeFirstLetter } from "@/lib/utils";
 
-export type NewProfileInput = z.infer<typeof newProfileSchema>;
+export type NewUserInput = z.infer<typeof newUserSchema>;
 
-export default function NewProfileForm() {
-  const form = useForm<NewProfileInput>({
-    resolver: zodResolver(newProfileSchema),
+export default function NewUserForm() {
+  const form = useForm<NewUserInput>({
+    resolver: zodResolver(newUserSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -64,9 +60,9 @@ export default function NewProfileForm() {
 
   const router = useRouter();
 
-  const { mutate } = api.profiles.create.useMutation({
+  const { mutate } = api.users.create.useMutation({
     onSuccess: () => {
-      router.push("/profile");
+      router.push("/user");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -74,7 +70,7 @@ export default function NewProfileForm() {
     },
   });
 
-  const onSubmit = async (data: NewProfileInput) => {
+  const onSubmit = async (data: NewUserInput) => {
     const skillsList = data.skills.map((skill) => skill.name);
     mutate({
       firstName: capitalizeFirstLetter(data.firstName),
@@ -90,16 +86,16 @@ export default function NewProfileForm() {
 
   return (
     <div className="flex w-screen justify-center p-8">
-      <Card className="border-border w-full max-w-2xl border">
+      <Card className="w-full max-w-2xl border border-border">
         <CardHeader>
-          <CardTitle>Create Profile</CardTitle>
+          <CardTitle>Create User</CardTitle>
           <CardDescription>Yabba dabba doo</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="text-muted-foreground flex w-full flex-1 flex-col justify-center gap-6"
+              className="flex w-full flex-1 flex-col justify-center gap-6 text-muted-foreground"
             >
               <div className="flex flex-row gap-4">
                 <FormField
@@ -177,14 +173,14 @@ export default function NewProfileForm() {
                             </FormControl>
                             {fields.length > 1 && (
                               <TrashIcon
-                                className="hover:text-muted-foreground/30 text-muted-foreground/40 invisible absolute right-1 h-6 w-6 hover:cursor-pointer group-hover:visible"
+                                className="invisible absolute right-1 h-6 w-6 text-muted-foreground/40 hover:cursor-pointer hover:text-muted-foreground/30 group-hover:visible"
                                 onClick={() => remove(index)}
                               />
                             )}
                           </div>
 
                           {form.formState.errors.skills?.[index]?.name && (
-                            <p className="text-destructive text-sm font-medium">
+                            <p className="text-sm font-medium text-destructive">
                               This can&apos;t be empty
                             </p>
                           )}

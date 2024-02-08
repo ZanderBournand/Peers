@@ -3,7 +3,7 @@ import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 
 import { RoleType } from "@prisma/client";
 
-export const profileRouter = createTRPCRouter({
+export const userRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
@@ -18,7 +18,7 @@ export const profileRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.profile.create({
+      const user = await ctx.db.user.create({
         data: {
           id: ctx.user.id,
           email: ctx.user.email!,
@@ -36,9 +36,9 @@ export const profileRouter = createTRPCRouter({
       return user;
     }),
   getCurrent: privateProcedure.query(async ({ ctx }) => {
-    const profile = await ctx.db.profile.findUnique({
+    const user = await ctx.db.user.findUnique({
       where: { id: ctx.user.id },
     });
-    return profile;
+    return user;
   }),
 });

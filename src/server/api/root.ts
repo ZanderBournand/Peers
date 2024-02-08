@@ -1,8 +1,10 @@
-import { profileRouter } from "@/server/api/routers/profiles";
+import { userRouter } from "@/server/api/routers/users";
+import { eventRouter } from "@/server/api/routers/events";
 import { createTRPCRouter } from "@/server/api/trpc";
 
 export const appRouter = createTRPCRouter({
-  profiles: profileRouter,
+  users: userRouter,
+  events: eventRouter,
 });
 
 export type AppRouter = typeof appRouter;
