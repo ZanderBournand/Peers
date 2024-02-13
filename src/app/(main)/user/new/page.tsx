@@ -33,10 +33,14 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 export type NewUserInput = z.infer<typeof newUserSchema>;
 
 export default function NewUserForm() {
+  const [isLoading, setIsLoading] = useState(true);
+  const { data: user, isLoading: isUserLoading } = api.users.getCurrent.useQuery();
+  
   const form = useForm<NewUserInput>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
@@ -51,6 +55,24 @@ export default function NewUserForm() {
     },
   });
 
+  useEffect(() => {
+    if (!isUserLoading) {
+      if (user) {
+        form.reset({
+          firstName: user.firstName ?? "",
+          lastName: user.lastName ?? "",
+          role: user.role ?? undefined,
+          skills: user.skills?.map(skill => ({ name: skill })) ?? [{ name: "" }],
+          bio: user.bio ?? "",
+          github: user.github ?? "",
+          linkedin: user.linkedin ?? "",
+          website: user.website ?? "",
+        });
+      }
+      setTimeout(() => setIsLoading(false), 500);
+    }
+  }, [user, isUserLoading, form]);
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "skills",
@@ -60,9 +82,10 @@ export default function NewUserForm() {
 
   const router = useRouter();
 
-  const { mutate } = api.users.create.useMutation({
+  const { mutate } = api.users.createOrUpdate.useMutation({
     onSuccess: () => {
       router.push("/user");
+      router.refresh();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -83,13 +106,26 @@ export default function NewUserForm() {
       website: data.website,
     });
   };
+  
+
+  if (isLoading) {
+    return (
+      <div className="flex w-screen justify-center p-8">
+        <Card className="w-full max-w-2xl border border-border">
+          <CardHeader>
+            <CardTitle>Loading User Profile...</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-screen justify-center p-8">
       <Card className="w-full max-w-2xl border border-border">
         <CardHeader>
-          <CardTitle>Create User</CardTitle>
-          <CardDescription>Yabba dabba doo</CardDescription>
+          <CardTitle>Complete User Profile</CardTitle>
+          <CardDescription>Please enter your information below</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
