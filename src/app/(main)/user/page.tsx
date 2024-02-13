@@ -32,9 +32,6 @@ export default async function UserPage() {
           </CardTitle>
           <CardDescription>{user.email}</CardDescription>
         </CardHeader>
-        <CardContent>
-          <p>Role: {capitalizeFirstLetter(user.role)}</p>
-        </CardContent>
         <CardContent className="flex items-center">
           <p className="pr-1">Skills:</p>
           {user.skills.map((skill, index) => (

@@ -11,16 +11,16 @@ datasource db {
 model User {
   id        String @id
   email     String @unique
-  firstName String
-  lastName  String
+  firstName String?
+  lastName  String?
 
-  role   RoleType
   skills String[]
-  bio    String
+  bio    String?
 
   github   String?
   linkedin String?
   website  String?
+  username String
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
@@ -56,13 +56,6 @@ model Event {
   orgHost    Organization? @relation("OrgHost", fields: [orgHostId], references: [id])
 
   attendees User[] @relation("Attendees")
-}
-
-enum RoleType {
-  FRONTEND
-  BACKEND
-  FULLSTACK
-  DESIGN
 }
 
 enum EventType {

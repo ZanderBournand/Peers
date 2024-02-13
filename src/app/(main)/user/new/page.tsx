@@ -46,7 +46,6 @@ export default function NewUserForm() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      role: undefined,
       skills: [{ name: "" }],
       bio: "",
       github: "",
@@ -61,7 +60,6 @@ export default function NewUserForm() {
         form.reset({
           firstName: user.firstName ?? "",
           lastName: user.lastName ?? "",
-          role: user.role ?? undefined,
           skills: user.skills?.map(skill => ({ name: skill })) ?? [{ name: "" }],
           bio: user.bio ?? "",
           github: user.github ?? "",
@@ -98,7 +96,6 @@ export default function NewUserForm() {
     mutate({
       firstName: capitalizeFirstLetter(data.firstName),
       lastName: capitalizeFirstLetter(data.lastName),
-      role: data.role,
       skills: skillsList,
       bio: data.bio,
       github: data.github,
@@ -161,33 +158,6 @@ export default function NewUserForm() {
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="FULLSTACK">Full Stack</SelectItem>
-                        <SelectItem value="FRONTEND">Frontend</SelectItem>
-                        <SelectItem value="BACKEND">Backend</SelectItem>
-                        <SelectItem value="DESIGN">Design</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="skills"

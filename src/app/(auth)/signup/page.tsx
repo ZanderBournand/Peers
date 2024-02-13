@@ -126,7 +126,7 @@ export default function Login() {
             <OauthButton provider={"google"} />
             <OauthButton provider={"github"} />
             <p className="text-muted-foreground py-4 text-center text-sm underline">
-              <Link href="/signup">Already have an account? Sign in</Link>
+              <Link href="/login">Already have an account? Sign in</Link>
             </p>
           </div>
         </div>
