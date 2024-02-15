@@ -30,7 +30,7 @@ import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch, Controller } from "react-hook-form";
-import type { z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newEventSchema } from "@/lib/validators/newEvent";
 import { useRouter } from "next/navigation";
@@ -41,22 +41,28 @@ import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
 import { v4 as uuidv4 } from "uuid";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { env } from "@/env";
 
 export type NewEventInput = z.infer<typeof newEventSchema>;
 
 export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | undefined>(
-    undefined,
-  );
   const { control } = useForm();
   const supabase = createClient();
 
   const { data: user } = api.users.getCurrent.useQuery();
 
-  const form = useForm<NewEventInput>({
-    resolver: zodResolver(newEventSchema),
+  // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
+  type NewEventInputWithFile = Omit<NewEventInput, "image"> & {
+    image: File | undefined;
+  };
+  const newEventSchemaWithFile = newEventSchema.omit({ image: true }).extend({
+    image: z.instanceof(File).optional(),
+  });
+
+  const form = useForm<NewEventInputWithFile>({
+    resolver: zodResolver(newEventSchemaWithFile),
     defaultValues: {
       title: undefined,
       location: undefined,
@@ -86,7 +92,7 @@ export default function CreateEvent() {
     },
   });
 
-  const onSubmit = async (data: NewEventInput) => {
+  const onSubmit = async (data: NewEventInputWithFile) => {
     setIsSubmitting(true);
     const newEventData: NewEventInput = {
       title: data.title,
@@ -100,20 +106,21 @@ export default function CreateEvent() {
       newEventData.location = data.location;
     }
 
-    if (isOrgEvent) {
-      // TODO: handle creation via organization
-    } else {
-      newEventData.userHostId = user?.id;
-    }
-
-    if (selectedImage) {
+    if (data.image) {
       const eventImageId: string = uuidv4();
 
       const { data: imageData } = await supabase.storage
         .from("images")
-        .upload("events/" + eventImageId, selectedImage);
+        .upload("events/" + eventImageId, data.image);
 
-      newEventData.image = imageData?.path;
+      const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
+      newEventData.image = baseStorageUrl + imageData?.path;
+    }
+
+    if (isOrgEvent) {
+      // TODO: handle creation via organization
+    } else {
+      newEventData.userHostId = user?.id;
     }
 
     mutate(newEventData);
@@ -122,8 +129,7 @@ export default function CreateEvent() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
-      form.setValue("image", URL.createObjectURL(file));
+      form.setValue("image", file);
     }
   };
 
@@ -357,7 +363,7 @@ export default function CreateEvent() {
                           </>
                         ) : (
                           <Image
-                            src={field.value}
+                            src={URL.createObjectURL(field.value)}
                             alt="selected image"
                             fill
                             style={{
