@@ -11,6 +11,7 @@ datasource db {
 model User {
   id        String @id
   email     String @unique
+  username  String @unique
   firstName String?
   lastName  String?
 
@@ -20,7 +21,6 @@ model User {
   github   String?
   linkedin String?
   website  String?
-  username String
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")

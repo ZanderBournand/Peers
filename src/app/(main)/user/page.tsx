@@ -13,15 +13,7 @@ import Link from "next/link";
 export default async function UserPage() {
   const user = await api.users.getCurrent.query();
 
-  if (!user) return (
-    <CardContent className="flex justify-center">
-          <Link href="/user/new">
-            <Button variant="default" className="my-4">
-              Create Profile!
-            </Button>
-          </Link>
-        </CardContent>
-  );
+  if (!user) return null;
 
   return (
     <div className="flex w-full justify-center ">
@@ -58,7 +50,7 @@ export default async function UserPage() {
           </CardContent>
         </div>
         <CardContent className="flex justify-center">
-          <Link href="/user/new">
+          <Link href="/user/edit">
             <Button variant="default" className="my-4">
               Edit Profile
             </Button>

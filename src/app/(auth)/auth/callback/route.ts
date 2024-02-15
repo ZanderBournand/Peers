@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser();
 
     if (user?.email) {
-      const isEmailPresent = await api.users.isEmailPresent.query({ email: user.email });
+      const isEmailPresent = await api.users.isUserCreated.query({ email: user.email });
 
       if (!isEmailPresent) {
         const { error } = await supabase

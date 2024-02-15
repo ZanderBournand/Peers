@@ -15,9 +15,21 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.update({
+      const user = await ctx.db.user.upsert({
         where: { id: ctx.user.id },
-        data: {
+        create: {
+          id: ctx.user.id,
+          email: ctx.user.email!,
+          username: "", // TODO: See why ctx.user.username is undefined
+          firstName: input.firstName,
+          lastName: input.lastName,
+          skills: input.skills,
+          bio: input.bio,
+          github: input.github,
+          linkedin: input.linkedin,
+          website: input.website,
+        },
+        update: {
           firstName: input.firstName,
           lastName: input.lastName,
           skills: input.skills,
@@ -27,7 +39,6 @@ export const userRouter = createTRPCRouter({
           website: input.website,
         },
       });
-
       return user;
     }),
   getCurrent: privateProcedure.query(async ({ ctx }) => {
@@ -36,7 +47,7 @@ export const userRouter = createTRPCRouter({
     });
     return user;
   }),
-  isEmailPresent: privateProcedure
+  isUserCreated: privateProcedure
   .input(z.object({ email: z.string().email() }))
   .query(async ({ ctx, input }) => {
     const user = await ctx.db.user.findUnique({

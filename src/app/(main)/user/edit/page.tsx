@@ -17,13 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useFieldArray, useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -55,18 +48,16 @@ export default function NewUserForm() {
   });
 
   useEffect(() => {
-    if (!isUserLoading) {
-      if (user) {
-        form.reset({
-          firstName: user.firstName ?? "",
-          lastName: user.lastName ?? "",
-          skills: user.skills?.map(skill => ({ name: skill })) ?? [{ name: "" }],
-          bio: user.bio ?? "",
-          github: user.github ?? "",
-          linkedin: user.linkedin ?? "",
-          website: user.website ?? "",
-        });
-      }
+    if (!isUserLoading && user) {
+      form.reset({
+        firstName: user.firstName ?? "",
+        lastName: user.lastName ?? "",
+        skills: user.skills?.map(skill => ({ name: skill })) ?? [{ name: "" }],
+        bio: user.bio ?? "",
+        github: user.github ?? "",
+        linkedin: user.linkedin ?? "",
+        website: user.website ?? "",
+      });
       setTimeout(() => setIsLoading(false), 500);
     }
   }, [user, isUserLoading, form]);
@@ -83,7 +74,6 @@ export default function NewUserForm() {
   const { mutate } = api.users.createOrUpdate.useMutation({
     onSuccess: () => {
       router.push("/user");
-      router.refresh();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -121,7 +111,7 @@ export default function NewUserForm() {
     <div className="flex w-screen justify-center p-8">
       <Card className="w-full max-w-2xl border border-border">
         <CardHeader>
-          <CardTitle>Complete User Profile</CardTitle>
+          <CardTitle>Edit User Profile</CardTitle>
           <CardDescription>Please enter your information below</CardDescription>
         </CardHeader>
         <CardContent>

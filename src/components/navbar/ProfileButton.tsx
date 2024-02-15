@@ -7,7 +7,6 @@ import type { User } from "@supabase/supabase-js";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
-import { useQuery } from "@tanstack/react-query";
 
 const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
