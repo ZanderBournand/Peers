@@ -26,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import type { z } from "zod";
@@ -33,14 +35,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { newEventSchema } from "@/lib/validators/newEvent";
 import { useRouter } from "next/navigation";
 import { DateTimePicker } from "@/components/ui/datetimepicker";
+import { PhotoIcon } from "@heroicons/react/24/outline";
 import InputMask from "react-input-mask";
+import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
+import { v4 as uuidv4 } from "uuid";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export type NewEventInput = z.infer<typeof newEventSchema>;
 
 export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
-  const { control, setValue } = useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | undefined>(
+    undefined,
+  );
+  const { control } = useForm();
+  const supabase = createClient();
+
+  const { data: user } = api.users.getCurrent.useQuery();
 
   const form = useForm<NewEventInput>({
     resolver: zodResolver(newEventSchema),
@@ -54,15 +67,6 @@ export default function CreateEvent() {
       duration: undefined,
     },
   });
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setIsOrgEvent(checked);
-    if (!checked) {
-      // NOTE: "organization" field value is not handled ATM
-      // -> waiting on implementation of organization creation
-      setValue("organization", undefined);
-    }
-  };
 
   const typeValue = useWatch({
     control: form.control,
@@ -83,7 +87,7 @@ export default function CreateEvent() {
   });
 
   const onSubmit = async (data: NewEventInput) => {
-    console.log("SUBMITTING FORN DATA:", data);
+    setIsSubmitting(true);
     const newEventData: NewEventInput = {
       title: data.title,
       date: data.date,
@@ -95,11 +99,32 @@ export default function CreateEvent() {
     if (data.location) {
       newEventData.location = data.location;
     }
-    if (data.image) {
-      newEventData.image = data.image;
+
+    if (isOrgEvent) {
+      // TODO: handle creation via organization
+    } else {
+      newEventData.userHostId = user?.id;
+    }
+
+    if (selectedImage) {
+      const eventImageId: string = uuidv4();
+
+      const { data: imageData } = await supabase.storage
+        .from("images")
+        .upload("events/" + eventImageId, selectedImage);
+
+      newEventData.image = imageData?.path;
     }
 
     mutate(newEventData);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      form.setValue("image", URL.createObjectURL(file));
+    }
   };
 
   return (
@@ -264,7 +289,9 @@ export default function CreateEvent() {
                 <div className="ml-1 mt-4 flex w-full flex-row items-center">
                   <Checkbox
                     checked={isOrgEvent}
-                    onCheckedChange={handleCheckboxChange}
+                    onCheckedChange={(checked: boolean) =>
+                      setIsOrgEvent(checked)
+                    }
                     className="h-5 w-5"
                     // disabled
                   />
@@ -308,9 +335,61 @@ export default function CreateEvent() {
                   />
                 )}
               </div>
-              <Button variant="default" className="my-4 w-full" type="submit">
-                Submit
-              </Button>
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <>
+                    <Label
+                      htmlFor="image"
+                      className="my-4 flex w-full flex-col items-center"
+                    >
+                      <div className="relative flex h-60 w-3/4 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                        {!field?.value ? (
+                          <>
+                            <PhotoIcon className="h-10 w-10" color="darkgray" />
+                            <span className="text-lg font-semibold">
+                              Click to add an event image
+                            </span>
+                            <span className="text-xs">
+                              JPEG or PNG, no larger than 10 MB
+                            </span>
+                          </>
+                        ) : (
+                          <Image
+                            src={field.value}
+                            alt="selected image"
+                            fill
+                            style={{
+                              objectFit: "cover",
+                            }}
+                            className="rounded-2xl"
+                          />
+                        )}
+                      </div>
+                    </Label>
+                    <Input
+                      id="image"
+                      type="file"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
+                    />
+                  </>
+                )}
+              />
+              <div className="flex justify-center">
+                <Button
+                  variant="default"
+                  className="my-4 w-1/2 justify-center"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting && (
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Submit
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>

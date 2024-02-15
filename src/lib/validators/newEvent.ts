@@ -9,4 +9,6 @@ export const newEventSchema = z.object({
   image: z.string().url().optional(),
   type: z.nativeEnum(EventType),
   duration: z.number().int().min(1),
+  userHostId: z.string().optional(),
+  orgHostId: z.string().optional(),
 });
