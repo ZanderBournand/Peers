@@ -71,7 +71,7 @@ export default function NewUserForm() {
 
   const router = useRouter();
 
-  const { mutate } = api.users.createOrUpdate.useMutation({
+  const { mutate } = api.users.update.useMutation({
     onSuccess: () => {
       router.push("/user");
     },
@@ -92,6 +92,8 @@ export default function NewUserForm() {
       linkedin: data.linkedin,
       website: data.website,
     });
+
+    router.refresh();
   };
   
 

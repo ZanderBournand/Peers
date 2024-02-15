@@ -16,21 +16,22 @@ export async function GET(request: Request) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (user?.email) {
-      const isEmailPresent = await api.users.isUserCreated.query({ email: user.email });
+    const isUserCreated = user?.email && await api.users.isUserCreated.query({ email: user.email });
 
-      if (!isEmailPresent) {
-        const { error } = await supabase
-        .from('User')
-        .insert([{ 
-                  id: user.id, 
-                  email: user.email, 
-                  username: "Peer" + Math.floor(Math.random() * 90000 + 10000).toString(),
-                  }]);
+    if (!isUserCreated && user && user.email) {
 
-        if (error) {
-          console.error('Error inserting user:', error.message);
-        }
+      let username, isUsernameTaken;
+      do {
+          username = "Peer" + Math.floor(Math.random() * 90000 + 10000).toString();
+          isUsernameTaken = await api.users.isUsernameTaken.query({ username });
+      } while (isUsernameTaken);
+
+      if (!isUserCreated) {
+        await api.users.create.mutate({
+          id: user.id,
+          email: user.email,
+          username: username,
+        });
       }
     }
   }

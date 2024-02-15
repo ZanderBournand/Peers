@@ -2,7 +2,25 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 
 export const userRouter = createTRPCRouter({
-  createOrUpdate: privateProcedure
+  create: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        email: z.string().email(),
+        username: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.create({
+        data: {
+          id: input.id,
+          email: input.email,
+          username: input.username,
+        },
+      });
+      return user;
+    }),
+  update: privateProcedure
     .input(
       z.object({
         firstName: z.string(),
@@ -15,21 +33,9 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.upsert({
+      const user = await ctx.db.user.updateMany({
         where: { id: ctx.user.id },
-        create: {
-          id: ctx.user.id,
-          email: ctx.user.email!,
-          username: "", // TODO: See why ctx.user.username is undefined
-          firstName: input.firstName,
-          lastName: input.lastName,
-          skills: input.skills,
-          bio: input.bio,
-          github: input.github,
-          linkedin: input.linkedin,
-          website: input.website,
-        },
-        update: {
+        data: {
           firstName: input.firstName,
           lastName: input.lastName,
           skills: input.skills,
@@ -52,6 +58,14 @@ export const userRouter = createTRPCRouter({
   .query(async ({ ctx, input }) => {
     const user = await ctx.db.user.findUnique({
       where: { email: input.email },
+    });
+    return Boolean(user);
+  }),
+  isUsernameTaken: privateProcedure
+  .input(z.object({ username: z.string() }))
+  .query(async ({ ctx, input }) => {
+    const user = await ctx.db.user.findUnique({
+      where: { username: input.username },
     });
     return Boolean(user);
   }),

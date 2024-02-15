@@ -13,9 +13,11 @@ export default async function AuthButton() {
 
   const userData = user && await api.users.getCurrent.query();
 
+  const displayName = userData?.firstName || userData?.username;
+  
   return user ? (
     <div className="mt-16 flex flex-col items-center justify-center">
-      <span>Hey, {userData?.username}!</span>
+      <span>Hey, {displayName}!</span>
       <Link href="/event/new">
         <Button className="my-8" variant="outline">
           <PlusIcon className="mr-2 h-4 w-4" />
