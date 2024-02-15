@@ -293,7 +293,7 @@ export default function CreateEvent() {
                       setIsOrgEvent(checked)
                     }
                     className="h-5 w-5"
-                    // disabled
+                    disabled
                   />
                   <FormLabel className="ml-3">
                     Is this event hosted by an organization?
