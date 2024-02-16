@@ -1,15 +1,30 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 
-import { RoleType } from "@prisma/client";
-
 export const userRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
+        id: z.string(),
+        email: z.string().email(),
+        username: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.create({
+        data: {
+          id: input.id,
+          email: input.email,
+          username: input.username,
+        },
+      });
+      return user;
+    }),
+  update: privateProcedure
+    .input(
+      z.object({
         firstName: z.string(),
         lastName: z.string(),
-        role: z.nativeEnum(RoleType),
         skills: z.array(z.string()),
         bio: z.string(),
         github: z.string(),
@@ -18,13 +33,11 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.create({
+      const user = await ctx.db.user.update({
+        where: { id: ctx.user.id },
         data: {
-          id: ctx.user.id,
-          email: ctx.user.email!,
           firstName: input.firstName,
           lastName: input.lastName,
-          role: input.role,
           skills: input.skills,
           bio: input.bio,
           github: input.github,
@@ -32,7 +45,6 @@ export const userRouter = createTRPCRouter({
           website: input.website,
         },
       });
-
       return user;
     }),
   getCurrent: privateProcedure.query(async ({ ctx }) => {
@@ -41,4 +53,20 @@ export const userRouter = createTRPCRouter({
     });
     return user;
   }),
+  isUserCreated: privateProcedure
+    .input(z.object({ email: z.string().email() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { email: input.email },
+      });
+      return Boolean(user);
+    }),
+  isUsernameTaken: privateProcedure
+    .input(z.object({ username: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { username: input.username },
+      });
+      return Boolean(user);
+    }),
 });

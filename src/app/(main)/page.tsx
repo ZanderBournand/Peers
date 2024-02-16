@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { api } from "@/trpc/server";
 import Link from "next/link";
 
 export default async function AuthButton() {
@@ -10,9 +11,13 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const userData = user && (await api.users.getCurrent.query());
+
+  const displayName = userData?.firstName || userData?.username;
+
   return user ? (
     <div className="mt-16 flex flex-col items-center justify-center">
-      <span>Hey, {user.email}!</span>
+      <span>Hey, {displayName}!</span>
       <Link href="/event/new">
         <Button className="my-8" variant="outline">
           <PlusIcon className="mr-2 h-4 w-4" />

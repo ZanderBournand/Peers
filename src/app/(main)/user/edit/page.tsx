@@ -17,13 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useFieldArray, useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -33,16 +26,20 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 export type NewUserInput = z.infer<typeof newUserSchema>;
 
 export default function NewUserForm() {
+  const [isLoading, setIsLoading] = useState(true);
+  const { data: user, isLoading: isUserLoading } =
+    api.users.getCurrent.useQuery();
+
   const form = useForm<NewUserInput>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
-      role: undefined,
       skills: [{ name: "" }],
       bio: "",
       github: "",
@@ -50,6 +47,23 @@ export default function NewUserForm() {
       website: "",
     },
   });
+
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      form.reset({
+        firstName: user.firstName ?? "",
+        lastName: user.lastName ?? "",
+        skills: user.skills?.map((skill) => ({ name: skill })) ?? [
+          { name: "" },
+        ],
+        bio: user.bio ?? "",
+        github: user.github ?? "",
+        linkedin: user.linkedin ?? "",
+        website: user.website ?? "",
+      });
+      setTimeout(() => setIsLoading(false), 500);
+    }
+  }, [user, isUserLoading, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -60,7 +74,7 @@ export default function NewUserForm() {
 
   const router = useRouter();
 
-  const { mutate } = api.users.create.useMutation({
+  const { mutate } = api.users.update.useMutation({
     onSuccess: () => {
       router.push("/user");
     },
@@ -75,21 +89,34 @@ export default function NewUserForm() {
     mutate({
       firstName: capitalizeFirstLetter(data.firstName),
       lastName: capitalizeFirstLetter(data.lastName),
-      role: data.role,
       skills: skillsList,
       bio: data.bio,
       github: data.github,
       linkedin: data.linkedin,
       website: data.website,
     });
+
+    router.refresh();
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex w-screen justify-center p-8">
+        <Card className="w-full max-w-2xl border border-border">
+          <CardHeader>
+            <CardTitle>Loading User Profile...</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-screen justify-center p-8">
       <Card className="w-full max-w-2xl border border-border">
         <CardHeader>
-          <CardTitle>Create User</CardTitle>
-          <CardDescription>Yabba dabba doo</CardDescription>
+          <CardTitle>Edit User Profile</CardTitle>
+          <CardDescription>Please enter your information below</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -125,33 +152,6 @@ export default function NewUserForm() {
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="FULLSTACK">Full Stack</SelectItem>
-                        <SelectItem value="FRONTEND">Frontend</SelectItem>
-                        <SelectItem value="BACKEND">Backend</SelectItem>
-                        <SelectItem value="DESIGN">Design</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="skills"

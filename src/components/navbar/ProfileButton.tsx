@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { createClient } from "@/utils/supabase/client";
+import { api } from "@/trpc/react";
 
 const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,6 +36,13 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
     };
   }, [ref]);
 
+  const userData = api.users.getCurrent.useQuery().data;
+
+  const displayName =
+    userData?.firstName && userData?.lastName
+      ? userData?.firstName + " " + userData?.lastName
+      : userData?.username;
+
   if (!user) return null;
   return (
     <div ref={ref} className="hidden sm:block">
@@ -56,7 +64,7 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
               </Avatar>
             </div>
             <div className="flex flex-col">
-              <p className="text-xl">Name Name</p>
+              <p className="text-xl">{displayName}</p>
               <p className="text-md text-muted-foreground">{user?.email}</p>
             </div>
           </div>

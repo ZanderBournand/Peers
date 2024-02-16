@@ -1,10 +1,8 @@
 import { z } from "zod";
-import { RoleType } from "@prisma/client";
 
 export const newUserSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  role: z.nativeEnum(RoleType),
   skills: z
     .object({ name: z.string().min(1) })
     .array()
