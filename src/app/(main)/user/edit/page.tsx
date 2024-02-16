@@ -32,8 +32,9 @@ export type NewUserInput = z.infer<typeof newUserSchema>;
 
 export default function NewUserForm() {
   const [isLoading, setIsLoading] = useState(true);
-  const { data: user, isLoading: isUserLoading } = api.users.getCurrent.useQuery();
-  
+  const { data: user, isLoading: isUserLoading } =
+    api.users.getCurrent.useQuery();
+
   const form = useForm<NewUserInput>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
@@ -52,7 +53,9 @@ export default function NewUserForm() {
       form.reset({
         firstName: user.firstName ?? "",
         lastName: user.lastName ?? "",
-        skills: user.skills?.map(skill => ({ name: skill })) ?? [{ name: "" }],
+        skills: user.skills?.map((skill) => ({ name: skill })) ?? [
+          { name: "" },
+        ],
         bio: user.bio ?? "",
         github: user.github ?? "",
         linkedin: user.linkedin ?? "",
@@ -95,7 +98,6 @@ export default function NewUserForm() {
 
     router.refresh();
   };
-  
 
   if (isLoading) {
     return (
