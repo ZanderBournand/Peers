@@ -73,7 +73,7 @@ export default function NewUserForm() {
 
   const { mutate } = api.users.update.useMutation({
     onSuccess: () => {
-      router.push("/user");
+      window.location.href = "/user";
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -92,8 +92,6 @@ export default function NewUserForm() {
       linkedin: data.linkedin,
       website: data.website,
     });
-
-    router.refresh();
   };
   
 
