@@ -51,15 +51,6 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               Complete Profile Now!
           </Link>
         }
-        { user && !user?.isVerifiedStudent &&
-          <Link
-              href='/verify-student'
-              className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-              style={{ color: 'red' }} 
-            >
-              Verify Student Staus Now!
-          </Link>
-        }
         </div>
       </div>
 
