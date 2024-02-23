@@ -32,10 +32,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newEventSchema } from "@/lib/validators/newEvent";
+import { newEventSchema } from "@/lib/validators/Events";
 import { useRouter } from "next/navigation";
 import { DateTimePicker } from "@/components/ui/datetimepicker";
-import { PhotoIcon } from "@heroicons/react/24/outline";
+import {
+  PhotoIcon,
+  VideoCameraIcon,
+  MicrophoneIcon,
+} from "@heroicons/react/24/outline";
 import InputMask from "react-input-mask";
 import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
@@ -178,8 +182,25 @@ export default function CreateEvent() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="ONLINE">Online</SelectItem>
                           <SelectItem value="IN_PERSON">In-person</SelectItem>
+                          <SelectItem value="ONLINE_VIDEO">
+                            <div className="flex flex-row items-center">
+                              <p className="mr-4">Online</p>
+                              <div className="flex flex-row items-center rounded-lg bg-blue-200 bg-opacity-30 px-2 py-0.5">
+                                <VideoCameraIcon className="mr-2 h-4 w-4" />
+                                <p>Video</p>
+                              </div>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="ONLINE_AUDIO">
+                            <div className="flex flex-row items-center">
+                              <p className="mr-4">Online</p>
+                              <div className="flex flex-row items-center rounded-lg bg-purple-300 bg-opacity-30 px-2 py-0.5">
+                                <MicrophoneIcon className="mr-2 h-4 w-4" />
+                                <p>Audio</p>
+                              </div>
+                            </div>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
