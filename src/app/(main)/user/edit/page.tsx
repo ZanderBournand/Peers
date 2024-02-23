@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFieldArray, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newUserSchema } from "@/lib/validators/newUser";
+import { newUserSchema } from "@/lib/validators/User";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";

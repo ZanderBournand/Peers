@@ -59,6 +59,7 @@ model Event {
 }
 
 enum EventType {
-  ONLINE
+  ONLINE_VIDEO
+  ONLINE_AUDIO
   IN_PERSON
 }

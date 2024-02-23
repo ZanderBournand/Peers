@@ -49,4 +49,13 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
+  getAll: privateProcedure.query(async ({ ctx }) => {
+    const events = await ctx.db.event.findMany({
+      include: {
+        userHost: true,
+        orgHost: true,
+      },
+    });
+    return events;
+  }),
 });
