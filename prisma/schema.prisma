@@ -60,6 +60,11 @@ model Event {
   attendees User[] @relation("Attendees")
 }
 
+model Verification_Code {
+  id String @id
+  code String
+}
+
 enum EventType {
   ONLINE
   IN_PERSON

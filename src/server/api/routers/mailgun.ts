@@ -2,7 +2,6 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
-import { env } from "@/env"; // Adjust this import based on your project structure
 
 export const mailgunRouter = createTRPCRouter({
   sendEmail: privateProcedure
@@ -33,5 +32,58 @@ export const mailgunRouter = createTRPCRouter({
         console.error(error);
         throw new Error('Failed to send email');
       }
+    }),
+    insertVerificationCode: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        code: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const verificationCode = await ctx.db.verification_Code.create({
+        data: {
+          id: input.id,
+          code: input.code,
+        },
+      });
+      return verificationCode;
+    }),
+    getVerificationCode: privateProcedure
+    .input(
+      z.object({ 
+        id: z.string() 
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const verificationCode = await ctx.db.verification_Code.findUnique({
+        where: { id: input.id },
+      });
+      return verificationCode;
+    }),
+    deleteVerificationCode: privateProcedure
+    .input(
+      z.object({ 
+        id: z.string() 
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const verificationCode = await ctx.db.verification_Code.delete({
+        where: { id: input.id },
+      });
+      return verificationCode;
+    }),
+    updateVerifiedStatus: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.update({
+        where: { id: input.id },
+        data: { isVerifiedStudent: true },
+      });
+      return user;
     }),
 });
