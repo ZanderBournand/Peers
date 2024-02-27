@@ -1,9 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/server";
-import Link from "next/link";
 import EventButton from "@/components/buttons/createEventButton";
 
 export default async function AuthButton() {

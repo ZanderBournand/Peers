@@ -3,7 +3,7 @@ import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
 
-export const mailgunRouter = createTRPCRouter({
+export const verifyStudentRouter = createTRPCRouter({
   sendEmail: privateProcedure
     .input(
       z.object({
@@ -36,54 +36,44 @@ export const mailgunRouter = createTRPCRouter({
     insertVerificationCode: privateProcedure
     .input(
       z.object({
-        id: z.string(),
         code: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const verificationCode = await ctx.db.verification_Code.create({
         data: {
-          id: input.id,
+          id: ctx.user.id,
           code: input.code,
         },
       });
       return verificationCode;
     }),
-    getVerificationCode: privateProcedure
-    .input(
-      z.object({ 
-        id: z.string() 
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const verificationCode = await ctx.db.verification_Code.findUnique({
-        where: { id: input.id },
-      });
-      return verificationCode;
-    }),
     deleteVerificationCode: privateProcedure
-    .input(
-      z.object({ 
-        id: z.string() 
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx }) => {
       const verificationCode = await ctx.db.verification_Code.delete({
-        where: { id: input.id },
+        where: { id: ctx.user.id },
       });
       return verificationCode;
     }),
-    updateVerifiedStatus: privateProcedure
+    isVerificationCodeCorrect: privateProcedure
     .input(
       z.object({
-        id: z.string(),
+        code: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.update({
-        where: { id: input.id },
-        data: { isVerifiedStudent: true },
+      const verificationCode = await ctx.db.verification_Code.findFirst({
+        where: { id: ctx.user.id },
       });
-      return user;
+
+      if (verificationCode?.code === input.code) {
+        const user = await ctx.db.user.update({
+          where: { id: ctx.user.id },
+          data: { isVerifiedStudent: true },
+        });
+        return true;
+      }
+
+      return false;
     }),
 });
