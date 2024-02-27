@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "@/components/navbar/Navbar";
 import AuthComponent from "@/components/navbar/AuthComponent";
-import { VerificationProvider } from "@/components/verification/VerificationContext";
+import { VerificationProvider } from "@/lib/context/VerificationContext";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
