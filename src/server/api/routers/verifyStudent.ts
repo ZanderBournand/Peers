@@ -1,26 +1,32 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
-import formData from 'form-data';
-import Mailgun from 'mailgun.js';
 
 export const verifyStudentRouter = createTRPCRouter({
   sendEmail: privateProcedure
     .input(
       z.object({
+        code: z.string(),
         to: z.string().email(),
         subject: z.string(),
         text: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
-      const mailgun = new Mailgun(formData);
-      const mg = mailgun.client({
-        username: 'api',
-        key: process.env.MAILGUN_API_KEY || '',
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.verification_Code.upsert({
+        where: { userId: ctx.user.id },
+        update: {
+          code: input.code,
+          createdAt: new Date(),
+        },
+        create: {
+          userId: ctx.user.id,
+          code: input.code,
+          createdAt: new Date(),
+        },
       });
 
       try {
-        const message = await mg.messages.create(process.env.MAILGUN_DOMAIN || '', {
+        const message = await ctx.mg.messages.create(process.env.MAILGUN_DOMAIN || '', {
           from: 'Peers <mailgun@yourdomain.com>',
           to: input.to,
           subject: input.subject,
@@ -33,28 +39,6 @@ export const verifyStudentRouter = createTRPCRouter({
         throw new Error('Failed to send email');
       }
     }),
-    insertVerificationCode: privateProcedure
-    .input(
-      z.object({
-        code: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const verificationCode = await ctx.db.verification_Code.create({
-        data: {
-          id: ctx.user.id,
-          code: input.code,
-        },
-      });
-      return verificationCode;
-    }),
-    deleteVerificationCode: privateProcedure
-    .mutation(async ({ ctx }) => {
-      const verificationCode = await ctx.db.verification_Code.delete({
-        where: { id: ctx.user.id },
-      });
-      return verificationCode;
-    }),
     isVerificationCodeCorrect: privateProcedure
     .input(
       z.object({
@@ -63,14 +47,19 @@ export const verifyStudentRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const verificationCode = await ctx.db.verification_Code.findFirst({
-        where: { id: ctx.user.id },
+        where: { userId: ctx.user.id },
       });
 
-      if (verificationCode?.code === input.code) {
-        const user = await ctx.db.user.update({
+      if ((verificationCode?.code === input.code) && (verificationCode.createdAt.getTime() + 1000 * 60 * 5 > Date.now())) {
+        await ctx.db.user.update({
           where: { id: ctx.user.id },
           data: { isVerifiedStudent: true },
         });
+
+        await ctx.db.verification_Code.delete({
+          where: { userId: ctx.user.id },
+        });
+
         return true;
       }
 

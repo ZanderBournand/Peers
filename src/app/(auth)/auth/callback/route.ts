@@ -26,14 +26,11 @@ export async function GET(request: Request) {
           isUsernameTaken = await api.users.isUsernameTaken.query({ username });
       } while (isUsernameTaken);
 
-      const isVerified = user.email.endsWith('.edu');
-
       if (!isUserCreated) {
         await api.users.create.mutate({
           id: user.id,
           email: user.email,
           username: username,
-          isVerifiedStudent: isVerified,
         });
       }
     }

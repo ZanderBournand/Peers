@@ -34,19 +34,20 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {route.title}
             </Link>
           ))}
-        { user && user?.firstName && user?.lastName &&
-          <Link
-              href='/user'
-              className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-            >
-              Profile
-          </Link>
-        }
+        <Link
+            href='/user'
+            className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
+          >
+            Profile
+        </Link>
         { user && !user?.firstName && !user?.lastName &&
           <Link
               href='/user/edit'
               className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-              style={{ color: 'red' }} 
+              style={{ 
+                backgroundColor: 'lightgrey',
+                borderRadius: '4px'
+              }}
             >
               Complete Profile Now!
           </Link>

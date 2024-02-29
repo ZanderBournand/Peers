@@ -61,7 +61,8 @@ model Event {
 }
 
 model Verification_Code {
-  id String @id
+  userId String @id
+  createdAt DateTime
   code String
 }
 

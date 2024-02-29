@@ -8,7 +8,6 @@ export const userRouter = createTRPCRouter({
         id: z.string(),
         email: z.string().email(),
         username: z.string(),
-        isVerifiedStudent: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -17,7 +16,7 @@ export const userRouter = createTRPCRouter({
           id: input.id,
           email: input.email,
           username: input.username,
-          isVerifiedStudent: input.isVerifiedStudent,
+          isVerifiedStudent: false,
         },
       });
       return user;
