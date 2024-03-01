@@ -23,7 +23,6 @@ import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newUserSchema } from "@/lib/validators/newUser";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -32,8 +31,9 @@ export type NewUserInput = z.infer<typeof newUserSchema>;
 
 export default function NewUserForm() {
   const [isLoading, setIsLoading] = useState(true);
-  const { data: user, isLoading: isUserLoading } = api.users.getCurrent.useQuery();
-  
+  const { data: user, isLoading: isUserLoading } =
+    api.users.getCurrent.useQuery();
+
   const form = useForm<NewUserInput>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
@@ -52,7 +52,9 @@ export default function NewUserForm() {
       form.reset({
         firstName: user.firstName ?? "",
         lastName: user.lastName ?? "",
-        skills: user.skills?.map(skill => ({ name: skill })) ?? [{ name: "" }],
+        skills: user.skills?.map((skill) => ({ name: skill })) ?? [
+          { name: "" },
+        ],
         bio: user.bio ?? "",
         github: user.github ?? "",
         linkedin: user.linkedin ?? "",
@@ -68,8 +70,6 @@ export default function NewUserForm() {
   });
 
   const watchSkills = form.watch("skills");
-
-  const router = useRouter();
 
   const { mutate } = api.users.update.useMutation({
     onSuccess: () => {
@@ -93,7 +93,6 @@ export default function NewUserForm() {
       website: data.website,
     });
   };
-  
 
   if (isLoading) {
     return (

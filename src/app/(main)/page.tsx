@@ -9,14 +9,14 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const userData = user && await api.users.getCurrent.query();
+  const userData = user && (await api.users.getCurrent.query());
 
-  const displayName = userData?.firstName || userData?.username;
-  
-  return user ? (
+  const displayName = userData?.firstName ?? userData?.username;
+
+  return user && userData ? (
     <div className="mt-16 flex flex-col items-center justify-center">
       <span>Hey, {displayName}!</span>
-      <EventButton userData={userData}/>
+      <EventButton userData={userData} />
     </div>
   ) : (
     <span className="bg-btn-background hover:bg-btn-background-hover ml-12 flex rounded-md px-3 py-2 no-underline">

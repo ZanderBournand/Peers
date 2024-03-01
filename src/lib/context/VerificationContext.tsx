@@ -1,6 +1,11 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  type ReactNode,
+} from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -32,15 +37,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 
-import { set, type z } from "zod";
+import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { eduEmailSchema } from "@/lib/validators/eduEmail";
-import { verifyCodeSchema } from "@/lib/validators/verifyCode";
+import {
+  eduEmailSchema,
+  verifyCodeSchema,
+} from "@/lib/validators/verification";
 import { api } from "@/trpc/react";
 import uniDomains from "universities_and_domains.json";
 import { useRouter } from "next/navigation";
@@ -51,8 +57,8 @@ interface VerificationState {
   openAlert: () => void;
 }
 
-export const VerificationContext = createContext<VerificationState | undefined>(
-  undefined,
+export const VerificationContext = createContext<VerificationState | null>(
+  null,
 );
 
 export const useVerificationAlert = () => {
@@ -71,7 +77,8 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
   const router = useRouter();
 
   const [codeSent, setCodeSent] = useState(false);
-  const [codeVerified, setCodeVerified] = useState(false);
+  const [showInvalidWarning, setShowInvalidWarning] = useState(false);
+  const [codeVerified, setCodeVerified] = useState<boolean | null>(null);
 
   const [verifyButtonClicked, setVerifyButtonClicked] = useState(false);
 
@@ -90,21 +97,24 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
     resolver: zodResolver(eduEmailSchema(domains)),
   });
 
-  const { mutate: sendEmail } = api.verifyStudent.sendEmail.useMutation({
-    onSuccess: () => {
-      console.log("Email sent successfully");
-      setCodeSent(true);
-    },
-    onError: (e) => {
-      console.error("Failed to send email", e);
-    },
-  });
+  const { mutate: sendVerificationCode } =
+    api.verifyStudent.sendVerificationCode.useMutation({
+      onSuccess: () => {
+        setCodeSent(true);
+      },
+      onError: (e) => {
+        console.error("Failed to send email", e);
+      },
+    });
 
   const { mutate: isVerificationCodeCorrect } =
     api.verifyStudent.isVerificationCodeCorrect.useMutation({
       onSuccess: (result) => {
         if (result) {
           setCodeVerified(true);
+        } else {
+          setCodeVerified(false);
+          setShowInvalidWarning(true);
         }
       },
       onError: (e) => {
@@ -113,18 +123,8 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
     });
 
   const onEmailSubmit = async (data: { eduEmail: string }) => {
-    const verifyCode = String(Math.floor(Math.random() * 1000000)).padStart(
-      6,
-      "0",
-    );
-
-    sendEmail({
-      code: verifyCode,
+    sendVerificationCode({
       to: data.eduEmail,
-      subject: "Student Verification Code",
-      text:
-        "Please enter the following code to verify your student email: " +
-        verifyCode,
     });
   };
 
@@ -134,7 +134,6 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
 
   const onCodeSubmit = async (data: { verifyCode: string }) => {
     setVerifyButtonClicked(true);
-
     isVerificationCodeCorrect({ code: data.verifyCode });
   };
 
@@ -150,7 +149,7 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
               the verification process below.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <Popover open={openCombo} onOpenChange={setOpenCombo}>
+          <Popover open={openCombo} onOpenChange={setOpenCombo} modal={true}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -201,25 +200,22 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
             </PopoverContent>
           </Popover>
           {domains[0] != "" && (
-            <Card className="w-full max-w-2xl border border-border">
-              <Form {...emailForm}>
-                <form className="flex w-full flex-1 flex-col justify-center gap-6 text-muted-foreground">
-                  <FormField
-                    control={emailForm.control}
-                    name="eduEmail"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormControl>
-                          <Input placeholder="Your student email" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
-            </Card>
-
+            <Form {...emailForm}>
+              <form className="flex w-full flex-1 flex-col justify-center gap-6 text-muted-foreground">
+                <FormField
+                  control={emailForm.control}
+                  name="eduEmail"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <Input placeholder="Your student email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
           )}
           {codeSent && (
             <div>
@@ -243,17 +239,25 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                   />
                 </form>
               </Form>
-              {!codeVerified && verifyButtonClicked && (
+              {codeVerified != null && !codeVerified && verifyButtonClicked && (
                 <div className="my-2 text-sm text-red-500">
-                  <div>
-                    The code you entered is invalid. Please try again.
-                  </div>
-                  <button className="underline" onClick={emailForm.handleSubmit(onEmailSubmit)}>
+                  {showInvalidWarning && (
+                    <div>
+                      The code you entered is invalid. Please try again.
+                    </div>
+                  )}
+                  <button
+                    className="underline"
+                    onClick={() => {
+                      void emailForm.handleSubmit(onEmailSubmit)();
+                      setShowInvalidWarning(false);
+                    }}
+                  >
                     Need to resend the code? Click here.
                   </button>
                 </div>
               )}
-              {codeVerified && (
+              {codeVerified != null && codeVerified && (
                 <div className="my-2 flex items-center text-sm text-green-500">
                   You have been verified! You may close out now.
                 </div>

@@ -2,44 +2,54 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 
 export const verifyStudentRouter = createTRPCRouter({
-  sendEmail: privateProcedure
+  sendVerificationCode: privateProcedure
     .input(
       z.object({
-        code: z.string(),
         to: z.string().email(),
-        subject: z.string(),
-        text: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const verificationCode = String(
+        Math.floor(Math.random() * 1000000),
+      ).padStart(6, "0");
+
       await ctx.db.verification_Code.upsert({
         where: { userId: ctx.user.id },
         update: {
-          code: input.code,
+          code: verificationCode,
           createdAt: new Date(),
         },
         create: {
           userId: ctx.user.id,
-          code: input.code,
+          code: verificationCode,
           createdAt: new Date(),
         },
       });
 
       try {
-        const message = await ctx.mg.messages.create(process.env.MAILGUN_DOMAIN || '', {
-          from: 'Peers <mailgun@yourdomain.com>',
-          to: input.to,
-          subject: input.subject,
-          text: input.text,
-        });
+        const message = await ctx.mg.messages.create(
+          process.env.MAILGUN_DOMAIN ?? "",
+          {
+            from: "Peers <mailgun@yourdomain.com>",
+            to: input.to,
+            subject: "Student Verification Code",
+            text:
+              "Please enter the following code to verify your student email: " +
+              verificationCode,
+          },
+        );
 
-        return { success: true, message: "Email sent successfully", messageId: message.id };
+        return {
+          success: true,
+          message: "Email sent successfully",
+          messageId: message.id,
+        };
       } catch (error) {
         console.error(error);
-        throw new Error('Failed to send email');
+        throw new Error("Failed to send email");
       }
     }),
-    isVerificationCodeCorrect: privateProcedure
+  isVerificationCodeCorrect: privateProcedure
     .input(
       z.object({
         code: z.string(),
@@ -50,7 +60,10 @@ export const verifyStudentRouter = createTRPCRouter({
         where: { userId: ctx.user.id },
       });
 
-      if ((verificationCode?.code === input.code) && (verificationCode.createdAt.getTime() + 1000 * 60 * 5 > Date.now())) {
+      if (
+        verificationCode?.code === input.code &&
+        verificationCode.createdAt.getTime() + 1000 * 60 * 5 > Date.now()
+      ) {
         await ctx.db.user.update({
           where: { id: ctx.user.id },
           data: { isVerifiedStudent: true },

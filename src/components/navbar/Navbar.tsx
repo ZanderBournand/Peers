@@ -7,6 +7,7 @@ import { api } from "@/trpc/react";
 const routes: { title: string; href: string }[] = [
   { title: "Discover", href: "/discover" },
   { title: "My Events", href: "/myevents" },
+  { title: "Profile", href: "/user" },
 ];
 
 const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -34,24 +35,20 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {route.title}
             </Link>
           ))}
-        <Link
-            href='/user'
-            className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-          >
-            Profile
-        </Link>
-        { user && !user?.firstName && !user?.lastName &&
-          <Link
-              href='/user/edit'
-              className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-              style={{ 
-                backgroundColor: 'lightgrey',
-                borderRadius: '4px'
+          {user && !user?.firstName && !user?.lastName && (
+            <Link
+              href="/user/edit"
+              className={`inline-flex h-6 w-full items-center px-2 py-2 text-sm transition-colors hover:text-accent-foreground sm:w-auto`}
+              style={{
+                marginTop: "8px",
+                backgroundColor: "#EAD7F0",
+                color: "purple",
+                borderRadius: "10px",
               }}
             >
-              Complete Profile Now!
-          </Link>
-        }
+              Complete your profile!
+            </Link>
+          )}
         </div>
       </div>
 
