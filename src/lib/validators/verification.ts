@@ -18,17 +18,3 @@ export const eduEmailSchema = (domains: string[]) =>
         return domains.some((domain) => email.endsWith(domain));
       }, "Email domain must correspond to the selected institution"),
   });
-
-export const userDataSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  username: z.string(),
-  firstName: z.string().nullable(),
-  lastName: z.string().nullable(),
-  skills: z.array(z.string()),
-  bio: z.string().nullable(),
-  github: z.string().nullable(),
-  linkedin: z.string().nullable(),
-  website: z.string().nullable(),
-  isVerifiedStudent: z.boolean(),
-});

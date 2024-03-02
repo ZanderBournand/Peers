@@ -77,10 +77,7 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
   const router = useRouter();
 
   const [codeSent, setCodeSent] = useState(false);
-  const [showInvalidWarning, setShowInvalidWarning] = useState(false);
   const [codeVerified, setCodeVerified] = useState<boolean | null>(null);
-
-  const [verifyButtonClicked, setVerifyButtonClicked] = useState(false);
 
   const [openCombo, setOpenCombo] = useState(false);
   const [university, setUniversity] = useState("");
@@ -114,7 +111,6 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
           setCodeVerified(true);
         } else {
           setCodeVerified(false);
-          setShowInvalidWarning(true);
         }
       },
       onError: (e) => {
@@ -123,6 +119,7 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
     });
 
   const onEmailSubmit = async (data: { eduEmail: string }) => {
+    setCodeVerified(null);
     sendVerificationCode({
       to: data.eduEmail,
     });
@@ -133,7 +130,6 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   const onCodeSubmit = async (data: { verifyCode: string }) => {
-    setVerifyButtonClicked(true);
     isVerificationCodeCorrect({ code: data.verifyCode });
   };
 
@@ -239,25 +235,20 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                   />
                 </form>
               </Form>
-              {codeVerified != null && !codeVerified && verifyButtonClicked && (
+              {!codeVerified && (
+                <button
+                  className="text-xs text-gray-500 underline"
+                  onClick={emailForm.handleSubmit(onEmailSubmit)}
+                >
+                  Need to resend the code? Click here.
+                </button>
+              )}
+              {codeVerified === false && (
                 <div className="my-2 text-sm text-red-500">
-                  {showInvalidWarning && (
-                    <div>
-                      The code you entered is invalid. Please try again.
-                    </div>
-                  )}
-                  <button
-                    className="underline"
-                    onClick={() => {
-                      void emailForm.handleSubmit(onEmailSubmit)();
-                      setShowInvalidWarning(false);
-                    }}
-                  >
-                    Need to resend the code? Click here.
-                  </button>
+                  The code you entered is invalid. Please try again.
                 </div>
               )}
-              {codeVerified != null && codeVerified && (
+              {codeVerified === true && (
                 <div className="my-2 flex items-center text-sm text-green-500">
                   You have been verified! You may close out now.
                 </div>

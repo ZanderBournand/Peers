@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
+import { BellAlertIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
 
 const routes: { title: string; href: string }[] = [
@@ -38,14 +39,9 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {user && !user?.firstName && !user?.lastName && (
             <Link
               href="/user/edit"
-              className={`inline-flex h-6 w-full items-center px-2 py-2 text-sm transition-colors hover:text-accent-foreground sm:w-auto`}
-              style={{
-                marginTop: "8px",
-                backgroundColor: "#EAD7F0",
-                color: "purple",
-                borderRadius: "10px",
-              }}
+              className="py-flex-row ml-2 mt-1 flex h-8 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
             >
+              <BellAlertIcon className="mr-1 h-5 w-5" />
               Complete your profile!
             </Link>
           )}
