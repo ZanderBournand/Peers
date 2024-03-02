@@ -5,7 +5,6 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { capitalizeFirstLetter } from "@/lib/utils";
 import { api } from "@/trpc/server";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

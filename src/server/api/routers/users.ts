@@ -16,6 +16,7 @@ export const userRouter = createTRPCRouter({
           id: input.id,
           email: input.email,
           username: input.username,
+          isVerifiedStudent: false,
         },
       });
       return user;

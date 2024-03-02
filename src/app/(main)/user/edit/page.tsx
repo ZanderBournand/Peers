@@ -23,7 +23,6 @@ import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newUserSchema } from "@/lib/validators/newUser";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -72,11 +71,9 @@ export default function NewUserForm() {
 
   const watchSkills = form.watch("skills");
 
-  const router = useRouter();
-
   const { mutate } = api.users.update.useMutation({
     onSuccess: () => {
-      router.push("/user");
+      window.location.href = "/user";
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -95,8 +92,6 @@ export default function NewUserForm() {
       linkedin: data.linkedin,
       website: data.website,
     });
-
-    router.refresh();
   };
 
   if (isLoading) {
