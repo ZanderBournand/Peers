@@ -34,7 +34,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.updateMany({
+      const user = await ctx.db.user.update({
         where: { id: ctx.user.id },
         data: {
           firstName: input.firstName,
@@ -55,19 +55,19 @@ export const userRouter = createTRPCRouter({
     return user;
   }),
   isUserCreated: privateProcedure
-  .input(z.object({ email: z.string().email() }))
-  .query(async ({ ctx, input }) => {
-    const user = await ctx.db.user.findUnique({
-      where: { email: input.email },
-    });
-    return Boolean(user);
-  }),
+    .input(z.object({ email: z.string().email() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { email: input.email },
+      });
+      return Boolean(user);
+    }),
   isUsernameTaken: privateProcedure
-  .input(z.object({ username: z.string() }))
-  .query(async ({ ctx, input }) => {
-    const user = await ctx.db.user.findUnique({
-      where: { username: input.username },
-    });
-    return Boolean(user);
-  }),
+    .input(z.object({ username: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { username: input.username },
+      });
+      return Boolean(user);
+    }),
 });

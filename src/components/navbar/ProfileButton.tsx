@@ -38,7 +38,10 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
 
   const userData = api.users.getCurrent.useQuery().data;
 
-  const displayName = (userData?.firstName && userData?.lastName) ? (userData?.firstName + " " + userData?.lastName) : userData?.username;
+  const displayName =
+    userData?.firstName && userData?.lastName
+      ? userData?.firstName + " " + userData?.lastName
+      : userData?.username;
 
   if (!user) return null;
   return (
