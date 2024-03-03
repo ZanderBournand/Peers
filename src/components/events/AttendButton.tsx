@@ -4,13 +4,17 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { UserPlusIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
-import type { UserData } from "@/lib/interfaces/userData";
-import type { EventData } from "@/lib/interfaces/eventData";
+import { type EventSchema } from "@/lib/validators/Events";
+import { type UserSchema } from "@/lib/validators/User";
 import { Skeleton } from "@/components/ui/skeleton";
+import { type z } from "zod";
+
+export type UserType = z.infer<typeof UserSchema>;
+export type EventType = z.infer<typeof EventSchema>;
 
 interface AttendButtonProps {
-  user: UserData;
-  event: EventData;
+  user: UserType;
+  event: EventType;
 }
 
 export default function AttendButton({ user, event }: AttendButtonProps) {

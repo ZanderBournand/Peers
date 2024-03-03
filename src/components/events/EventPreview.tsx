@@ -53,7 +53,7 @@ export default function EventPreview({ event }: { event: EventType }) {
           <div className="text-md">
             Hosted by:
             {event.userHostId ? (
-              <div className="ml-2 inline-flex items-center rounded-full border border-gray-100 bg-white px-2 py-0.5 text-sm hover:shadow-sm">
+              <div className="ml-2 inline-flex items-center rounded-full border border-gray-100 bg-white px-1 text-sm hover:shadow-sm">
                 @{event.userHost?.username}
               </div>
             ) : (
@@ -83,9 +83,8 @@ export default function EventPreview({ event }: { event: EventType }) {
               </div>
               <div className="flex flex-row items-center">
                 <MapPinIcon className="mx-2 h-5 w-5" />
-                <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">
-                  {event?.location}
-                </span>
+                {/* Put the location city, state */}
+                <span className="truncate">Gainesville, FL</span>
               </div>
             </div>
           )}

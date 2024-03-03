@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import {
+  countdownDays,
   formattedAddressObj,
   formattedDuration,
   type formattedAddress,
@@ -18,19 +19,23 @@ import ShareButton from "@/components/events/ShareButton";
 import { headers } from "next/headers";
 import AttendButton from "@/components/events/AttendButton";
 import Link from "next/link";
-import type { UserData } from "@/lib/interfaces/userData";
-import type { EventData } from "@/lib/interfaces/eventData";
-import Map from "@/components/location/Map";
-import EventStatus from "@/components/events/EventStatus";
+import { type z } from "zod";
+import { type EventSchema } from "@/lib/validators/Events";
+import { type UserSchema } from "@/lib/validators/User";
+import Map from "@/components/googleMaps/Map";
+
+export type EventType = z.infer<typeof EventSchema>;
+export type UserType = z.infer<typeof UserSchema>;
 
 export default async function EventPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const event: EventData = await api.events.get.query({ id: params.id });
-  const user: UserData = await api.users.getCurrent.query();
+  const event: EventType = await api.events.get.query({ id: params.id });
+  const user: UserType = await api.users.getCurrent.query();
 
+  const countdownDate = countdownDays(event.date);
   const duration = formattedDuration(event.duration);
   const formattedDate = event.date.toLocaleString("en-US", {
     weekday: "long",
@@ -68,7 +73,38 @@ export default async function EventPage({
             )}
           </div>
           <div className="mt-8">
-            <EventStatus event={event} />
+            <div className="flex flex-row items-center">
+              <div className="relative">
+                <div
+                  className={`h-3 w-3 rounded-full ${
+                    event.type === "ONLINE_VIDEO"
+                      ? "bg-blue-300"
+                      : event.type === "ONLINE_AUDIO"
+                        ? "bg-purple-300"
+                        : "bg-green-300"
+                  }`}
+                ></div>
+                <div
+                  className={`absolute left-0 top-0 h-3 w-3 animate-slow-ping rounded-full ${
+                    event.type === "ONLINE_VIDEO"
+                      ? "bg-blue-400"
+                      : event.type === "ONLINE_AUDIO"
+                        ? "bg-purple-400"
+                        : "bg-green-400"
+                  }`}
+                ></div>
+                <div
+                  className={`absolute left-0 top-0 h-3 w-3 animate-slow-pulse rounded-full ${
+                    event.type === "ONLINE_VIDEO"
+                      ? "bg-blue-300"
+                      : event.type === "ONLINE_AUDIO"
+                        ? "bg-purple-300"
+                        : "bg-green-300"
+                  }`}
+                ></div>
+              </div>
+              <p className="text-md ml-3 text-xl">{countdownDate}</p>
+            </div>
             <div className="mb-5 mt-1 flex flex-row items-center">
               <p className="text-2xl font-bold">{event.title}</p>
               {event.type === "ONLINE_VIDEO" && (

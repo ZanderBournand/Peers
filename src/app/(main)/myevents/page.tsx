@@ -1,17 +1,24 @@
 import React from "react";
 import { api } from "@/trpc/server";
+import { type EventSchema } from "@/lib/validators/Events";
+import { type z } from "zod";
 import EventCarousel from "@/components/events/EventCarousel";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import type { EventData } from "@/lib/interfaces/eventData";
+
+export type EventType = z.infer<typeof EventSchema>;
 
 export default async function MyEventsPage() {
-  const events: EventData[] = await api.events.getCurrentUserEvents.query();
+  const events: EventType[] = await api.events.getCurrentUserEvents.query();
 
   const filteredEventsSection = (filterType: string) => {
     const now = new Date();
-    let filteredEvents: EventData[];
+    let filteredEvents: EventType[];
 
     if (filterType === "week") {
       const endOfWeek = new Date(
