@@ -46,16 +46,22 @@ import { api } from "@/trpc/react";
 import { v4 as uuidv4 } from "uuid";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { env } from "@/env";
+import MapsButton from "@/components/googleMaps/MapsButton";
+import LocationInput from "@/components/googleMaps/LocationInput";
+import { type Tag, TagInput } from "@/components/tags/tag-input";
 
 export type NewEventInput = z.infer<typeof newEventSchema>;
 
 export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [needLocationDetails, setNeedLocationDetails] = useState(false);
+  const [tags, setTags] = useState<Tag[]>([]);
   const { control } = useForm();
   const supabase = createClient();
 
   const { data: user } = api.users.getCurrent.useQuery();
+  const { data: allTags } = api.tags.getAll.useQuery();
 
   // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
   type NewEventInputWithFile = Omit<NewEventInput, "image"> & {
@@ -70,11 +76,13 @@ export default function CreateEvent() {
     defaultValues: {
       title: undefined,
       location: undefined,
+      locationDetails: undefined,
       date: undefined,
       description: undefined,
       image: undefined,
       type: undefined,
       duration: undefined,
+      tags: undefined,
     },
   });
 
@@ -104,12 +112,20 @@ export default function CreateEvent() {
       description: data.description,
       type: data.type,
       duration: data.duration,
+      tags: data.tags,
     };
 
-    if (data.location) {
+    if (data.type === "IN_PERSON") {
       newEventData.location = data.location;
     }
-
+    if (needLocationDetails) {
+      newEventData.locationDetails = data.locationDetails;
+    }
+    if (isOrgEvent) {
+      // TODO: handle creation via organization
+    } else {
+      newEventData.userHostId = user?.id;
+    }
     if (data.image) {
       const eventImageId: string = uuidv4();
 
@@ -121,12 +137,6 @@ export default function CreateEvent() {
       newEventData.image = baseStorageUrl + imageData?.path;
     }
 
-    if (isOrgEvent) {
-      // TODO: handle creation via organization
-    } else {
-      newEventData.userHostId = user?.id;
-    }
-
     mutate(newEventData);
   };
 
@@ -135,6 +145,19 @@ export default function CreateEvent() {
     if (file) {
       form.setValue("image", file);
     }
+  };
+
+  const handleLocationChange = (location: string) => {
+    if (location) {
+      form.setValue("location", location);
+    }
+  };
+
+  const handleLocationDetailsChange = (locationDetails: string | null) => {
+    if (locationDetails) {
+      setNeedLocationDetails(true);
+    }
+    form.setValue("locationDetails", locationDetails);
   };
 
   return (
@@ -152,6 +175,9 @@ export default function CreateEvent() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex w-full flex-1 flex-col justify-center gap-6 text-muted-foreground"
             >
+              <p className="mt-4 text-xl font-semibold text-black">
+                General Info
+              </p>
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
@@ -225,24 +251,127 @@ export default function CreateEvent() {
                   </FormItem>
                 )}
               />
+              <div className="mt-2 flex flex-col gap-4">
+                <div className="ml-1 flex w-full flex-row items-center">
+                  <Checkbox
+                    checked={isOrgEvent}
+                    onCheckedChange={(checked: boolean) =>
+                      setIsOrgEvent(checked)
+                    }
+                    className="h-5 w-5"
+                    disabled
+                  />
+                  <FormLabel className="ml-3">
+                    Is this event hosted by an organization?
+                  </FormLabel>
+                </div>
+                {isOrgEvent && (
+                  <FormField
+                    control={control}
+                    // NOTE: "organization" field value is not handled ATM
+                    // -> waiting on implementation of organization creation
+                    name="organization"
+                    render={({ field }) => (
+                      <FormItem className="ml-1 w-1/2">
+                        <FormLabel>Host Organization</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value as string}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select the host organization" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="ORG 1">
+                              ORGANIZATION 1
+                            </SelectItem>
+                            <SelectItem value="ORG 2">
+                              ORGANIZATION 2
+                            </SelectItem>
+                            <SelectItem value="ORG 3">
+                              ORGANIZATION 3
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
               {typeValue === "IN_PERSON" && (
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="The location of your event (e.g., campus room, coffee shop, etc.)"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <>
+                  <p className="mt-4 text-xl font-semibold text-black">
+                    Location
+                  </p>
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address</FormLabel>
+                        <FormControl>
+                          <div className="flex flex-row items-center">
+                            <div className="flex w-2/3 flex-col">
+                              <LocationInput
+                                location={field.value}
+                                setLocation={handleLocationChange}
+                              />
+                            </div>
+                            <div className="flex w-1/4">
+                              <MapsButton
+                                location={form.watch("location")}
+                                locationDetails={form.watch("locationDetails")}
+                                setLocation={handleLocationChange}
+                                setLocationDetails={handleLocationDetailsChange}
+                              />
+                            </div>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex flex-col gap-4">
+                    <div className="ml-1 flex w-full flex-row items-center">
+                      <Checkbox
+                        checked={needLocationDetails}
+                        onCheckedChange={(checked: boolean) =>
+                          setNeedLocationDetails(checked)
+                        }
+                        className="h-5 w-5"
+                      />
+                      <FormLabel className="ml-3">
+                        Any location specific details (e.g. room number, floor,
+                        etc.)?
+                      </FormLabel>
+                    </div>
+                    {needLocationDetails && (
+                      <FormField
+                        control={form.control}
+                        name="locationDetails"
+                        render={({ field }) => (
+                          <FormItem className="ml-1 w-2/3">
+                            <FormControl>
+                              <Input
+                                placeholder="Location details..."
+                                {...field}
+                                value={field.value ?? ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </div>
+                </>
               )}
+              <p className="mt-6 text-xl font-semibold text-black">
+                Date & time
+              </p>
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
@@ -312,56 +441,32 @@ export default function CreateEvent() {
                   )}
                 />
               </div>
-              <div className="flex flex-col gap-4">
-                <div className="ml-1 mt-4 flex w-full flex-row items-center">
-                  <Checkbox
-                    checked={isOrgEvent}
-                    onCheckedChange={(checked: boolean) =>
-                      setIsOrgEvent(checked)
-                    }
-                    className="h-5 w-5"
-                    disabled
-                  />
-                  <FormLabel className="ml-3">
-                    Is this event hosted by an organization?
-                  </FormLabel>
-                </div>
-                {isOrgEvent && (
-                  <FormField
-                    control={control}
-                    // NOTE: "organization" field value is not handled ATM
-                    // -> waiting on implementation of organization creation
-                    name="organization"
-                    render={({ field }) => (
-                      <FormItem className="ml-1 w-1/2">
-                        <FormLabel>Host Organization</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value as string}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select the host organization" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="ORG 1">
-                              ORGANIZATION 1
-                            </SelectItem>
-                            <SelectItem value="ORG 2">
-                              ORGANIZATION 2
-                            </SelectItem>
-                            <SelectItem value="ORG 3">
-                              ORGANIZATION 3
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <p className="mt-6 text-xl font-semibold text-black">Extras</p>
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="">Tags</FormLabel>
+                    <FormControl>
+                      <TagInput
+                        {...field}
+                        placeholder="Enter a topic"
+                        tags={tags}
+                        className="w-full"
+                        setTags={(newTags) => {
+                          setTags(newTags);
+                          form.setValue("tags", newTags as [Tag, ...Tag[]]);
+                        }}
+                        enableAutocomplete
+                        autocompleteOptions={allTags}
+                        value={field.value ?? []}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
               <FormField
                 control={form.control}
                 name="image"
