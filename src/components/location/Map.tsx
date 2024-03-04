@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { getGeocode, getLatLng } from "use-places-autocomplete";
+import { env } from "@/env";
 
 export interface MarkerType {
   lat: number;
@@ -19,7 +20,7 @@ export default function Map({
   width: string;
 }) {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAUfKOghY6-q6AoYn8WzIpC4NVCw13NPPk",
+    googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
     libraries: ["places"],
   });
 

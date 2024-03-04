@@ -7,6 +7,7 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
+import { env } from "@/env";
 
 interface PlacesAutocompleteProps {
   location: string | null | undefined;
@@ -18,7 +19,7 @@ export default function LocationInput({
   setLocation,
 }: PlacesAutocompleteProps) {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAUfKOghY6-q6AoYn8WzIpC4NVCw13NPPk",
+    googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
     libraries: ["places"],
   });
 

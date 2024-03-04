@@ -7,7 +7,12 @@ await import("./src/env.js");
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["erwggivaefiaiqdqgtqb.supabase.co"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+    ],
   },
 };
 

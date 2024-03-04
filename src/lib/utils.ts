@@ -42,25 +42,24 @@ export function countdownDays(inputDate: Date) {
 export function formattedDuration(inputDurations: number) {
   const hours = Math.floor(inputDurations / 60);
   const minutes = inputDurations % 60;
+
   let formattedDuration = "";
 
   if (hours > 0 && minutes > 0) {
-    formattedDuration = `${hours} hour ${minutes} mins`;
+    formattedDuration = `${pluralize(hours, "hour")} ${pluralize(
+      minutes,
+      "min",
+    )}`;
   } else if (hours > 0 && minutes === 0) {
-    formattedDuration = `${hours} hour`;
+    formattedDuration = pluralize(hours, "hour");
   } else {
-    formattedDuration = `${minutes} mins`;
+    formattedDuration = pluralize(minutes, "min");
   }
 
   return formattedDuration;
 }
 
-export interface formattedAddress {
-  main: string;
-  secondary: string;
-}
-
-export function formattedAddressObj(address: string | null | undefined) {
+export function getFormattedAddress(address: string | null | undefined) {
   if (address) {
     const parts = address.split(",");
     let secondary = "";

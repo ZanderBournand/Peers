@@ -30,7 +30,9 @@ export default async function AuthButton() {
         </Button>
       </Link>
       <div className="grid w-11/12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {events?.map((event) => <EventPreview key={event.id} event={event} />)}
+        {filteredEvent?.map((event) => (
+          <EventPreview key={event.id} event={event} />
+        ))}
       </div>
     </div>
   ) : (

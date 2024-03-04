@@ -45,7 +45,7 @@ export default async function EventPage({
     minute: "numeric",
     hour12: true,
   });
-  const formattedAddress: formattedAddress | null = formattedAddressObj(
+  const formattedAddress: formattedAddress | null = getFormattedAddress(
     event?.location,
   );
 
@@ -168,7 +168,6 @@ export default async function EventPage({
           <div className="sticky top-10 flex flex-col">
             <div className="flex flex-row justify-center">
               <ShareButton textToCopy={eventLink} />
-              {/* TODO: Handle on press of "Attend" button */}
               <AttendButton user={user} event={event} />
             </div>
             <Link

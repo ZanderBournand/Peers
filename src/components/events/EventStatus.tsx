@@ -1,6 +1,7 @@
 import React from "react";
 import type { EventData } from "@/lib/interfaces/eventData";
 import { NoSymbolIcon } from "@heroicons/react/24/outline";
+import { pluralize } from "../../lib/utils";
 
 interface EventStatusProps {
   event: EventData;
@@ -12,21 +13,18 @@ const countdownTime = (eventDate: Date, durationInMinutes: number) => {
   const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
   const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
 
-  const countdownTextBuilder = (value: number, unit: string) =>
-    `In ${value} ${unit}${value === 1 ? "" : "s"}`;
-
   return diffMs <= 0
     ? new Date() <= new Date(eventDate.getTime() + durationInMinutes * 60000)
       ? "Live now!"
-      : "The event has ended"
+      : "This event has ended"
     : diffDays === 0
       ? diffHours === 0
-        ? countdownTextBuilder(diffMinutes, "minute")
-        : countdownTextBuilder(diffHours, "hour")
-      : countdownTextBuilder(
-          Math.max(1, Math.floor(diffDays / 7)),
+        ? `In ${pluralize(diffMinutes, "minute")}`
+        : `In ${pluralize(diffHours, "hour")}`
+      : `In ${pluralize(
+          diffDays < 7 ? diffDays : Math.floor(diffDays / 7),
           diffDays < 7 ? "day" : "week",
-        );
+        )}`;
 };
 
 export default function EventStatus({ event }: EventStatusProps) {

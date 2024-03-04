@@ -116,9 +116,9 @@ export default async function MyEventsPage() {
     <div className="flex flex-col items-center justify-center px-8 pb-32">
       <div className="my-12 flex w-full max-w-screen-lg flex-col self-center">
         <p className="mb-4 text-2xl font-bold">Your events</p>
-        {filteredEventsSection("week")}
-        {filteredEventsSection("nextWeek")}
-        {filteredEventsSection("upcoming")}
+        <FilteredEventsSection events={events} filterType="currentWeek" />
+        <FilteredEventsSection events={events} filterType="nextWeek" />
+        <FilteredEventsSection events={events} filterType="upcoming" />
       </div>
     </div>
   );
