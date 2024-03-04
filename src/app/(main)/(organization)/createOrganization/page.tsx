@@ -162,7 +162,11 @@ export default function CreateOrganization() {
                     </FormItem>
                   )}
                 />
-                <FormField
+
+              </div>
+
+              <div className="flex flex-row gap-4">
+              <FormField
                   control={form.control}
                   name="OrgPresident"
                   render={({ field }) => (
@@ -175,7 +179,52 @@ export default function CreateOrganization() {
                     </FormItem>
                   )}
                 />
+              <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Type of Organization</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select the type of organization" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="BUSINESS">Business</SelectItem>
+                          <SelectItem value="ENGINEERING">Engineering</SelectItem>
+                          <SelectItem value="JOURNALISM">Journalism</SelectItem>
+                          <SelectItem value="AGRICULTURE">Agriculture</SelectItem>
+                          <SelectItem value="ART">Art</SelectItem>
+                          <SelectItem value="DENTRISTRY">Dentistry</SelectItem>
+                          <SelectItem value="DESIGN">Design</SelectItem>
+                          <SelectItem value="CONSTRUCTION">Construction</SelectItem>
+                          <SelectItem value="EDUCATION">Education</SelectItem>
+                          <SelectItem value="LAW">Law</SelectItem>
+                          <SelectItem value="SCIENCE">Science</SelectItem>
+                          <SelectItem value="MEDICINE">Medicine</SelectItem>
+                          <SelectItem value="NURSING">Nursing</SelectItem>
+                          <SelectItem value="PHARMACY">Pharmacy</SelectItem>
+                          <SelectItem value="VETERINARY">Veterinary</SelectItem>
+                          <SelectItem value="PUBLIC HEALTH">Public Health</SelectItem>
+                          <SelectItem value="FARMING">Farming</SelectItem>
+                          <SelectItem value="VOLUNEERING">Volunteering</SelectItem>
+                          <SelectItem value="SPORTS">Sports</SelectItem>
+                          <SelectItem value="E_SPORTS">E-Sports</SelectItem>
+                          <SelectItem value="OTHER">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
               </div>
+
               
               <FormField
                 control={form.control}
