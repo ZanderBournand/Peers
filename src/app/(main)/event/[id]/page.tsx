@@ -9,11 +9,8 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import {
-  formattedAddressObj,
-  formattedDuration,
-  type formattedAddress,
-} from "@/lib/utils";
+import { getFormattedAddress, getFormattedDuration } from "@/lib/utils";
+import { type formattedAddress } from "@/lib/interfaces/eventData";
 import ShareButton from "@/components/events/ShareButton";
 import { headers } from "next/headers";
 import AttendButton from "@/components/events/AttendButton";
@@ -31,7 +28,7 @@ export default async function EventPage({
   const event: EventData = await api.events.get.query({ id: params.id });
   const user: UserData = await api.users.getCurrent.query();
 
-  const duration = formattedDuration(event.duration);
+  const duration = getFormattedDuration(event.duration);
   const formattedDate = event.date.toLocaleString("en-US", {
     weekday: "long",
     month: "long",
@@ -40,7 +37,7 @@ export default async function EventPage({
     minute: "numeric",
     hour12: true,
   });
-  const formattedAddress: formattedAddress | null = formattedAddressObj(
+  const formattedAddress: formattedAddress | null = getFormattedAddress(
     event?.location,
   );
 
@@ -132,7 +129,6 @@ export default async function EventPage({
           <div className="sticky top-10 flex flex-col">
             <div className="flex flex-row justify-center">
               <ShareButton textToCopy={eventLink} />
-              {/* TODO: Handle on press of "Attend" button */}
               <AttendButton user={user} event={event} />
             </div>
             <Link

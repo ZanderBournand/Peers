@@ -4,6 +4,7 @@ import { api } from "@/trpc/server";
 import CreateEventButton from "@/components/events/CreateEventButton";
 import EventPreview from "@/components/events/EventPreview";
 import type { EventData } from "@/lib/interfaces/eventData";
+import moment from "moment";
 
 export default async function AuthButton() {
   const supabase = createClient(cookies());
@@ -14,6 +15,19 @@ export default async function AuthButton() {
   const userData = user && (await api.users.getCurrent.query());
   const events: EventData[] = await api.events.getAll.query();
 
+  const filteredEvent = events.sort((a, b) => {
+    const aEndDate = moment(a.date).add(a.duration, "minutes");
+    const bEndDate = moment(b.date).add(b.duration, "minutes");
+    const aIsCompleted = moment().isAfter(aEndDate);
+    const bIsCompleted = moment().isAfter(bEndDate);
+
+    if (aIsCompleted !== bIsCompleted) {
+      return aIsCompleted ? 1 : -1;
+    }
+
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
+
   const displayName = userData?.firstName ?? userData?.username;
 
   return user && userData ? (
@@ -21,7 +35,9 @@ export default async function AuthButton() {
       <span>Hey, {displayName}!</span>
       <CreateEventButton userData={userData} />
       <div className="grid w-11/12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {events?.map((event) => <EventPreview key={event.id} event={event} />)}
+        {filteredEvent?.map((event) => (
+          <EventPreview key={event.id} event={event} />
+        ))}
       </div>
     </div>
   ) : (

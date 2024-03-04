@@ -24,9 +24,6 @@ export default function AttendButton({ user, event }: AttendButtonProps) {
   }, [user, event]);
 
   const { mutate, isLoading } = api.events.toggleAttendance.useMutation({
-    onSuccess: () => {
-      // No need to update state here, as it's already updated optimistically
-    },
     onError: (e) => {
       console.error("Error changing event attendance:", e);
       // Revert state on error

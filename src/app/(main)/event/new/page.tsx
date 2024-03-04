@@ -32,7 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newEventSchema } from "@/lib/validators/Events";
+import { newEventSchema } from "@/lib/validators/Event";
 import { useRouter } from "next/navigation";
 import { DateTimePicker } from "@/components/ui/datetimepicker";
 import {
@@ -58,11 +58,13 @@ export default function CreateEvent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
   const [tags, setTags] = useState<TagData[]>([]);
+
   const { control } = useForm();
-  const supabase = createClient();
 
   const { data: user } = api.users.getCurrent.useQuery();
   const { data: allTags } = api.tags.getAll.useQuery();
+
+  const supabase = createClient();
 
   // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
   type NewEventInputWithFile = Omit<NewEventInput, "image"> & {
@@ -114,19 +116,10 @@ export default function CreateEvent() {
       type: data.type,
       duration: data.duration,
       tags: data.tags,
+      location: data.location,
+      locationDetails: data.locationDetails,
     };
 
-    if (data.type === "IN_PERSON") {
-      newEventData.location = data.location;
-    }
-    if (needLocationDetails) {
-      newEventData.locationDetails = data.locationDetails;
-    }
-    if (isOrgEvent) {
-      // TODO: handle creation via organization
-    } else {
-      newEventData.userHostId = user?.id;
-    }
     if (data.image) {
       const eventImageId: string = uuidv4();
 
@@ -136,6 +129,12 @@ export default function CreateEvent() {
 
       const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
       newEventData.image = baseStorageUrl + imageData?.path;
+    }
+
+    if (isOrgEvent) {
+      // TODO: handle creation via organization
+    } else {
+      newEventData.userHostId = user?.id;
     }
 
     mutate(newEventData);

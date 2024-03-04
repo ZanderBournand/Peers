@@ -20,3 +20,8 @@ export interface EventData {
   orgHostId?: string | null;
   orgHost?: OrganizationData | null;
 }
+
+export interface formattedAddress {
+  main: string;
+  secondary: string;
+}

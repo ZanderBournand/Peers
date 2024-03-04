@@ -141,8 +141,6 @@ export const eventRouter = createTRPCRouter({
       include: {
         userHost: true,
         orgHost: true,
-        tags: true,
-        attendees: true,
       },
     });
 
