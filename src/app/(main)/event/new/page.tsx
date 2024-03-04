@@ -48,7 +48,8 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { env } from "@/env";
 import MapsButton from "@/components/location/MapsButton";
 import LocationInput from "@/components/location/LocationInput";
-import { type Tag, TagInput } from "@/components/tags/tag-input";
+import { TagInput } from "@/components/tags/tag-input";
+import { type TagData } from "@/lib/interfaces/tagData";
 
 export type NewEventInput = z.infer<typeof newEventSchema>;
 
@@ -56,7 +57,7 @@ export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
-  const [tags, setTags] = useState<Tag[]>([]);
+  const [tags, setTags] = useState<TagData[]>([]);
   const { control } = useForm();
   const supabase = createClient();
 
@@ -455,11 +456,15 @@ export default function CreateEvent() {
                         tags={tags}
                         className="w-full"
                         setTags={(newTags) => {
-                          setTags(newTags);
-                          form.setValue("tags", newTags as [Tag, ...Tag[]]);
+                          setTags(newTags as TagData[]);
+                          form.setValue(
+                            "tags",
+                            newTags as [TagData, ...TagData[]],
+                          );
                         }}
                         enableAutocomplete
                         autocompleteOptions={allTags}
+                        enableStrictAutocomplete={true}
                         value={field.value ?? []}
                       />
                     </FormControl>
