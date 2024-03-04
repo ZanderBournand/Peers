@@ -1,9 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/server";
-import Link from "next/link";
+import EventButton from "@/components/buttons/createEventButton";
 
 export default async function AuthButton() {
   const supabase = createClient(cookies());
@@ -13,17 +11,12 @@ export default async function AuthButton() {
 
   const userData = user && (await api.users.getCurrent.query());
 
-  const displayName = userData?.firstName || userData?.username;
+  const displayName = userData?.firstName ?? userData?.username;
 
-  return user ? (
+  return user && userData ? (
     <div className="mt-16 flex flex-col items-center justify-center">
       <span>Hey, {displayName}!</span>
-      <Link href="/event/new">
-        <Button className="my-8" variant="outline">
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Create Event
-        </Button>
-      </Link>
+      <EventButton userData={userData} />
     </div>
   ) : (
     <span className="bg-btn-background hover:bg-btn-background-hover ml-12 flex rounded-md px-3 py-2 no-underline">

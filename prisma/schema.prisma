@@ -22,6 +22,8 @@ model User {
   linkedin String?
   website  String?
 
+  isVerifiedStudent Boolean
+
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
 
@@ -56,6 +58,12 @@ model Event {
   orgHost    Organization? @relation("OrgHost", fields: [orgHostId], references: [id])
 
   attendees User[] @relation("Attendees")
+}
+
+model Verification_Code {
+  userId String @id
+  createdAt DateTime
+  code String
 }
 
 enum EventType {

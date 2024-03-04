@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
 import { db } from "@/server/db";
+import { mg } from "@/server/mg";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const supabase = createClient(cookies());
@@ -17,6 +18,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   return {
     user,
     db,
+    mg,
     ...opts,
   };
 };
