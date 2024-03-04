@@ -31,13 +31,15 @@ export default async function AuthButton() {
   const displayName = userData?.firstName ?? userData?.username;
 
   return user && userData ? (
-    <div className="mt-16 flex flex-col items-center justify-center">
-      <span>Hey, {displayName}!</span>
-      <CreateEventButton userData={userData} />
-      <div className="grid w-11/12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredEvent?.map((event) => (
-          <EventPreview key={event.id} event={event} />
-        ))}
+    <div className="flex items-center justify-center pb-32">
+      <div className="mt-16 flex max-w-screen-2xl flex-col items-center justify-center">
+        <span>Hey, {displayName}!</span>
+        <CreateEventButton userData={userData} />
+        <div className="grid w-full grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredEvent?.map((event) => (
+            <EventPreview key={event.id} event={event} />
+          ))}
+        </div>
       </div>
     </div>
   ) : (
