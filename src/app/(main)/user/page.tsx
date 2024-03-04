@@ -49,10 +49,20 @@ export default async function UserPage() {
           </div>
           <CardContent className="flex justify-center">
             <Link href="/user/edit">
-              <Button variant="default" className="my-4">
+              <Button variant="default" className="my-4 w-4/5 justify-center"
+>
                 Edit Profile
               </Button>
             </Link>
+
+            <Link href="/createOrganization">
+                <Button 
+                  variant="default"
+                  className="my-4 w-4/5 justify-center"
+                  type="button"
+                  >
+                    Create Org</Button>
+              </Link>
           </CardContent>
         </Card>
       </div>

@@ -41,6 +41,7 @@ import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
 import { v4 as uuidv4 } from "uuid";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 import { env } from "@/env";
 
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
@@ -285,15 +286,18 @@ export default function CreateOrganization() {
                   </>
                 )}
               />
+
+
               <div className="flex justify-center">
+                
+              <Link href="/user">
                 <Button 
                   variant="destructive"
-                  className="my-4 w-1/2 justify-center"
-
+                  className="my-4 w-4/5 justify-center"
                   type="button"
                   >
                     Cancel</Button>
-              
+              </Link>
                 <Button
                   variant="default"
                   className="my-4 w-1/2 justify-center"
