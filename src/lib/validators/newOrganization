@@ -6,4 +6,5 @@ export const newOrgSchema = z.object({
   email: z.string().min(1),
   president: z.string().min(1),
   description: z.string().min(50),
+  image: z.string().url().optional(),
 });

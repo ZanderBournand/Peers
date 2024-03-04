@@ -68,6 +68,7 @@ export default function CreateOrganization() {
       email: undefined,
       president: undefined,
       description: undefined,
+      image: undefined,
     },
   });
 
@@ -98,7 +99,25 @@ export default function CreateOrganization() {
       description: data.description,
     };
 
+    if (data.image) {
+      const orgImageId: string = uuidv4();
+
+      const { data: imageData } = await supabase.storage
+        .from("images")
+        .upload("events/" + orgImageId, data.image);
+
+      const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
+      newOrgData.image = baseStorageUrl + imageData?.path;
+    }
+
     mutate(newOrgData);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("image", file);
+    }
   };
 
   return (
@@ -175,7 +194,48 @@ export default function CreateOrganization() {
                   </FormItem>
                 )}
               />
-
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <>
+                    <Label
+                      htmlFor="image"
+                      className="my-4 flex w-full flex-col items-center"
+                    >
+                      <div className="relative flex h-60 w-3/4 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                        {!field?.value ? (
+                          <>
+                            <PhotoIcon className="h-10 w-10" color="darkgray" />
+                            <span className="text-lg font-semibold">
+                              Click to add an event image
+                            </span>
+                            <span className="text-xs">
+                              JPEG or PNG, no larger than 10 MB
+                            </span>
+                          </>
+                        ) : (
+                          <Image
+                            src={URL.createObjectURL(field.value)}
+                            alt="selected image"
+                            fill
+                            style={{
+                              objectFit: "cover",
+                            }}
+                            className="rounded-2xl"
+                          />
+                        )}
+                      </div>
+                    </Label>
+                    <Input
+                      id="image"
+                      type="file"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
+                    />
+                  </>
+                )}
+              />
               <div className="flex justify-center">
                 <Button 
                   variant="destructive"
