@@ -7,13 +7,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { type EventSchema } from "@/lib/validators/Events";
-import { type z } from "zod";
-
-export type EventType = z.infer<typeof EventSchema>;
+import type { EventData } from "@/lib/interfaces/eventData";
 
 interface EventCarouselProps {
-  events: EventType[];
+  events: EventData[];
 }
 
 export default function EventCarousel({ events }: EventCarouselProps) {

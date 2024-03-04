@@ -14,31 +14,6 @@ export function capitalizeFirstLetter(inputString: string) {
   return capitalizedString;
 }
 
-export function countdownDays(inputDate: Date) {
-  const currentDate = new Date();
-  const diffTime = Math.abs(inputDate.getTime() - currentDate.getTime());
-
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor((diffTime / (1000 * 60 * 60)) % 24);
-  const diffMinutes = Math.floor((diffTime / (1000 * 60)) % 60);
-
-  let countdownText;
-  if (diffDays === 0) {
-    if (diffHours === 0) {
-      countdownText = `In ${diffMinutes} minutes`;
-    } else {
-      countdownText = `In ${diffHours} hours`;
-    }
-  } else if (diffDays < 7) {
-    countdownText = `In ${diffDays} days`;
-  } else {
-    const diffWeeks = Math.floor(diffDays / 7);
-    countdownText = `In ${diffWeeks} weeks`;
-  }
-
-  return countdownText;
-}
-
 export function formattedDuration(inputDurations: number) {
   const hours = Math.floor(inputDurations / 60);
   const minutes = inputDurations % 60;

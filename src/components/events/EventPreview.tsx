@@ -7,12 +7,9 @@ import {
   VideoCameraIcon,
   MicrophoneIcon,
 } from "@heroicons/react/24/outline";
-import { type EventSchema } from "@/lib/validators/Events";
-import { type z } from "zod";
+import type { EventData } from "@/lib/interfaces/eventData";
 
-export type EventType = z.infer<typeof EventSchema>;
-
-export default function EventPreview({ event }: { event: EventType }) {
+export default function EventPreview({ event }: { event: EventData }) {
   const eventDate = new Date(event.date);
   const formattedDate = eventDate.toLocaleDateString("en-US", {
     weekday: "short",

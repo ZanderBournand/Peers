@@ -46,8 +46,8 @@ import { api } from "@/trpc/react";
 import { v4 as uuidv4 } from "uuid";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { env } from "@/env";
-import MapsButton from "@/components/googleMaps/MapsButton";
-import LocationInput from "@/components/googleMaps/LocationInput";
+import MapsButton from "@/components/location/MapsButton";
+import LocationInput from "@/components/location/LocationInput";
 import { type Tag, TagInput } from "@/components/tags/tag-input";
 
 export type NewEventInput = z.infer<typeof newEventSchema>;

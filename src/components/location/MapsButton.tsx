@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { Button } from "../ui/button";
 import LocationInput from "./LocationInput";
-import Map from "../googleMaps/Map";
+import Map from "./Map";
 
 type MapsButtonProps = {
   location: string | null | undefined;
