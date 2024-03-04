@@ -234,7 +234,7 @@ export default function CreateOrganization() {
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tell us about the Organization"
+                        placeholder="Tell us about the organization"
                         className="resize-none"
                         {...field}
                       />
