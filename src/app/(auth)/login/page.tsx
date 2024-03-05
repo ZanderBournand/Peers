@@ -47,15 +47,15 @@ export default function Login() {
 
   return (
     <div className="flex">
-      <div className="bg-secondary/15 hidden h-screen grow lg:block" />
-      <div className="bg-background h-screen w-full">
+      <div className="hidden h-screen grow bg-secondary/15 lg:block" />
+      <div className="h-screen w-full bg-background">
         <div className="flex h-full items-center justify-center">
           <div className="w-full max-w-md p-8">
             <h1 className="mb-4 text-2xl font-semibold">Sign in</h1>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="animate-in text-muted-foreground flex w-full flex-1 flex-col justify-center gap-2"
+                className="flex w-full flex-1 flex-col justify-center gap-2 text-muted-foreground animate-in"
               >
                 <FormField
                   control={form.control}
@@ -100,8 +100,8 @@ export default function Login() {
                   Sign in
                 </Button>
                 {error && (
-                  <div className="bg-destructive/10 border-destructive mb-3 mt-1 rounded-md border p-3">
-                    <p className="text-destructive text-center text-sm font-medium">
+                  <div className="mb-3 mt-1 rounded-md border border-destructive bg-destructive/10 p-3">
+                    <p className="text-center text-sm font-medium text-destructive">
                       {error}
                     </p>
                   </div>
@@ -110,12 +110,12 @@ export default function Login() {
             </Form>
             <div className="flex items-center gap-2 py-4">
               <hr className="w-full" />
-              <p className="text-muted-foreground text-xs">OR</p>
+              <p className="text-xs text-muted-foreground">OR</p>
               <hr className="w-full" />
             </div>
             <OauthButton provider={"google"} />
             <OauthButton provider={"github"} />
-            <p className="text-muted-foreground py-4 text-center text-sm underline">
+            <p className="py-4 text-center text-sm text-muted-foreground underline">
               <Link href="/signup">Don&apos;t have an account? Sign up</Link>
             </p>
           </div>

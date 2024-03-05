@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
   const { supabase } = createClient(request);
-
   await supabase.auth.getSession();
 
   const requestHeaders = new Headers(request.headers);
