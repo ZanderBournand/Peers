@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { UserData } from "@/lib/interfaces/userData";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,32 +15,19 @@ export function capitalizeFirstLetter(inputString: string) {
   return capitalizedString;
 }
 
-export function countdownDays(inputDate: Date) {
-  const currentDate = new Date();
-  const diffTime = Math.abs(inputDate.getTime() - currentDate.getTime());
-
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor((diffTime / (1000 * 60 * 60)) % 24);
-  const diffMinutes = Math.floor((diffTime / (1000 * 60)) % 60);
-
-  let countdownText;
-  if (diffDays === 0) {
-    if (diffHours === 0) {
-      countdownText = `In ${diffMinutes} minutes`;
-    } else {
-      countdownText = `In ${diffHours} hours`;
-    }
-  } else if (diffDays < 7) {
-    countdownText = `In ${diffDays} days`;
+export function getDisplayName(user: UserData, fullName = true) {
+  if (user.firstName && user.lastName) {
+    return `${user.firstName}` + (fullName ? ` ${user.lastName}` : "");
   } else {
-    const diffWeeks = Math.floor(diffDays / 7);
-    countdownText = `In ${diffWeeks} weeks`;
+    return "@" + user.username;
   }
-
-  return countdownText;
 }
 
-export function formattedDuration(inputDurations: number) {
+export function pluralize(value: number, unit: string) {
+  return `${value} ${value === 1 ? unit : unit + "s"}`;
+}
+
+export function getFormattedDuration(inputDurations: number) {
   const hours = Math.floor(inputDurations / 60);
   const minutes = inputDurations % 60;
 
@@ -59,18 +47,27 @@ export function formattedDuration(inputDurations: number) {
   return formattedDuration;
 }
 
-export function getFormattedAddress(address: string | null | undefined) {
-  if (address) {
-    const parts = address.split(",");
-    let secondary = "";
+export function getAddressSections(fullAddress: string | null | undefined) {
+  if (fullAddress) {
+    const parts = fullAddress.split(",");
+    let address = null,
+      city = null,
+      state = null;
+
     if (parts.length === 5) {
-      secondary = `${parts[1]?.trim()} · ${parts[2]?.trim()}, ${parts[3]?.trim()}`;
+      address = parts[1]?.trim();
+      city = parts[2]?.trim();
+      state = parts[3]?.trim();
     } else if (parts.length === 4) {
-      secondary = `${parts[1]?.trim()}, ${parts[2]?.trim()}`;
+      city = parts[1]?.trim();
+      state = parts[2]?.trim();
     }
+
     return {
-      main: parts[0]?.trim() ?? "",
-      secondary: secondary,
+      place: parts[0] ?? "",
+      address: address ?? null,
+      city: city ?? "",
+      state: state ?? "",
     };
   }
   return null;

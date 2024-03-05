@@ -21,7 +21,9 @@ export interface EventData {
   orgHost?: OrganizationData | null;
 }
 
-export interface formattedAddress {
-  main: string;
-  secondary: string;
+export interface addressSections {
+  place: string;
+  address: string | null;
+  city: string;
+  state: string;
 }
