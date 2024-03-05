@@ -19,8 +19,6 @@ export default function EventPreview({ event }: { event: EventData }) {
   const eventEndDate = moment(eventDate).add(event.duration, "minutes");
   const isEventPassed = moment().isAfter(eventEndDate);
 
-  const unusedVar = 254;
-
   const formattedDate = eventDate.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
@@ -31,7 +29,9 @@ export default function EventPreview({ event }: { event: EventData }) {
     minute: "2-digit",
   });
 
-  const addressSections: addressSections | null = getAddressSections( event?.location,);  
+  const addressSections: addressSections | null = getAddressSections(
+    event?.location,
+  );
 
   return (
     <Link href={`/event/${event.id}`}>
