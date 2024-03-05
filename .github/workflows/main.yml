@@ -21,12 +21,11 @@ jobs:
           persist-credentials: false
 
       - name: Installing prettier plugins
-        run: npm install --no-save prettier-plugin-tailwindcss
+        run: npm install prettier prettier-plugin-tailwindcss --save-dev
 
       - name: Prettify code
         uses: creyD/prettier_action@v4.3
         with:
           dry: True
           prettier_options: --check **/*.{js,ts,tsx}
-          prettier_plugins: "@prettier-plugin-tailwindcss"
           github_token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
