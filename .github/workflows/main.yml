@@ -21,7 +21,7 @@ jobs:
           persist-credentials: false
 
       - name: Installing prettier plugins
-        run: npm install prettier prettier-plugin-tailwindcss --save-dev
+        run: npm install --no-save prettier-plugin-tailwindcss
 
       - name: Prettify code
         uses: creyD/prettier_action@v4.3
