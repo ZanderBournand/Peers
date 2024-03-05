@@ -1,11 +1,18 @@
 name: Peers Testing Pipeline
 
-# This action works with pull requests and pushes
+# Trigger the workflow on push or pull request,
+# but only for the main branch
 on:
-  pull_request:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  checks: write
+  contents: write
 
 jobs:
   code_formatting:
