@@ -1,18 +1,11 @@
 name: Peers Testing Pipeline
 
-# Trigger the workflow on push or pull request,
-# but only for the main branch
+# This action works with pull requests and pushes
 on:
+  pull_request:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-
-permissions:
-  checks: write
-  contents: write
 
 jobs:
   code_formatting:
@@ -27,11 +20,15 @@ jobs:
           # Make sure the value of GITHUB_TOKEN will not be persisted in repo's config
           persist-credentials: false
 
-      - name: Installing dependencies
-        run: npm ci
+      - name: Installing prettier plugins
+        run: npm install --no-save prettier-plugin-tailwindcss
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
+      - name: Prettier
+        uses: creyD/prettier_action@v4.3
         with:
-          eslint: true
-          prettier: true
+          dry: True
+          prettier_options: --check **/*.{js,ts,tsx}
+          github_token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+
+      - name: ESLint
+        run: eslint "**/*.{js,ts,tsx}"
