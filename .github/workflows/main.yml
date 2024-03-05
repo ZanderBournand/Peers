@@ -14,13 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          persist-credentials: false
 
       - name: Cache dependencies
-        id: cache
         uses: actions/cache@v3
         with:
           path: ./node_modules
@@ -37,13 +32,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          persist-credentials: false
 
       - name: Fetch dependencies
-        id: cache
         uses: actions/cache@v3
         with:
           path: ./node_modules
@@ -63,13 +53,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          persist-credentials: false
 
       - name: Fetch dependencies
-        id: cache
         uses: actions/cache@v3
         with:
           path: ./node_modules
