@@ -3,10 +3,8 @@ import { cookies } from "next/headers";
 import { api } from "@/trpc/server";
 import Link from "next/link";
 import EventPreview from "@/components/events/EventPreview";
-import { type EventSchema } from "@/lib/validators/Events";
-import { type z } from "zod";
-
-export type EventType = z.infer<typeof EventSchema>;
+import moment from "moment";
+import { getDisplayName } from "@/lib/utils";
 
 export default async function AuthButton() {
   const supabase = createClient(cookies());
@@ -15,10 +13,20 @@ export default async function AuthButton() {
   } = await supabase.auth.getUser();
 
   const userData = user && (await api.users.getCurrent.query());
-  const events = await api.events.getAll.query();
+  const events = user && (await api.events.getAll.query());
 
-  const displayName = userData?.firstName ?? userData?.username;
-  const displayName = userData?.firstName ?? userData?.username;
+  const filteredEvent = events?.sort((a, b) => {
+    const aEndDate = moment(a.date).add(a.duration, "minutes");
+    const bEndDate = moment(b.date).add(b.duration, "minutes");
+    const aIsCompleted = moment().isAfter(aEndDate);
+    const bIsCompleted = moment().isAfter(bEndDate);
+
+    if (aIsCompleted !== bIsCompleted) {
+      return aIsCompleted ? 1 : -1;
+    }
+
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
 
   return user && userData ? (
     <div className="mt-16 flex flex-col items-center justify-center">
