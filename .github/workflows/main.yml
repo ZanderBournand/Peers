@@ -76,4 +76,4 @@ jobs:
           key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: ESLint
-        run: npx eslint "**/*.{js,ts,tsx}"
+        run: npx eslint "**/*.{js,ts,tsx}" --max-warnings=0
