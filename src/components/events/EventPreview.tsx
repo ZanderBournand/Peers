@@ -9,6 +9,7 @@ import {
   CheckCircleIcon,
   UserIcon,
   UserGroupIcon,
+  ChartBarSquareIcon,
 } from "@heroicons/react/24/outline";
 import type { EventData, addressSections } from "@/lib/interfaces/eventData";
 import moment from "moment";
@@ -18,6 +19,8 @@ export default function EventPreview({ event }: { event: EventData }) {
   const eventDate = new Date(event.date);
   const eventEndDate = moment(eventDate).add(event.duration, "minutes");
   const isEventPassed = moment().isAfter(eventEndDate);
+
+  const unusedVar = 2;
 
   const formattedDate = eventDate.toLocaleDateString("en-US", {
     weekday: "short",
