@@ -29,9 +29,7 @@ export default function EventPreview({ event }: { event: EventData }) {
     minute: "2-digit",
   });
 
-  const addressSections: addressSections | null = getAddressSections(
-    event?.location,
-  );
+  const addressSections: addressSections | null = getAddressSections( event?.location,);
 
   return (
     <Link href={`/event/${event.id}`}>
