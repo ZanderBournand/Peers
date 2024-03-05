@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { UserData } from "@/lib/interfaces/userData";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,6 +13,14 @@ export function capitalizeFirstLetter(inputString: string) {
     lowercaseString.charAt(0).toUpperCase() + lowercaseString.slice(1);
 
   return capitalizedString;
+}
+
+export function getDisplayName(user: UserData, fullName = true) {
+  if (user.firstName && user.lastName) {
+    return `${user.firstName}` + (fullName ? ` ${user.lastName}` : "");
+  } else {
+    return "@" + user.username;
+  }
 }
 
 export function pluralize(value: number, unit: string) {
@@ -38,18 +47,27 @@ export function getFormattedDuration(inputDurations: number) {
   return formattedDuration;
 }
 
-export function getFormattedAddress(address: string | null | undefined) {
-  if (address) {
-    const parts = address.split(",");
-    let secondary = "";
+export function getAddressSections(fullAddress: string | null | undefined) {
+  if (fullAddress) {
+    const parts = fullAddress.split(",");
+    let address = null,
+      city = null,
+      state = null;
+
     if (parts.length === 5) {
-      secondary = `${parts[1]?.trim()} · ${parts[2]?.trim()}, ${parts[3]?.trim()}`;
+      address = parts[1]?.trim();
+      city = parts[2]?.trim();
+      state = parts[3]?.trim();
     } else if (parts.length === 4) {
-      secondary = `${parts[1]?.trim()}, ${parts[2]?.trim()}`;
+      city = parts[1]?.trim();
+      state = parts[2]?.trim();
     }
+
     return {
-      main: parts[0]?.trim() ?? "",
-      secondary: secondary,
+      place: parts[0] ?? "",
+      address: address ?? null,
+      city: city ?? "",
+      state: state ?? "",
     };
   }
   return null;

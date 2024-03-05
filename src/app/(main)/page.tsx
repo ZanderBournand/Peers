@@ -5,6 +5,7 @@ import CreateEventButton from "@/components/events/CreateEventButton";
 import EventPreview from "@/components/events/EventPreview";
 import type { EventData } from "@/lib/interfaces/eventData";
 import moment from "moment";
+import { getDisplayName } from "@/lib/utils";
 
 export default async function AuthButton() {
   const supabase = createClient(cookies());
@@ -28,12 +29,10 @@ export default async function AuthButton() {
     return new Date(a.date).getTime() - new Date(b.date).getTime();
   });
 
-  const displayName = userData?.firstName ?? userData?.username;
-
   return user && userData ? (
     <div className="flex items-center justify-center pb-32">
       <div className="mt-16 flex max-w-screen-2xl flex-col items-center justify-center">
-        <span>Hey, {displayName}!</span>
+        <span>Hey, {getDisplayName(userData, false)}!</span>
         <CreateEventButton userData={userData} />
         <div className="grid w-full grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredEvent?.map((event) => (

@@ -9,14 +9,17 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { getFormattedAddress, getFormattedDuration } from "@/lib/utils";
-import { type formattedAddress } from "@/lib/interfaces/eventData";
+import {
+  getDisplayName,
+  getAddressSections,
+  getFormattedDuration,
+} from "@/lib/utils";
 import ShareButton from "@/components/events/ShareButton";
 import { headers } from "next/headers";
 import AttendButton from "@/components/events/AttendButton";
 import Link from "next/link";
 import type { UserData } from "@/lib/interfaces/userData";
-import type { EventData } from "@/lib/interfaces/eventData";
+import type { EventData, addressSections } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import EventStatus from "@/components/events/EventStatus";
 
@@ -37,7 +40,8 @@ export default async function EventPage({
     minute: "numeric",
     hour12: true,
   });
-  const formattedAddress: formattedAddress | null = getFormattedAddress(
+
+  const addressSections: addressSections | null = getAddressSections(
     event?.location,
   );
 
@@ -100,11 +104,13 @@ export default async function EventPage({
                     className="blue blue-500 mr-1 h-5 w-5"
                     color="#6e13c8"
                   />
-                  Zander Bournand
+                  {event.userHost
+                    ? getDisplayName(event.userHost)
+                    : event.orgHost?.name}
                 </div>
               </div>
               <p className="text-md my-5 whitespace-pre-line font-normal">
-                {/* TODO: Display organization bio*/}
+                {/* TODO: Display organization bio */}
                 {event.userHost ? event.userHost?.bio : "[INSERT ORG BIO HERE]"}
               </p>
             </div>
@@ -160,7 +166,7 @@ export default async function EventPage({
               <div className="flex-start flex flex-col px-4 py-4">
                 <p className="mt-2 font-semibold">
                   {event.userHost
-                    ? `${event.userHost?.firstName} ${event.userHost?.lastName}`
+                    ? getDisplayName(event.userHost)
                     : event.orgHost?.name}
                 </p>
                 <div className="mt-4 flex flex-row items-center">
@@ -218,21 +224,21 @@ export default async function EventPage({
                       color="gray"
                     />
                     <div className="flex-start flex flex-col">
-                      <p>{formattedAddress?.main}</p>
+                      <p>{addressSections?.place}</p>
                       <p className="text-sm text-gray-500">
-                        {formattedAddress?.secondary}
+                        {addressSections?.address &&
+                          addressSections?.address + " · "}
+                        {addressSections?.city}, {addressSections?.state}
                       </p>
                     </div>
                   </div>
                   {event.locationDetails && (
-                    <div className="mb-4 ml-10 flex w-4/5 flex-col rounded-md bg-slate-50/75 px-4">
-                      <div className="flex flex-row items-center">
-                        <InformationCircleIcon className="mr-1 h-5 w-5 flex-shrink-0" />
-                        <p className="mr-1 text-sm font-semibold">
-                          Location Details:
-                        </p>
-                      </div>
-                      <p className="ml-2 mt-2 text-sm">
+                    <div className="mb-4 ml-12 flex w-10/12 flex-row rounded-sm">
+                      <InformationCircleIcon
+                        className="mx-1 h-5 w-5 flex-shrink-0"
+                        color="gray"
+                      />
+                      <p className="mr-1 text-sm  text-gray-600">
                         {event.locationDetails}
                       </p>
                     </div>
