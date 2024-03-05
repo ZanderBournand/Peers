@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  Prettier:
+  install_dependencies:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,8 +19,35 @@ jobs:
           ref: ${{ github.head_ref }}
           persist-credentials: false
 
-      - name: Installing dependencies
-        run: npm install
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+  prettier:
+    needs: install_dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+          persist-credentials: false
+
+      - name: Fetch dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Prettier
         uses: creyD/prettier_action@v4.3
@@ -28,9 +55,8 @@ jobs:
           dry: True
           prettier_options: --check **/*.{js,ts,tsx}
           github_token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-        continue-on-error: true
 
-  ESLint:
+  esLint:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,9 +67,12 @@ jobs:
           ref: ${{ github.head_ref }}
           persist-credentials: false
 
-      - name: Installing dependencies
-        run: npm install
+      - name: Fetch dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: ESLint
         run: npx eslint "**/*.{js,ts,tsx}"
-        continue-on-error: true
