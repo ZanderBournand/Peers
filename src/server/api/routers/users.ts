@@ -52,6 +52,11 @@ export const userRouter = createTRPCRouter({
     const user = await ctx.db.user.findUnique({
       where: { id: ctx.user.id },
     });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     return user;
   }),
   isUserCreated: privateProcedure

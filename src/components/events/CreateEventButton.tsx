@@ -6,7 +6,7 @@ import { useVerificationAlert } from "../../lib/context/VerificationContext";
 import { useRouter } from "next/navigation";
 import type { UserData } from "@/lib/interfaces/userData";
 
-const EventButton: React.FC<{ userData: UserData }> = ({ userData }) => {
+const CreateEventButton: React.FC<{ userData: UserData }> = ({ userData }) => {
   const router = useRouter();
 
   const verificationAlert = useVerificationAlert();
@@ -27,4 +27,4 @@ const EventButton: React.FC<{ userData: UserData }> = ({ userData }) => {
   );
 };
 
-export default EventButton;
+export default CreateEventButton;
