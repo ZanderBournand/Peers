@@ -4,7 +4,14 @@
  */
 await import("./src/env.js");
 
-/** @type {import("next").NextConfig} */
-const config = {};
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
+  images: {
+    domains: ["github.githubassets.com", "upload.wikimedia.org"],
+  },
+  // Add other configurations here as needed.
+};
 
-export default config;
+export default nextConfig;
