@@ -23,6 +23,7 @@ model User {
   website  String?
 
   isVerifiedStudent Boolean
+  university String?
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
