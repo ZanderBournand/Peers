@@ -19,6 +19,8 @@ const cardStyle = {
 export default async function UserPage() {
   const user = await api.users.getCurrent.query();
 
+  const userImage = user?.image ?? "";
+
   if (!user) return null;
 
   return (
@@ -38,7 +40,7 @@ export default async function UserPage() {
             }}
           >
             <Avatar className="size-20 hover:cursor-pointer">
-              <AvatarImage src="https://wallpapers.com/images/high/funny-profile-picture-7k1legjukiz1lju7.webp" />
+              <AvatarImage src={userImage} />
               <AvatarFallback>Peer</AvatarFallback>
             </Avatar>
             <p

@@ -24,6 +24,7 @@ export const userRouter = createTRPCRouter({
   update: privateProcedure
     .input(
       z.object({
+        image: z.string().url().optional().nullable(),
         firstName: z.string(),
         lastName: z.string(),
         skills: z.array(z.string()),
@@ -37,6 +38,7 @@ export const userRouter = createTRPCRouter({
       const user = await ctx.db.user.update({
         where: { id: ctx.user.id },
         data: {
+          image: input.image,
           firstName: input.firstName,
           lastName: input.lastName,
           skills: input.skills,
