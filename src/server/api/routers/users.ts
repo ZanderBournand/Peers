@@ -77,4 +77,32 @@ export const userRouter = createTRPCRouter({
       });
       return Boolean(user);
     }),
+  getEventsAttending: privateProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.user.findUnique({
+      where: { id: ctx.user.id },
+      include: {
+        attends: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user.attends;
+  }),
+  getEventsHosting: privateProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.user.findUnique({
+      where: { id: ctx.user.id },
+      include: {
+        hostEvents: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user.hostEvents;
+  }),
 });

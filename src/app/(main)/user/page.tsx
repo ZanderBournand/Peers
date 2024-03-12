@@ -20,6 +20,9 @@ const cardStyle = {
 export default async function UserPage() {
   const user = await api.users.getCurrent.query();
 
+  const eventsAttending = await api.users.getEventsAttending.query();
+  const eventsHosting = await api.users.getEventsHosting.query();
+
   const userImage = user?.image ?? "";
 
   if (!user) return null;
@@ -257,9 +260,38 @@ export default async function UserPage() {
                   </Link>
                 </div>
               </CardHeader>
-              <CardContent className="text-center">
-                This user is not registered for any events.
-              </CardContent>
+              {eventsAttending.length == 0 ? (
+                <CardContent className="text-center">
+                  This user is not registered for any events.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="font-bold">Upcoming Events:</div>
+                  {eventsAttending.map((event) => (
+                    <Link href={`/event/${event.id}`}>
+                      <li key={event.id} className="ml-4">
+                        {event.title}
+                      </li>
+                    </Link>
+                  ))}
+                </CardContent>
+              )}
+              {eventsHosting.length == 0 ? (
+                <CardContent className="text-center">
+                  This user is not registered for any events.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="font-bold">Events Hosting:</div>
+                  {eventsHosting.map((event) => (
+                    <Link href={`/event/${event.id}`}>
+                      <li key={event.id} className="ml-4">
+                        {event.title}
+                      </li>
+                    </Link>
+                  ))}
+                </CardContent>
+              )}
             </Card>
           </div>
         </div>
