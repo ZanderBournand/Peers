@@ -8,6 +8,7 @@ import { PlusIcon } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
+import Image from "next/image";
 
 const cardStyle = {
   width: "580px",
@@ -268,27 +269,57 @@ export default async function UserPage() {
                 <CardContent>
                   <div className="font-bold">Upcoming Events:</div>
                   {eventsAttending.map((event) => (
-                    <Link href={`/event/${event.id}`}>
-                      <li key={event.id} className="ml-4">
-                        {event.title}
-                      </li>
-                    </Link>
+                    <div className="ml-4 mt-1.5 flex">
+                      {event.image ? (
+                        <Image
+                          src={event.image}
+                          alt="selected image"
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center text-gray-500">
+                          No image available
+                        </div>
+                      )}
+                      <Link href={`/event/${event.id}`}>
+                        <div key={event.id} className="ml-2">
+                          {event.title}
+                        </div>
+                      </Link>
+                    </div>
                   ))}
                 </CardContent>
               )}
               {eventsHosting.length == 0 ? (
                 <CardContent className="text-center">
-                  This user is not registered for any events.
+                  This user is not hosting any events.
                 </CardContent>
               ) : (
                 <CardContent>
                   <div className="font-bold">Events Hosting:</div>
                   {eventsHosting.map((event) => (
-                    <Link href={`/event/${event.id}`}>
-                      <li key={event.id} className="ml-4">
-                        {event.title}
-                      </li>
-                    </Link>
+                    <div className="ml-4 mt-1.5 flex">
+                      {event.image ? (
+                        <Image
+                          src={event.image}
+                          alt="selected image"
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center text-gray-500">
+                          No image available
+                        </div>
+                      )}
+                      <Link href={`/event/${event.id}`}>
+                        <div key={event.id} className="ml-2">
+                          {event.title}
+                        </div>
+                      </Link>
+                    </div>
                   ))}
                 </CardContent>
               )}
