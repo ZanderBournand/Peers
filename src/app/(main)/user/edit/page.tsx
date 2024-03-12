@@ -197,7 +197,7 @@ export default function NewUserForm() {
                           />
                         )}
                       </div>
-                      <div className="relative z-10 -mt-7 ml-12 h-9 w-9 items-center justify-center rounded-full border-4 border-white bg-blue-300">
+                      <div className="relative z-10 -mt-7 ml-12 h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-blue-300">
                         <MdEdit className="color-black ml-1 mt-1 h-5 w-5" />
                       </div>{" "}
                     </Label>

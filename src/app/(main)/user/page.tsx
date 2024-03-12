@@ -7,6 +7,7 @@ import Link from "next/link";
 import { PlusIcon } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
+import { PiStudentFill } from "react-icons/pi";
 
 const cardStyle = {
   width: "580px",
@@ -28,7 +29,7 @@ export default async function UserPage() {
       <div className="flex items-start justify-center">
         <div className="flex-col">
           <div
-            className="mt-4 flex h-48 w-80 flex-col items-center justify-center border-2"
+            className="mt-4 flex h-56 w-80 flex-col items-center justify-center border-2"
             style={{
               border: "4px solid grey",
               borderBottom: "0px",
@@ -61,6 +62,7 @@ export default async function UserPage() {
               {user.username}
             </p>
             <p
+              className="flex"
               style={{
                 fontSize: "1.01rem",
               }}
@@ -68,6 +70,17 @@ export default async function UserPage() {
               Student Status:{" "}
               {user.isVerifiedStudent ? "Verified" : "Not Verified"}
             </p>
+            {user.isVerifiedStudent && (
+              <p
+                className="flex items-center"
+                style={{
+                  fontSize: "1.01rem",
+                }}
+              >
+                <PiStudentFill className="-ml-2 mr-1 h-5 w-5" />
+                {user.university}
+              </p>
+            )}
           </div>
           <div
             className="w-80 border-2 px-5 py-2"
