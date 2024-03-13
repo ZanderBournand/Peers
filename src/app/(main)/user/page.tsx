@@ -4,17 +4,18 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
 import Link from "next/link";
-import { PlusIcon } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import Image from "next/image";
+import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
+import { FaCirclePlus } from "react-icons/fa6";
 
 const cardStyle = {
   width: "580px",
   padding: 10,
   borderRadius: 10,
-  border: "4px solid grey",
+  border: "1px solid grey",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
 };
 
@@ -35,9 +36,7 @@ export default async function UserPage() {
           <div
             className="mt-4 flex h-56 w-80 flex-col items-center justify-center border-2"
             style={{
-              border: "4px solid grey",
-              borderBottom: "0px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              border: "1px solid grey",
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
               borderBottomLeftRadius: 0,
@@ -89,9 +88,9 @@ export default async function UserPage() {
           <div
             className="w-80 border-2 px-5 py-2"
             style={{
-              marginTop: "-4px",
-              border: "4px solid grey",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              marginTop: "-1px",
+              border: "1px solid grey",
+              borderTop: "0px",
             }}
           >
             <p>{user.bio}</p>
@@ -99,10 +98,10 @@ export default async function UserPage() {
           <div
             className="flex w-80 flex-col items-center justify-center border-2 py-2"
             style={{
-              marginTop: "-4px",
-              border: "4px solid grey",
+              marginTop: "-1px",
+              border: "1px solid grey",
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              borderTop: "0px",
+              borderTop: "1px",
               borderTopLeftRadius: 0,
               borderTopRightRadius: 0,
               borderBottomLeftRadius: 10,
@@ -187,36 +186,17 @@ export default async function UserPage() {
         <div className="ml-20 mt-4 flex-col">
           <div className="flex items-center justify-center">
             <Card style={cardStyle}>
-              <CardHeader
-                className="ml-5 flex items-center justify-center text-center"
-                style={{
-                  padding: 7,
-                  fontSize: "1.25rem",
-                  fontWeight: "bold",
-                }}
-              >
+              <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
                 <div className="flex">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
-                  <Link href="/organization/new">
-                    <Button
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "1px",
-                        marginLeft: "6px",
-                        marginTop: "7px",
-                        backgroundColor: "grey",
-                      }}
-                      title="Create Organization"
-                    >
-                      <PlusIcon style={{ width: "24px", height: "24px" }} />
-                    </Button>
+                  <Link
+                    className="color-grey ml-2 mt-1"
+                    href="/organization/new"
+                    title="Create Organization"
+                  >
+                    <FaCirclePlus />
                   </Link>
                 </div>
               </CardHeader>
@@ -228,36 +208,17 @@ export default async function UserPage() {
 
           <div className="flex items-center justify-center">
             <Card className="mt-3" style={cardStyle}>
-              <CardHeader
-                className="ml-5 flex items-center justify-center text-center"
-                style={{
-                  padding: 7,
-                  fontSize: "1.25rem",
-                  fontWeight: "bold",
-                }}
-              >
+              <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
                 <div className="flex">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
-                  <Link href="/event/new">
-                    <Button
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "1px",
-                        marginLeft: "6px",
-                        marginTop: "7px",
-                        backgroundColor: "grey",
-                      }}
-                      title="Create Event"
-                    >
-                      <PlusIcon style={{ width: "24px", height: "24px" }} />
-                    </Button>
+                  <Link
+                    className="color-grey ml-2 mt-1"
+                    href="/event/new"
+                    title="Create Event"
+                  >
+                    <FaCirclePlus />
                   </Link>
                 </div>
               </CardHeader>
@@ -268,28 +229,7 @@ export default async function UserPage() {
               ) : (
                 <CardContent>
                   <div className="font-bold">Upcoming Events:</div>
-                  {eventsAttending.map((event) => (
-                    <div className="ml-4 mt-1.5 flex">
-                      {event.image ? (
-                        <Image
-                          src={event.image}
-                          alt="selected image"
-                          width={24}
-                          height={24}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center text-gray-500">
-                          No image available
-                        </div>
-                      )}
-                      <Link href={`/event/${event.id}`}>
-                        <div key={event.id} className="ml-2">
-                          {event.title}
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
+                  <UserPageEventCarousel events={eventsAttending} />
                 </CardContent>
               )}
               {eventsHosting.length == 0 ? (
@@ -298,29 +238,8 @@ export default async function UserPage() {
                 </CardContent>
               ) : (
                 <CardContent>
-                  <div className="font-bold">Events Hosting:</div>
-                  {eventsHosting.map((event) => (
-                    <div className="ml-4 mt-1.5 flex">
-                      {event.image ? (
-                        <Image
-                          src={event.image}
-                          alt="selected image"
-                          width={24}
-                          height={24}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center text-gray-500">
-                          No image available
-                        </div>
-                      )}
-                      <Link href={`/event/${event.id}`}>
-                        <div key={event.id} className="ml-2">
-                          {event.title}
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
+                  <div className="font-bold">Upcoming Events:</div>
+                  <UserPageEventCarousel events={eventsHosting} />
                 </CardContent>
               )}
             </Card>
