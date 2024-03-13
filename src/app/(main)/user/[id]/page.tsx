@@ -18,8 +18,8 @@ const cardStyle = {
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
 };
 
-export default async function UserPage() {
-  const user = await api.users.getCurrent.query({});
+export default async function PeerPage({ params }: { params: { id: string } }) {
+  const user = await api.users.getCurrent.query({ id: params.id });
 
   const eventsAttending = await api.users.getEventsAttending.query();
   const eventsHosting = await api.users.getEventsHosting.query();
@@ -169,11 +169,6 @@ export default async function UserPage() {
               </div>
             </div>
           </div>
-          <div className="mt-3 flex w-80 justify-center py-2">
-            <Link href="/user/edit">
-              <Button variant="default">Edit Profile</Button>
-            </Link>
-          </div>
 
           {!user.isVerifiedStudent && (
             <div className="mt-2 flex w-80 justify-center py-2">
@@ -190,13 +185,6 @@ export default async function UserPage() {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
-                  <Link
-                    className="color-grey ml-2 mt-1"
-                    href="/organization/new"
-                    title="Create Organization"
-                  >
-                    <FaCirclePlus />
-                  </Link>
                 </div>
               </CardHeader>
               <CardContent className="text-center">
@@ -212,13 +200,6 @@ export default async function UserPage() {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
-                  <Link
-                    className="color-grey ml-2 mt-1"
-                    href="/event/new"
-                    title="Create Event"
-                  >
-                    <FaCirclePlus />
-                  </Link>
                 </div>
               </CardHeader>
               {eventsAttending.length == 0 ? (

@@ -39,7 +39,7 @@ export type NewUserInput = z.infer<typeof newUserSchema>;
 export default function NewUserForm() {
   const [isLoading, setIsLoading] = useState(true);
   const { data: user, isLoading: isUserLoading } =
-    api.users.getCurrent.useQuery();
+    api.users.getCurrent.useQuery({});
 
   type NewUserInputWithFile = Omit<NewUserInput, "image"> & {
     image: File | undefined;

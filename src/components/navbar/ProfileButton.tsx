@@ -37,7 +37,7 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
     };
   }, [ref]);
 
-  const userData = api.users.getCurrent.useQuery().data;
+  const userData = api.users.getCurrent.useQuery({}).data;
   const userImage = userData?.image ?? "";
 
   if (!user) return null;

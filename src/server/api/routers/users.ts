@@ -50,17 +50,21 @@ export const userRouter = createTRPCRouter({
       });
       return user;
     }),
-  getCurrent: privateProcedure.query(async ({ ctx }) => {
-    const user = await ctx.db.user.findUnique({
-      where: { id: ctx.user.id },
-    });
+  getCurrent: privateProcedure
+    .input(z.object({ id: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.id || ctx.user.id;
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+      });
 
-    return user;
-  }),
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user;
+    }),
   isUserCreated: privateProcedure
     .input(z.object({ email: z.string().email() }))
     .query(async ({ ctx, input }) => {
