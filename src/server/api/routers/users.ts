@@ -81,32 +81,40 @@ export const userRouter = createTRPCRouter({
       });
       return Boolean(user);
     }),
-  getEventsAttending: privateProcedure.query(async ({ ctx }) => {
-    const user = await ctx.db.user.findUnique({
-      where: { id: ctx.user.id },
-      include: {
-        attends: true,
-      },
-    });
+  getEventsAttending: privateProcedure
+    .input(z.object({ id: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.id || ctx.user.id;
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        include: {
+          attends: true,
+        },
+      });
 
-    return user.attends;
-  }),
-  getEventsHosting: privateProcedure.query(async ({ ctx }) => {
-    const user = await ctx.db.user.findUnique({
-      where: { id: ctx.user.id },
-      include: {
-        hostEvents: true,
-      },
-    });
+      if (!user) {
+        throw new Error("User not found");
+      }
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+      return user.attends;
+    }),
+  getEventsHosting: privateProcedure
+    .input(z.object({ id: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.id || ctx.user.id;
 
-    return user.hostEvents;
-  }),
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        include: {
+          hostEvents: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user.hostEvents;
+    }),
 });

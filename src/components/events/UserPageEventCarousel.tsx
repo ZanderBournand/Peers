@@ -31,7 +31,7 @@ export default function UserPageEventCarousel({ events }: EventCarouselProps) {
   }
 
   return (
-    <Carousel className="my-2">
+    <Carousel className="my-2 ml-6 w-11/12 items-center justify-center">
       <CarouselContent className="mx-2">
         {events.map((event) => (
           <CarouselItem className="mx-1 basis-2/5 pl-4">
@@ -78,8 +78,8 @@ export default function UserPageEventCarousel({ events }: EventCarouselProps) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="mx-5 border-black" />
-      <CarouselNext className="mx-5 border-black" />
+      <CarouselPrevious className="mr-4 border-black" />
+      <CarouselNext className="ml-4 border-black" />
     </Carousel>
   );
 }

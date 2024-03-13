@@ -1,14 +1,11 @@
 import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
-import Link from "next/link";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
-import { FaCirclePlus } from "react-icons/fa6";
 
 const cardStyle = {
   width: "580px",
@@ -21,8 +18,12 @@ const cardStyle = {
 export default async function PeerPage({ params }: { params: { id: string } }) {
   const user = await api.users.getCurrent.query({ id: params.id });
 
-  const eventsAttending = await api.users.getEventsAttending.query();
-  const eventsHosting = await api.users.getEventsHosting.query();
+  const eventsAttending = await api.users.getEventsAttending.query({
+    id: params.id,
+  });
+  const eventsHosting = await api.users.getEventsHosting.query({
+    id: params.id,
+  });
 
   const userImage = user?.image ?? "";
 
@@ -169,12 +170,6 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-
-          {!user.isVerifiedStudent && (
-            <div className="mt-2 flex w-80 justify-center py-2">
-              <VerifyStudentButton />
-            </div>
-          )}
         </div>
 
         <div className="ml-20 mt-4 flex-col">

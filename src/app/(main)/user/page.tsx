@@ -21,8 +21,8 @@ const cardStyle = {
 export default async function UserPage() {
   const user = await api.users.getCurrent.query({});
 
-  const eventsAttending = await api.users.getEventsAttending.query();
-  const eventsHosting = await api.users.getEventsHosting.query();
+  const eventsAttending = await api.users.getEventsAttending.query({});
+  const eventsHosting = await api.users.getEventsHosting.query({});
 
   const userImage = user?.image ?? "";
 
