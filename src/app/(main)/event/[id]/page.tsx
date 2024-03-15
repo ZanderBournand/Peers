@@ -22,6 +22,7 @@ import type { UserData } from "@/lib/interfaces/userData";
 import type { EventData, addressSections } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import EventStatus from "@/components/events/EventStatus";
+import JoinCallButton from "@/components/events/JoinCallButton";
 
 export default async function EventPage({
   params,
@@ -191,29 +192,19 @@ export default async function EventPage({
                 </div>
               </div>
               {event.type === "ONLINE_VIDEO" && (
-                <div className="my-4 flex w-full flex-row items-center px-4">
-                  <VideoCameraIcon
-                    className="mr-4 h-6 w-6 flex-shrink-0"
-                    color="gray"
+                <div className="my-4 flex w-full items-center justify-center px-4">
+                  <JoinCallButton
+                    url={"https://peers-knowledge.daily.co/demo"}
+                    icon={VideoCameraIcon}
                   />
-                  <p>
-                    The live video stream will become available here{" "}
-                    <span className="font-bold">10 minutes</span> before the
-                    event starts
-                  </p>
                 </div>
               )}
               {event.type === "ONLINE_AUDIO" && (
-                <div className="my-4 flex w-full flex-row items-center px-4">
-                  <MicrophoneIcon
-                    className="mr-4 h-6 w-6 flex-shrink-0"
-                    color="gray"
+                <div className="my-4 flex w-full items-center justify-center px-4">
+                  <JoinCallButton
+                    url={"https://peers-knowledge.daily.co/demo"}
+                    icon={MicrophoneIcon}
                   />
-                  <p>
-                    The audio video stream will become available here{" "}
-                    <span className="font-bold">10 minutes</span> before the
-                    event starts
-                  </p>
                 </div>
               )}
               {event.type === "IN_PERSON" && (
