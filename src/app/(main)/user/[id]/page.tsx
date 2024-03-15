@@ -1,7 +1,7 @@
 import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import VerifyStudentButton from "@/components/user/verifyStudentButton";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
@@ -64,25 +64,30 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             >
               {user.username}
             </p>
-            <p
-              className="flex"
-              style={{
-                fontSize: "1.01rem",
-              }}
-            >
-              Student Status:{" "}
-              {user.isVerifiedStudent ? "Verified" : "Not Verified"}
-            </p>
             {user.isVerifiedStudent && (
-              <p
-                className="flex items-center"
-                style={{
-                  fontSize: "1.01rem",
-                }}
-              >
-                <PiStudentFill className="-ml-2 mr-1 h-5 w-5" />
-                {user.university}
-              </p>
+              <div>
+                <p
+                  className="mr-2 flex"
+                  style={{
+                    fontSize: "1.01rem",
+                  }}
+                >
+                  <CheckBadgeIcon
+                    className="blue blue-500 mr-1 h-6 w-6"
+                    color="#6e13c8"
+                  />
+                  Verified Student
+                </p>
+                <p
+                  className="flex items-center"
+                  style={{
+                    fontSize: "1.01rem",
+                  }}
+                >
+                  <PiStudentFill className="-ml-2 mr-1 h-5 w-5" />
+                  {user.university}
+                </p>
+              </div>
             )}
           </div>
           <div
