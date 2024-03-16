@@ -58,6 +58,7 @@ export default async function EventPage({
                 src={event.image}
                 alt="selected image"
                 fill
+                sizes="100%"
                 style={{
                   objectFit: "cover",
                 }}
@@ -184,6 +185,7 @@ export default async function EventPage({
                     src={event.image}
                     alt="selected image"
                     fill
+                    sizes="100%"
                     style={{
                       objectFit: "cover",
                     }}

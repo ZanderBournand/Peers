@@ -10,7 +10,7 @@ export const newEventSchema = z.object({
   locationDetails: z.string().min(1).optional().nullable(),
   date: z.date(),
   description: z.string().min(1),
-  image: z.string().url().optional().nullable(),
+  image: z.string().url(),
   type: z.nativeEnum(EventType),
   duration: z.number().int().min(1),
   tags: TagSchema.array().optional().nullable(),
