@@ -10,13 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -39,6 +32,8 @@ import {
   PhotoIcon,
   VideoCameraIcon,
   MicrophoneIcon,
+  LinkIcon,
+  MapPinIcon,
 } from "@heroicons/react/24/outline";
 import InputMask from "react-input-mask";
 import { createClient } from "@/utils/supabase/client";
@@ -50,6 +45,7 @@ import MapsButton from "@/components/location/MapsButton";
 import LocationInput from "@/components/location/LocationInput";
 import { TagInput } from "@/components/tags/tag-input";
 import { type TagData } from "@/lib/interfaces/tagData";
+import DefaultImagesButton from "@/components/events/DefaultImages";
 
 export type NewEventInput = z.infer<typeof newEventSchema>;
 
@@ -57,14 +53,14 @@ export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [tags, setTags] = useState<TagData[]>([]);
 
   const { control } = useForm();
+  const supabase = createClient();
 
   const { data: user } = api.users.getCurrent.useQuery();
   const { data: allTags } = api.tags.getAll.useQuery();
-
-  const supabase = createClient();
 
   // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
   type NewEventInputWithFile = Omit<NewEventInput, "image"> & {
@@ -118,8 +114,10 @@ export default function CreateEvent() {
       tags: data.tags,
       location: data.location,
       locationDetails: data.locationDetails,
+      image: imageUrl,
     };
 
+    // Image file was uploaded
     if (data.image) {
       const eventImageId: string = uuidv4();
 
@@ -127,8 +125,8 @@ export default function CreateEvent() {
         .from("images")
         .upload("events/" + eventImageId, data.image);
 
-      const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
-      newEventData.image = baseStorageUrl + imageData?.path;
+      newEventData.image =
+        env.NEXT_PUBLIC_SUPABASE_STORAGE_URL + imageData?.path;
     }
 
     if (isOrgEvent) {
@@ -140,11 +138,24 @@ export default function CreateEvent() {
     mutate(newEventData);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       form.setValue("image", file);
+
+      const imageUrl = URL.createObjectURL(file);
+      setImageUrl(imageUrl);
     }
+  };
+
+  const handleDefaultImageChange = (defaultImage: string) => {
+    form.setValue("image", undefined);
+    setImageUrl(defaultImage);
+  };
+
+  const handleImageRemoval = () => {
+    form.setValue("image", undefined);
+    setImageUrl(null);
   };
 
   const handleLocationChange = (location: string) => {
@@ -161,29 +172,24 @@ export default function CreateEvent() {
   };
 
   return (
-    <div className="flex w-screen justify-center p-8">
-      <Card className="w-full max-w-2xl border border-border">
-        <CardHeader>
-          <CardTitle>Create Event</CardTitle>
-          <CardDescription>
-            Have an idea for an upcoming event? Bring it to life right here!
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex w-full flex-1 flex-col justify-center gap-6 text-muted-foreground"
-            >
-              <p className="mt-4 text-xl font-semibold text-black">
-                General Info
-              </p>
-              <div className="flex flex-row gap-4">
+    <div className="flex items-center justify-center px-8 pb-32">
+      <div className="mt-12 flex w-full max-w-screen-xl flex-col self-center">
+        <h1 className="text-3xl font-bold">Create an Event</h1>
+        <h3 className="text-gray-600">
+          Have an idea for an upcoming event? Bring it to life right here!
+        </h3>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-4 flex flex-col justify-between gap-6 text-muted-foreground lg:flex-row"
+          >
+            <div className="flex-start mt-4 flex w-full max-w-screen-md flex-col">
+              <div className="flex flex-row gap-6">
                 <FormField
                   control={form.control}
                   name="title"
                   render={({ field }) => (
-                    <FormItem className="w-full">
+                    <FormItem className="w-7/12">
                       <FormLabel className="">Title</FormLabel>
                       <FormControl>
                         <Input placeholder="Title of the event" {...field} />
@@ -196,39 +202,65 @@ export default function CreateEvent() {
                   control={form.control}
                   name="type"
                   render={({ field }) => (
-                    <FormItem className="w-full">
+                    <FormItem className="w-5/12 min-w-[250px]">
                       <FormLabel>Type of event</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select the type of event" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="IN_PERSON">In-person</SelectItem>
-                          <SelectItem value="ONLINE_VIDEO">
-                            <div className="flex flex-row items-center">
-                              <p className="mr-4">Online</p>
-                              <div className="flex flex-row items-center rounded-lg bg-blue-200 bg-opacity-30 px-2 py-0.5">
-                                <VideoCameraIcon className="mr-2 h-4 w-4" />
-                                <p>Video</p>
-                              </div>
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="ONLINE_AUDIO">
-                            <div className="flex flex-row items-center">
-                              <p className="mr-4">Online</p>
-                              <div className="flex flex-row items-center rounded-lg bg-purple-300 bg-opacity-30 px-2 py-0.5">
-                                <MicrophoneIcon className="mr-2 h-4 w-4" />
-                                <p>Audio</p>
-                              </div>
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex flex-row items-center">
+                        <div
+                          className={`mr-4 flex cursor-pointer flex-col items-center ${
+                            field.value === "IN_PERSON" && "text-green-800"
+                          } hover:text-green-800`}
+                          onClick={() => field.onChange("IN_PERSON")}
+                        >
+                          <Button
+                            variant="outline"
+                            type="button"
+                            className={`flex h-14 w-14  items-center justify-center ${
+                              field.value === "IN_PERSON" &&
+                              "bg-green-200/30 shadow-md"
+                            } hover:bg-green-200/30 hover:text-green-800 hover:shadow-md`}
+                          >
+                            <MapPinIcon className="h-7 w-7 flex-shrink-0" />
+                          </Button>
+                          <p className="mt-1">In-person</p>
+                        </div>
+
+                        <div
+                          className={`mr-6 flex cursor-pointer flex-col items-center ${
+                            field.value === "ONLINE_VIDEO" && "text-cyan-800"
+                          } hover:text-cyan-800`}
+                          onClick={() => field.onChange("ONLINE_VIDEO")}
+                        >
+                          <Button
+                            variant="outline"
+                            type="button"
+                            className={`flex h-14 w-14  items-center justify-center ${
+                              field.value === "ONLINE_VIDEO" &&
+                              "bg-blue-200/30 shadow-md"
+                            } hover:bg-blue-200/30 hover:text-cyan-800 hover:shadow-md`}
+                          >
+                            <VideoCameraIcon className="h-7 w-7 flex-shrink-0" />
+                          </Button>
+                          <p className="mt-1">Video</p>
+                        </div>
+                        <div
+                          className={`flex cursor-pointer flex-col items-center ${
+                            field.value === "ONLINE_AUDIO" && "text-purple-800"
+                          } hover:text-purple-800`}
+                          onClick={() => field.onChange("ONLINE_AUDIO")}
+                        >
+                          <Button
+                            variant="outline"
+                            type="button"
+                            className={`flex h-14 w-14  items-center justify-center ${
+                              field.value === "ONLINE_AUDIO" &&
+                              "bg-purple-300/30 shadow-md"
+                            } hover:bg-purple-300/30 hover:text-purple-800 hover:shadow-md`}
+                          >
+                            <MicrophoneIcon className="h-7 w-7 flex-shrink-0" />
+                          </Button>
+                          <p className="mt-1">Audio</p>
+                        </div>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -238,7 +270,7 @@ export default function CreateEvent() {
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="">
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
@@ -251,7 +283,7 @@ export default function CreateEvent() {
                   </FormItem>
                 )}
               />
-              <div className="mt-2 flex flex-col gap-4">
+              <div className="mt-6 flex flex-col gap-4">
                 <div className="ml-1 flex w-full flex-row items-center">
                   <Checkbox
                     checked={isOrgEvent}
@@ -302,15 +334,19 @@ export default function CreateEvent() {
                 )}
               </div>
               {typeValue === "IN_PERSON" && (
-                <>
-                  <p className="mt-4 text-xl font-semibold text-black">
-                    Location
-                  </p>
+                <div className="flex-start mt-12 flex flex-col rounded-lg bg-gray-50/50 px-2 py-3">
+                  <div className="flex flex-row items-center">
+                    <p className="text-xl font-semibold text-black">Location</p>
+                    <div className="my-2 ml-3 flex w-max flex-row items-center rounded-md bg-green-200 bg-opacity-30 px-2 py-1 text-sm text-green-800">
+                      <MapPinIcon className="mr-1 h-5 w-5" />
+                      {"In-person"}
+                    </div>
+                  </div>
                   <FormField
                     control={form.control}
                     name="location"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="mt-4">
                         <FormLabel>Address</FormLabel>
                         <FormControl>
                           <div className="flex flex-row items-center">
@@ -334,7 +370,7 @@ export default function CreateEvent() {
                       </FormItem>
                     )}
                   />
-                  <div className="flex flex-col gap-4">
+                  <div className="mt-6 flex flex-col gap-4">
                     <div className="ml-1 flex w-full flex-row items-center">
                       <Checkbox
                         checked={needLocationDetails}
@@ -367,73 +403,107 @@ export default function CreateEvent() {
                       />
                     )}
                   </div>
-                </>
+                </div>
               )}
-              <p className="mt-6 text-xl font-semibold text-black">
-                Date & time
-              </p>
-              <div className="flex flex-row gap-4">
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Date of event</FormLabel>
-                      <DateTimePicker
-                        date={field.value}
-                        setDate={(date) => field.onChange(date)}
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="duration"
-                  render={({}) => (
-                    <FormItem className="mx-4 w-3/5">
-                      <FormLabel>Duration</FormLabel>
-                      <FormControl>
-                        <Controller
-                          control={form.control}
-                          name="duration"
-                          render={({ field }) => (
-                            <InputMask
-                              mask="9 h : 99 mins"
-                              placeholder="Enter a duration"
-                              value={
-                                field.value !== undefined
-                                  ? `${Math.floor(field.value / 60)} h : ${(
-                                      field.value % 60
-                                    )
-                                      .toString()
-                                      .padStart(2, "0")} mins`
-                                  : ""
-                              }
-                              onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>,
-                              ) => {
-                                const [hours, minutes] =
-                                  e.target?.value.split(" : ");
-                                if (parseInt(minutes ?? "") > 59) {
-                                  e.target.value = hours + " : 59 mins";
+              <div className="flex-start mt-12 flex flex-col">
+                <p className="text-xl font-semibold text-black">Date & time</p>
+                <div className="mt-4 flex flex-row gap-4">
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Date of event</FormLabel>
+                        <DateTimePicker
+                          date={field.value}
+                          setDate={(date) => field.onChange(date)}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="duration"
+                    render={({}) => (
+                      <FormItem className="mx-4 w-3/5">
+                        <FormLabel>Duration</FormLabel>
+                        <FormControl>
+                          <Controller
+                            control={form.control}
+                            name="duration"
+                            render={({ field }) => (
+                              <InputMask
+                                mask="9 h : 99 mins"
+                                placeholder="Enter a duration"
+                                value={
+                                  field.value !== undefined
+                                    ? `${Math.floor(field.value / 60)} h : ${(
+                                        field.value % 60
+                                      )
+                                        .toString()
+                                        .padStart(2, "0")} mins`
+                                    : ""
                                 }
-                                const parsedHours = isNaN(parseInt(hours ?? ""))
-                                  ? 0
-                                  : parseInt(hours ?? "");
-                                const parsedMinutes = isNaN(
-                                  parseInt(minutes ?? ""),
-                                )
-                                  ? 0
-                                  : parseInt(minutes ?? "");
-                                const totalMinutes =
-                                  parsedHours * 60 + parsedMinutes;
-                                field.onChange(totalMinutes);
-                              }}
-                            >
-                              <Input />
-                            </InputMask>
-                          )}
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>,
+                                ) => {
+                                  const [hours, minutes] =
+                                    e.target?.value.split(" : ");
+                                  if (parseInt(minutes ?? "") > 59) {
+                                    e.target.value = hours + " : 59 mins";
+                                  }
+                                  const parsedHours = isNaN(
+                                    parseInt(hours ?? ""),
+                                  )
+                                    ? 0
+                                    : parseInt(hours ?? "");
+                                  const parsedMinutes = isNaN(
+                                    parseInt(minutes ?? ""),
+                                  )
+                                    ? 0
+                                    : parseInt(minutes ?? "");
+                                  const totalMinutes =
+                                    parsedHours * 60 + parsedMinutes;
+                                  field.onChange(totalMinutes);
+                                }}
+                              >
+                                <Input />
+                              </InputMask>
+                            )}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="flex-start mt-12 flex flex-col">
+                <p className="text-xl font-semibold text-black">Extras</p>
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem className="mt-4 w-full">
+                      <FormLabel className="">Tags</FormLabel>
+                      <FormControl>
+                        <TagInput
+                          {...field}
+                          placeholder="Enter a topic"
+                          tags={tags}
+                          className="w-full"
+                          setTags={(newTags) => {
+                            setTags(newTags as TagData[]);
+                            form.setValue(
+                              "tags",
+                              newTags as [TagData, ...TagData[]],
+                            );
+                          }}
+                          enableAutocomplete
+                          autocompleteOptions={allTags}
+                          enableStrictAutocomplete={true}
+                          value={field.value ?? []}
                         />
                       </FormControl>
                       <FormMessage />
@@ -441,47 +511,48 @@ export default function CreateEvent() {
                   )}
                 />
               </div>
-              <p className="mt-6 text-xl font-semibold text-black">Extras</p>
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel className="">Tags</FormLabel>
-                    <FormControl>
-                      <TagInput
-                        {...field}
-                        placeholder="Enter a topic"
-                        tags={tags}
-                        className="w-full"
-                        setTags={(newTags) => {
-                          setTags(newTags as TagData[]);
-                          form.setValue(
-                            "tags",
-                            newTags as [TagData, ...TagData[]],
-                          );
-                        }}
-                        enableAutocomplete
-                        autocompleteOptions={allTags}
-                        enableStrictAutocomplete={true}
-                        value={field.value ?? []}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            </div>
+            <div className="flex-start flex w-full flex-col">
               <FormField
                 control={form.control}
                 name="image"
                 render={({ field }) => (
-                  <>
+                  <div className="my-4 flex w-full flex-col items-center">
+                    {imageUrl && (
+                      <div className="flex-start flex w-3/4 flex-row items-center">
+                        {field.value && (
+                          <div className="ml-1 mr-2 flex flex-row items-center">
+                            <LinkIcon className="h-5 w-5" color="#6b21a8" />
+                            <p className="ml-2 text-sm text-purple-800">
+                              {field.value.name}
+                            </p>
+                            <p className="ml-4 text-xl text-gray-200">|</p>
+                          </div>
+                        )}
+                        <div className="flex flex-row items-center">
+                          <Button type="button" variant="ghost">
+                            <Label htmlFor="image">Edit</Label>
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={handleImageRemoval}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                     <Label
                       htmlFor="image"
-                      className="my-4 flex w-full flex-col items-center"
+                      className="flex w-full flex-col items-center"
                     >
-                      <div className="relative flex h-60 w-3/4 flex-col items-center justify-center rounded-2xl bg-gray-50">
-                        {!field?.value ? (
+                      <div
+                        className={`relative flex aspect-video w-3/4 cursor-pointer flex-col items-center justify-center rounded-2xl bg-gray-50/50 ${
+                          !imageUrl && "border-2 border-dashed border-gray-200"
+                        }`}
+                      >
+                        {!imageUrl ? (
                           <>
                             <PhotoIcon className="h-10 w-10" color="darkgray" />
                             <span className="text-lg font-semibold">
@@ -493,7 +564,7 @@ export default function CreateEvent() {
                           </>
                         ) : (
                           <Image
-                            src={URL.createObjectURL(field.value)}
+                            src={imageUrl}
                             alt="selected image"
                             fill
                             style={{
@@ -507,16 +578,29 @@ export default function CreateEvent() {
                     <Input
                       id="image"
                       type="file"
+                      accept=".jpeg,.jpg,.png"
                       style={{ display: "none" }}
-                      onChange={handleImageChange}
+                      onChange={handleImageFileChange}
                     />
-                  </>
+                  </div>
                 )}
               />
-              <div className="flex justify-center">
+              <div className="flex w-2/3 items-center justify-center self-center">
+                <DefaultImagesButton onImageChange={handleDefaultImageChange} />
+              </div>
+              <div className="mt-6 flex flex-row justify-center">
+                <Button
+                  variant="outline"
+                  className="mx-4 my-4 w-1/3 justify-center"
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => router.push("/")}
+                >
+                  Cancel
+                </Button>
                 <Button
                   variant="default"
-                  className="my-4 w-1/2 justify-center"
+                  className="mx-4 my-4 w-1/3 justify-center"
                   type="submit"
                   disabled={isSubmitting}
                 >
@@ -526,10 +610,10 @@ export default function CreateEvent() {
                   Submit
                 </Button>
               </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+            </div>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
