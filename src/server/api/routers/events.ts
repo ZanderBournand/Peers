@@ -14,7 +14,7 @@ export const eventRouter = createTRPCRouter({
           locationDetails: z.string().optional().nullable(),
           date: z.date(),
           description: z.string(),
-          image: z.string().optional().nullable(),
+          image: z.string(),
           type: z.nativeEnum(EventType),
           duration: z.number().int(),
           tags: TagSchema.array().optional().nullable(),

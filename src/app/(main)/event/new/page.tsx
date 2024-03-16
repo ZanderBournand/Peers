@@ -23,7 +23,7 @@ import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch, Controller } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newEventSchema } from "@/lib/validators/Event";
 import { useRouter } from "next/navigation";
@@ -34,6 +34,8 @@ import {
   MicrophoneIcon,
   LinkIcon,
   MapPinIcon,
+  TrashIcon,
+  PencilIcon,
 } from "@heroicons/react/24/outline";
 import InputMask from "react-input-mask";
 import { createClient } from "@/utils/supabase/client";
@@ -53,7 +55,7 @@ export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [tags, setTags] = useState<TagData[]>([]);
 
   const { control } = useForm();
@@ -62,16 +64,8 @@ export default function CreateEvent() {
   const { data: user } = api.users.getCurrent.useQuery();
   const { data: allTags } = api.tags.getAll.useQuery();
 
-  // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
-  type NewEventInputWithFile = Omit<NewEventInput, "image"> & {
-    image: File | undefined;
-  };
-  const newEventSchemaWithFile = newEventSchema.omit({ image: true }).extend({
-    image: z.instanceof(File).optional(),
-  });
-
-  const form = useForm<NewEventInputWithFile>({
-    resolver: zodResolver(newEventSchemaWithFile),
+  const form = useForm<NewEventInput>({
+    resolver: zodResolver(newEventSchema),
     defaultValues: {
       title: undefined,
       location: undefined,
@@ -103,7 +97,7 @@ export default function CreateEvent() {
     },
   });
 
-  const onSubmit = async (data: NewEventInputWithFile) => {
+  const onSubmit = async (data: NewEventInput) => {
     setIsSubmitting(true);
     const newEventData: NewEventInput = {
       title: data.title,
@@ -114,16 +108,16 @@ export default function CreateEvent() {
       tags: data.tags,
       location: data.location,
       locationDetails: data.locationDetails,
-      image: imageUrl,
+      image: data.image,
     };
 
     // Image file was uploaded
-    if (data.image) {
+    if (imageFile) {
       const eventImageId: string = uuidv4();
 
       const { data: imageData } = await supabase.storage
         .from("images")
-        .upload("events/" + eventImageId, data.image);
+        .upload("events/" + eventImageId, imageFile);
 
       newEventData.image =
         env.NEXT_PUBLIC_SUPABASE_STORAGE_URL + imageData?.path;
@@ -141,21 +135,20 @@ export default function CreateEvent() {
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      form.setValue("image", file);
+      form.setValue("image", URL.createObjectURL(file));
 
-      const imageUrl = URL.createObjectURL(file);
-      setImageUrl(imageUrl);
+      setImageFile(file);
     }
   };
 
   const handleDefaultImageChange = (defaultImage: string) => {
-    form.setValue("image", undefined);
-    setImageUrl(defaultImage);
+    form.setValue("image", defaultImage);
+    setImageFile(null);
   };
 
   const handleImageRemoval = () => {
-    form.setValue("image", undefined);
-    setImageUrl(null);
+    form.resetField("image");
+    setImageFile(null);
   };
 
   const handleLocationChange = (location: string) => {
@@ -517,75 +510,93 @@ export default function CreateEvent() {
                 control={form.control}
                 name="image"
                 render={({ field }) => (
-                  <div className="my-4 flex w-full flex-col items-center">
-                    {imageUrl && (
-                      <div className="flex-start flex w-3/4 flex-row items-center">
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <div className="my-4 flex w-full flex-col items-center">
                         {field.value && (
-                          <div className="ml-1 mr-2 flex flex-row items-center">
-                            <LinkIcon className="h-5 w-5" color="#6b21a8" />
-                            <p className="ml-2 text-sm text-purple-800">
-                              {field.value.name}
-                            </p>
-                            <p className="ml-4 text-xl text-gray-200">|</p>
+                          <div className="flex-start flex w-3/4 flex-row items-center">
+                            {imageFile && (
+                              <div className="ml-1 mr-2 flex flex-row items-center">
+                                <LinkIcon className="h-5 w-5" color="#6b21a8" />
+                                <p className="ml-2 text-sm text-purple-800">
+                                  {imageFile?.name}
+                                </p>
+                                <p className="ml-4 text-xl text-gray-200">|</p>
+                              </div>
+                            )}
+                            <div className="flex flex-row items-center">
+                              <Button type="button" variant="ghost">
+                                <Label
+                                  htmlFor="image"
+                                  className="flex cursor-pointer flex-row items-center"
+                                >
+                                  <PencilIcon className="mr-2 h-5 w-5" />
+                                  <p>Edit</p>
+                                </Label>
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={handleImageRemoval}
+                                className=""
+                              >
+                                <TrashIcon className="mr-1 h-5 w-5" />
+                                <p>Remove</p>
+                              </Button>
+                            </div>
                           </div>
                         )}
-                        <div className="flex flex-row items-center">
-                          <Button type="button" variant="ghost">
-                            <Label htmlFor="image">Edit</Label>
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={handleImageRemoval}
+                        <Label
+                          htmlFor="image"
+                          className="flex w-full flex-col items-center"
+                        >
+                          <div
+                            className={`relative flex aspect-video w-3/4 cursor-pointer flex-col items-center justify-center rounded-2xl bg-gray-50/50 ${
+                              !field.value &&
+                              "border-2 border-dashed border-gray-200"
+                            }`}
                           >
-                            Remove
-                          </Button>
-                        </div>
+                            {!field.value ? (
+                              <>
+                                <PhotoIcon
+                                  className="h-10 w-10"
+                                  color="darkgray"
+                                />
+                                <span className="text-lg font-semibold">
+                                  Click to add an event image
+                                </span>
+                                <span className="text-xs">
+                                  JPEG or PNG, no larger than 10 MB
+                                </span>
+                              </>
+                            ) : (
+                              <Image
+                                src={field.value}
+                                alt="selected image"
+                                fill
+                                sizes="100%"
+                                style={{
+                                  objectFit: "cover",
+                                }}
+                                className="rounded-2xl"
+                              />
+                            )}
+                          </div>
+                        </Label>
+                        <Input
+                          id="image"
+                          type="file"
+                          accept=".jpeg,.jpg,.png"
+                          style={{ display: "none" }}
+                          onChange={handleImageFileChange}
+                        />
+                        <FormMessage className="mt-4 w-3/4" />
                       </div>
-                    )}
-                    <Label
-                      htmlFor="image"
-                      className="flex w-full flex-col items-center"
-                    >
-                      <div
-                        className={`relative flex aspect-video w-3/4 cursor-pointer flex-col items-center justify-center rounded-2xl bg-gray-50/50 ${
-                          !imageUrl && "border-2 border-dashed border-gray-200"
-                        }`}
-                      >
-                        {!imageUrl ? (
-                          <>
-                            <PhotoIcon className="h-10 w-10" color="darkgray" />
-                            <span className="text-lg font-semibold">
-                              Click to add an event image
-                            </span>
-                            <span className="text-xs">
-                              JPEG or PNG, no larger than 10 MB
-                            </span>
-                          </>
-                        ) : (
-                          <Image
-                            src={imageUrl}
-                            alt="selected image"
-                            fill
-                            style={{
-                              objectFit: "cover",
-                            }}
-                            className="rounded-2xl"
-                          />
-                        )}
-                      </div>
-                    </Label>
-                    <Input
-                      id="image"
-                      type="file"
-                      accept=".jpeg,.jpg,.png"
-                      style={{ display: "none" }}
-                      onChange={handleImageFileChange}
-                    />
-                  </div>
+                    </FormControl>
+                  </FormItem>
                 )}
               />
-              <div className="flex w-2/3 items-center justify-center self-center">
+              <div className="flex items-center self-center">
                 <DefaultImagesButton onImageChange={handleDefaultImageChange} />
               </div>
               <div className="mt-6 flex flex-row justify-center">
