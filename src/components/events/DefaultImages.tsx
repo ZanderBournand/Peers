@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   CheckIcon,
@@ -26,32 +26,27 @@ export default function DefaultImagesButton({
 
   const supabase = createClient();
 
-  const fetchDefaultImages = useCallback(async () => {
-    return await supabase.storage
-      .from("images")
-      .list("events/defaults")
-      .then(
-        (res) =>
-          res?.data?.map(
-            (image) =>
-              env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
-              "events/defaults/" +
-              image.name,
-          ),
-      );
-  }, [supabase.storage]);
-
   useEffect(() => {
-    fetchDefaultImages()
-      .then((images) => {
-        if (images) {
-          setImages(images);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [fetchDefaultImages]);
+    const fetchDefaultImages = async () => {
+      return await supabase.storage
+        .from("images")
+        .list("events/defaults")
+        .then((res) =>
+          setImages(
+            res?.data?.map(
+              (image) =>
+                env.NEXT_PUBLIC_SUPABASE_STORAGE_URL +
+                "events/defaults/" +
+                image.name,
+            ) ?? [],
+          ),
+        );
+    };
+
+    fetchDefaultImages().catch((error) => {
+      console.error(error);
+    });
+  }, [supabase]);
 
   const handleSubmit = () => {
     if (selectedImage) {
@@ -74,6 +69,7 @@ export default function DefaultImagesButton({
           src={image}
           alt="default image"
           fill
+          sizes="100%"
           style={{
             objectFit: "cover",
           }}
@@ -90,11 +86,11 @@ export default function DefaultImagesButton({
 
   return (
     <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button
           variant="outline"
           type="button"
-          className="flex w-full flex-row items-center"
+          className="flex w-auto flex-row items-center"
         >
           <MagnifyingGlassIcon className="mr-2 h-5 w-5" />
           Browse default images

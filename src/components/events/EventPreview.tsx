@@ -39,6 +39,7 @@ export default function EventPreview({ event }: { event: EventData }) {
                 src={event.image}
                 alt="selected image"
                 fill
+                sizes="100%"
                 style={{
                   objectFit: "cover",
                 }}
