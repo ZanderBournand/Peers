@@ -46,17 +46,13 @@ export default async function EventPage({
     hour12: true,
   });
 
-  const addressSections: addressSections | null = getAddressSections(
-    event?.location,
-  );
-
   const eventLink = headers().get("x-url");
 
   return (
     <div className="flex items-center justify-center pb-32">
       <div className="my-16 flex w-full max-w-screen-xl flex-row self-center">
         <div className="flex w-8/12 flex-col items-start px-20">
-          <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50">
+          <div className="relative flex aspect-video w-full items-center justify-center rounded-xl bg-gray-50">
             {event.image ? (
               <Image
                 src={event.image}
@@ -65,7 +61,7 @@ export default async function EventPage({
                 style={{
                   objectFit: "cover",
                 }}
-                className="rounded-lg transition-opacity duration-500 group-hover:opacity-70"
+                className="rounded-xl transition-opacity duration-500 group-hover:opacity-70"
               />
             ) : (
               <div className="flex items-center justify-center text-gray-500">
@@ -260,11 +256,9 @@ export default async function EventPage({
                       color="gray"
                     />
                     <div className="flex-start flex flex-col">
-                      <p>{addressSections?.place}</p>
+                      <p>{event?.location?.split(",")[0]}</p>
                       <p className="text-sm text-gray-500">
-                        {addressSections?.address &&
-                          addressSections?.address + " · "}
-                        {addressSections?.city}, {addressSections?.state}
+                        {event?.location?.split(",").slice(1).join(",")}
                       </p>
                     </div>
                   </div>
