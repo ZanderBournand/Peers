@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { api } from "@/trpc/server";
 import CreateEventButton from "@/components/events/CreateEventButton";
 import EventPreview from "@/components/events/EventPreview";
-import type { EventData } from "@/lib/interfaces/eventData";
 import moment from "moment";
 import { getDisplayName } from "@/lib/utils";
 
@@ -14,9 +13,9 @@ export default async function AuthButton() {
   } = await supabase.auth.getUser();
 
   const userData = user && (await api.users.getCurrent.query());
-  const events: EventData[] = await api.events.getAll.query();
+  const events = user && (await api.events.getAll.query());
 
-  const filteredEvent = events.sort((a, b) => {
+  const filteredEvent = events?.sort((a, b) => {
     const aEndDate = moment(a.date).add(a.duration, "minutes");
     const bEndDate = moment(b.date).add(b.duration, "minutes");
     const aIsCompleted = moment().isAfter(aEndDate);
