@@ -20,10 +20,3 @@ export interface EventData {
   orgHostId?: string | null;
   orgHost?: OrganizationData | null;
 }
-
-export interface addressSections {
-  place: string;
-  address: string | null;
-  city: string;
-  state: string;
-}
