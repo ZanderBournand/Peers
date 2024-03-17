@@ -7,9 +7,15 @@ import {
   VideoCameraIcon,
   MicrophoneIcon,
   InformationCircleIcon,
+  SignalIcon,
+  NoSymbolIcon,
 } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { getDisplayName, getFormattedDuration } from "@/lib/utils";
+import {
+  getDisplayName,
+  getFormattedDuration,
+  shouldDisplayJoinButton,
+} from "@/lib/utils";
 import ShareButton from "@/components/events/ShareButton";
 import { headers } from "next/headers";
 import AttendButton from "@/components/events/AttendButton";
@@ -18,6 +24,7 @@ import type { UserData } from "@/lib/interfaces/userData";
 import type { EventData } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import EventStatus from "@/components/events/EventStatus";
+import JoinCallButton from "@/components/events/JoinCallButton";
 
 export default async function EventPage({
   params,
@@ -38,6 +45,7 @@ export default async function EventPage({
   });
 
   const eventLink = headers().get("x-url");
+  const eventJoinStatus = shouldDisplayJoinButton(event.date, event.duration);
 
   return (
     <div className="flex items-center justify-center pb-32">
@@ -184,30 +192,50 @@ export default async function EventPage({
                   <p className="text-sm text-gray-500">Aprox. {duration}</p>
                 </div>
               </div>
-              {event.type === "ONLINE_VIDEO" && (
+              {(event.type === "ONLINE_VIDEO" ||
+                event.type === "ONLINE_AUDIO") && (
                 <div className="my-4 flex w-full flex-row items-center px-4">
-                  <VideoCameraIcon
-                    className="mr-4 h-6 w-6 flex-shrink-0"
-                    color="gray"
-                  />
-                  <p>
-                    The live video stream will become available here{" "}
-                    <span className="font-bold">10 minutes</span> before the
-                    event starts
-                  </p>
-                </div>
-              )}
-              {event.type === "ONLINE_AUDIO" && (
-                <div className="my-4 flex w-full flex-row items-center px-4">
-                  <MicrophoneIcon
-                    className="mr-4 h-6 w-6 flex-shrink-0"
-                    color="gray"
-                  />
-                  <p>
-                    The audio video stream will become available here{" "}
-                    <span className="font-bold">10 minutes</span> before the
-                    event starts
-                  </p>
+                  {eventJoinStatus === "live" ? (
+                    <>
+                      <SignalIcon
+                        className="mr-4 h-6 w-6 flex-shrink-0"
+                        color="gray"
+                      />
+                      <JoinCallButton
+                        type={event.type === "ONLINE_VIDEO" ? "video" : "audio"}
+                        url={"https://peers-knowledge.daily.co/demo"}
+                      />
+                    </>
+                  ) : eventJoinStatus === "upcoming" ? (
+                    <>
+                      {event.type === "ONLINE_VIDEO" ? (
+                        <VideoCameraIcon
+                          className="mr-4 h-6 w-6 flex-shrink-0"
+                          color="gray"
+                        />
+                      ) : (
+                        <MicrophoneIcon
+                          className="mr-4 h-6 w-6 flex-shrink-0"
+                          color="gray"
+                        />
+                      )}
+                      <p>
+                        The live{" "}
+                        {event.type === "ONLINE_VIDEO" ? "video" : "audio"}{" "}
+                        stream will become available here{" "}
+                        <span className="font-bold">10 minutes</span> before the
+                        event starts
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <NoSymbolIcon
+                        className="mr-4 h-6 w-6 flex-shrink-0"
+                        color="gray"
+                      />
+                      <p>This event has ended</p>
+                    </>
+                  )}
                 </div>
               )}
               {event.type === "IN_PERSON" && (
