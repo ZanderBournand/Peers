@@ -5,6 +5,7 @@ import CreateEventButton from "@/components/events/CreateEventButton";
 import EventPreview from "@/components/events/EventPreview";
 import moment from "moment";
 import { getDisplayName } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 export default async function AuthButton() {
   const supabase = createClient(cookies());
@@ -15,28 +16,47 @@ export default async function AuthButton() {
   const userData = user && (await api.users.getCurrent.query());
   const events = user && (await api.events.getAll.query());
 
-  const filteredEvent = events?.sort((a, b) => {
-    const aEndDate = moment(a.date).add(a.duration, "minutes");
-    const bEndDate = moment(b.date).add(b.duration, "minutes");
-    const aIsCompleted = moment().isAfter(aEndDate);
-    const bIsCompleted = moment().isAfter(bEndDate);
+  const upcomingEvents = events
+    .filter((event) => {
+      const endDate = moment(event.date).add(event.duration, "minutes");
+      return moment().isBefore(endDate);
+    })
+    .sort((a, b) => moment(a.date).diff(moment(b.date)));
 
-    if (aIsCompleted !== bIsCompleted) {
-      return aIsCompleted ? 1 : -1;
-    }
-
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
+  const completedEvents = events
+    .filter((event) => {
+      const endDate = moment(event.date).add(event.duration, "minutes");
+      return moment().isAfter(endDate);
+    })
+    .sort((a, b) => moment(b.date).diff(moment(a.date)));
 
   return user && userData ? (
     <div className="flex items-center justify-center pb-32">
-      <div className="mt-16 flex max-w-screen-2xl flex-col items-center justify-center">
-        <span>Hey, {getDisplayName(userData, false)}!</span>
-        <CreateEventButton userData={userData} />
-        <div className="grid w-full grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredEvent?.map((event) => (
-            <EventPreview key={event.id} event={event} />
-          ))}
+      <div className="mt-16 flex max-w-screen-2xl flex-col">
+        <div className="flex flex-col items-center">
+          <span className="text-lg">
+            Hey, {getDisplayName(userData, false)}!
+          </span>
+          <CreateEventButton userData={userData} />
+        </div>
+        <div className="flex flex-col">
+          <p className="mb-6 ml-4 text-2xl font-bold">Upcoming Events</p>
+          <div className="grid w-full grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {upcomingEvents?.map((event) => (
+              <EventPreview key={event.id} event={event} />
+            ))}
+          </div>
+        </div>
+        <Separator className="my-8 mb-16 w-3/4 self-center" />
+        <div className="flex flex-col">
+          <div className="mb-6 ml-4 flex flex-row items-center text-2xl font-bold">
+            Past Events
+          </div>
+          <div className="grid w-full grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {completedEvents?.map((event) => (
+              <EventPreview key={event.id} event={event} />
+            ))}
+          </div>
         </div>
       </div>
     </div>

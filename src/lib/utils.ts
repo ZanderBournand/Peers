@@ -46,29 +46,3 @@ export function getFormattedDuration(inputDurations: number) {
 
   return formattedDuration;
 }
-
-export function getAddressSections(fullAddress: string | null | undefined) {
-  if (fullAddress) {
-    const parts = fullAddress.split(",");
-    let address = null,
-      city = null,
-      state = null;
-
-    if (parts.length === 5) {
-      address = parts[1]?.trim();
-      city = parts[2]?.trim();
-      state = parts[3]?.trim();
-    } else if (parts.length === 4) {
-      city = parts[1]?.trim();
-      state = parts[2]?.trim();
-    }
-
-    return {
-      place: parts[0] ?? "",
-      address: address ?? null,
-      city: city ?? "",
-      state: state ?? "",
-    };
-  }
-  return null;
-}
