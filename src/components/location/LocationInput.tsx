@@ -59,7 +59,7 @@ const LocationInputChild = ({
 
   return (
     <div className="relative flex w-full">
-      <Command>
+      <Command className="border border-b-0">
         <CommandInput
           disabled={!ready}
           onValueChange={(value) => {

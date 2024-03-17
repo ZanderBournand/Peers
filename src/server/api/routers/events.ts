@@ -14,7 +14,7 @@ export const eventRouter = createTRPCRouter({
           locationDetails: z.string().optional().nullable(),
           date: z.date(),
           description: z.string(),
-          image: z.string().optional().nullable(),
+          image: z.string(),
           type: z.nativeEnum(EventType),
           duration: z.number().int(),
           tags: TagSchema.array().optional().nullable(),
@@ -36,6 +36,16 @@ export const eventRouter = createTRPCRouter({
         ),
     )
     .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.user.id },
+      });
+
+      if (!user?.isVerifiedStudent) {
+        throw new Error(
+          "User is not a verified student. Only verified users can create events.",
+        );
+      }
+
       const event = await ctx.db.event.create({
         data: {
           title: input.title,
