@@ -32,7 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newOrgSchema } from "@/lib/validators/newOrganization";
+import { newOrgSchema } from "@/lib/validators/Organization";
 import { useRouter } from "next/navigation";
 import { DateTimePicker } from "@/components/ui/datetimepicker";
 import { PhotoIcon } from "@heroicons/react/24/outline";
