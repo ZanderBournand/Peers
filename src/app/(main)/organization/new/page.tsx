@@ -67,7 +67,6 @@ export default function CreateOrganization() {
     defaultValues: {
       name: undefined,
       email: undefined,
-      president: undefined,
       description: undefined,
       image: undefined,
     },
@@ -96,7 +95,6 @@ export default function CreateOrganization() {
     const newOrgData: NewOrgInput = {
       name: data.name,
       email: data.email,
-      president: data.president,
       description: data.description,
     };
 
@@ -163,24 +161,10 @@ export default function CreateOrganization() {
                     </FormItem>
                   )}
                 />
-
               </div>
 
               <div className="flex flex-row gap-4">
-              <FormField
-                  control={form.control}
-                  name="OrgPresident"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel className="">Organization President</FormLabel>
-                      <FormControl>
-                        <Input placeholder="First and Last Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              <FormField
+                <FormField
                   control={form.control}
                   name="type"
                   render={({ field }) => (
@@ -197,13 +181,19 @@ export default function CreateOrganization() {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="BUSINESS">Business</SelectItem>
-                          <SelectItem value="ENGINEERING">Engineering</SelectItem>
+                          <SelectItem value="ENGINEERING">
+                            Engineering
+                          </SelectItem>
                           <SelectItem value="JOURNALISM">Journalism</SelectItem>
-                          <SelectItem value="AGRICULTURE">Agriculture</SelectItem>
+                          <SelectItem value="AGRICULTURE">
+                            Agriculture
+                          </SelectItem>
                           <SelectItem value="ART">Art</SelectItem>
                           <SelectItem value="DENTRISTRY">Dentistry</SelectItem>
                           <SelectItem value="DESIGN">Design</SelectItem>
-                          <SelectItem value="CONSTRUCTION">Construction</SelectItem>
+                          <SelectItem value="CONSTRUCTION">
+                            Construction
+                          </SelectItem>
                           <SelectItem value="EDUCATION">Education</SelectItem>
                           <SelectItem value="LAW">Law</SelectItem>
                           <SelectItem value="SCIENCE">Science</SelectItem>
@@ -211,9 +201,13 @@ export default function CreateOrganization() {
                           <SelectItem value="NURSING">Nursing</SelectItem>
                           <SelectItem value="PHARMACY">Pharmacy</SelectItem>
                           <SelectItem value="VETERINARY">Veterinary</SelectItem>
-                          <SelectItem value="PUBLIC HEALTH">Public Health</SelectItem>
+                          <SelectItem value="PUBLIC HEALTH">
+                            Public Health
+                          </SelectItem>
                           <SelectItem value="FARMING">Farming</SelectItem>
-                          <SelectItem value="VOLUNEERING">Volunteering</SelectItem>
+                          <SelectItem value="VOLUNEERING">
+                            Volunteering
+                          </SelectItem>
                           <SelectItem value="SPORTS">Sports</SelectItem>
                           <SelectItem value="E_SPORTS">E-Sports</SelectItem>
                           <SelectItem value="OTHER">Other</SelectItem>
@@ -223,10 +217,8 @@ export default function CreateOrganization() {
                     </FormItem>
                   )}
                 />
-
               </div>
 
-              
               <FormField
                 control={form.control}
                 name="description"
@@ -287,17 +279,7 @@ export default function CreateOrganization() {
                 )}
               />
 
-
               <div className="flex justify-center">
-                
-              <Link href="/user">
-                <Button 
-                  variant="destructive"
-                  className="my-4 w-4/5 justify-center"
-                  type="button"
-                  >
-                    Cancel</Button>
-              </Link>
                 <Button
                   variant="default"
                   className="my-4 w-1/2 justify-center"
