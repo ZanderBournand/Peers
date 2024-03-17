@@ -103,7 +103,7 @@ export default function CreateOrganization() {
 
       const { data: imageData } = await supabase.storage
         .from("images")
-        .upload("events/" + orgImageId, data.image);
+        .upload("organizations/" + orgImageId, data.image);
 
       const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
       newOrgData.image = baseStorageUrl + imageData?.path;
@@ -250,7 +250,7 @@ export default function CreateOrganization() {
                           <>
                             <PhotoIcon className="h-10 w-10" color="darkgray" />
                             <span className="text-lg font-semibold">
-                              Click to add an event image
+                              Click to add your organization's profile image
                             </span>
                             <span className="text-xs">
                               JPEG or PNG, no larger than 10 MB
