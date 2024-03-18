@@ -134,10 +134,12 @@ export default async function EventPage({
         </div>
         <div className="sticky top-0 flex w-4/12 flex-col px-4">
           <div className="sticky top-10 flex flex-col">
-            <div className="flex flex-row justify-center">
-              <ShareButton textToCopy={eventLink} />
-              <AttendButton user={user} event={event} />
-            </div>
+            {eventJoinStatus !== "ended" && (
+              <div className="flex flex-row justify-center">
+                <ShareButton textToCopy={eventLink} />
+                <AttendButton user={user} event={event} />
+              </div>
+            )}
             <Link
               href={
                 event.userHost
