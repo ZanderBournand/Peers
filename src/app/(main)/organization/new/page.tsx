@@ -18,7 +18,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -29,30 +28,23 @@ import {
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm, useWatch, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newOrgSchema } from "@/lib/validators/Organization";
 import { useRouter } from "next/navigation";
-import { DateTimePicker } from "@/components/ui/datetimepicker";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import InputMask from "react-input-mask";
 import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
 import { v4 as uuidv4 } from "uuid";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
 import { env } from "@/env";
 
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
 export default function CreateOrganization() {
-  const [isOrgization, setIsOrgization] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { control } = useForm();
   const supabase = createClient();
-
-  const { data: user } = api.users.getCurrent.useQuery();
 
   // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
@@ -67,15 +59,10 @@ export default function CreateOrganization() {
     defaultValues: {
       name: undefined,
       email: undefined,
+      type: undefined,
       description: undefined,
       image: undefined,
     },
-  });
-
-  const typeValue = useWatch({
-    control: form.control,
-    name: "type",
-    defaultValue: undefined,
   });
 
   const router = useRouter();
@@ -95,6 +82,7 @@ export default function CreateOrganization() {
     const newOrgData: NewOrgInput = {
       name: data.name,
       email: data.email,
+      type: data.type,
       description: data.description,
     };
 
@@ -137,7 +125,7 @@ export default function CreateOrganization() {
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
-                  name="OrgName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Organization Name</FormLabel>
@@ -150,7 +138,7 @@ export default function CreateOrganization() {
                 />
                 <FormField
                   control={form.control}
-                  name="OrgEmail"
+                  name="email"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Email</FormLabel>
@@ -250,7 +238,8 @@ export default function CreateOrganization() {
                           <>
                             <PhotoIcon className="h-10 w-10" color="darkgray" />
                             <span className="text-lg font-semibold">
-                              Click to add your organization's profile image
+                              Click to add your organization&apos;s profile
+                              image
                             </span>
                             <span className="text-xs">
                               JPEG or PNG, no larger than 10 MB

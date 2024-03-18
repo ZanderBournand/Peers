@@ -7,9 +7,10 @@ import Link from "next/link";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
-import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
+import UserPageOrgCarousel from "@/components/organizations/UserPageOrgCarousel";
 import { FaCirclePlus } from "react-icons/fa6";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
 
 const cardStyle = {
   width: "580px",
@@ -24,6 +25,8 @@ export default async function UserPage() {
 
   const eventsAttending = await api.users.getEventsAttending.query({});
   const eventsHosting = await api.users.getEventsHosting.query({});
+  const organizationsAdmin =
+    await api.organizations.getAdminOrganizations.query({ userId: user.id });
 
   const userImage = user?.image ?? "";
 
@@ -205,9 +208,16 @@ export default async function UserPage() {
                   </Link>
                 </div>
               </CardHeader>
-              <CardContent className="text-center">
-                This user is not part of any organizations.
-              </CardContent>
+              {organizationsAdmin.length == 0 ? (
+                <CardContent className="text-center">
+                  This user is not part of any organizations.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="-ml-4 font-bold">Their orgs:</div>
+                  <UserPageOrgCarousel organizations={organizationsAdmin} />
+                </CardContent>
+              )}
             </Card>
           </div>
 

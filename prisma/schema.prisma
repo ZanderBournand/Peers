@@ -24,7 +24,7 @@ model User {
   website  String?
 
   isVerifiedStudent Boolean
-  university String?
+  university        String?
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
@@ -34,8 +34,13 @@ model User {
 }
 
 model Organization {
-  id   String @id
-  name String
+  id          String  @id
+  name        String
+  description String
+  type        String
+
+  image String?
+  email String?
 
   admins  User[] @relation("Admins")
   members User[] @relation("Members")

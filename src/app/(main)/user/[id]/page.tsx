@@ -6,6 +6,7 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
+import UserPageOrgCarousel from "@/components/organizations/UserPageOrgCarousel";
 
 const cardStyle = {
   width: "580px",
@@ -24,6 +25,8 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
   const eventsHosting = await api.users.getEventsHosting.query({
     id: params.id,
   });
+  const organizationsAdmin =
+    await api.organizations.getAdminOrganizations.query({ userId: user.id });
 
   const userImage = user?.image ?? "";
 
@@ -187,9 +190,16 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   </span>
                 </div>
               </CardHeader>
-              <CardContent className="text-center">
-                This user is not part of any organizations.
-              </CardContent>
+              {organizationsAdmin.length == 0 ? (
+                <CardContent className="text-center">
+                  This user is not part of any organizations.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="-ml-4 font-bold">Their orgs:</div>
+                  <UserPageOrgCarousel organizations={organizationsAdmin} />
+                </CardContent>
+              )}
             </Card>
           </div>
 
