@@ -32,7 +32,7 @@ model User {
 }
 
 model Organization {
-  id   String @id
+  id   String @id @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
   name String
 
   email       String?
@@ -61,7 +61,7 @@ model Event {
 
   userHostId String?
   userHost   User?         @relation("UserHost", fields: [userHostId], references: [id])
-  orgHostId  String?
+  orgHostId  Organization? @relation("OrgHost", fields: [orgHostId], references: [id])
   orgHost    Organization? @relation("OrgHost", fields: [orgHostId], references: [id])
 
   attendees User[] @relation("Attendees")
@@ -84,4 +84,28 @@ enum EventType {
   ONLINE_VIDEO
   ONLINE_AUDIO
   IN_PERSON
+}
+
+enum OrganizationType {
+  BUSINESS
+  ENGINEERING
+  JOURNALISM
+  AGRICULTURE
+  ART
+  DENTRISTRY
+  DESIGN
+  CONSTRUCTION
+  EDUCATION
+  LAW
+  SCIENCE
+  MEDICINE
+  NURSING
+  PHARMACY
+  VETERINARY
+  PUBLIC_HEALTH
+  FARMING
+  VOLUNEERING
+  SPORTS
+  E_SPORTS
+  OTHER
 }
