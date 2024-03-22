@@ -237,11 +237,11 @@ export default function CreateOrganization() {
                       htmlFor="image"
                       className="my-4 flex w-full flex-col items-center"
                     >
-                      <div className="relative flex h-60 w-3/4 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                      <div className="relative flex h-60 w-60 flex-col items-center justify-center rounded-2xl bg-gray-50">
                         {!field?.value ? (
                           <>
                             <PhotoIcon className="h-10 w-10" color="darkgray" />
-                            <span className="text-lg font-semibold">
+                            <span className="text-center font-semibold">
                               Click to add your organization's profile image
                             </span>
                             <span className="text-xs">
