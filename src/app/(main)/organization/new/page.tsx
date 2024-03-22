@@ -29,19 +29,16 @@ import {
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm, useWatch, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newOrgSchema } from "@/lib/validators/Organization";
 import { useRouter } from "next/navigation";
-import { DateTimePicker } from "@/components/ui/datetimepicker";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import InputMask from "react-input-mask";
 import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
 import { v4 as uuidv4 } from "uuid";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
 import { env } from "@/env";
 
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
@@ -72,12 +69,6 @@ export default function CreateOrganization() {
     },
   });
 
-  const typeValue = useWatch({
-    control: form.control,
-    name: "type",
-    defaultValue: undefined,
-  });
-
   const router = useRouter();
 
   const { mutate } = api.organizations.create.useMutation({
@@ -96,6 +87,7 @@ export default function CreateOrganization() {
       name: data.name,
       email: data.email,
       description: data.description,
+      type: data.type,
     };
 
     if (data.image) {
