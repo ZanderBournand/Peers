@@ -3,7 +3,7 @@ import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 
 import { OrganizationType } from "@prisma/client";
 
-export const orgRouter = createTRPCRouter({
+export const organizationRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z
