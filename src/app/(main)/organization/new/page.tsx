@@ -193,7 +193,7 @@ export default function CreateOrganization() {
                           <SelectItem value="NURSING">Nursing</SelectItem>
                           <SelectItem value="PHARMACY">Pharmacy</SelectItem>
                           <SelectItem value="VETERINARY">Veterinary</SelectItem>
-                          <SelectItem value="PUBLIC HEALTH">
+                          <SelectItem value="PUBLIC_HEALTH">
                             Public Health
                           </SelectItem>
                           <SelectItem value="FARMING">Farming</SelectItem>
