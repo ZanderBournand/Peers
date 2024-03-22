@@ -33,6 +33,11 @@ model Organization {
   id   String @id
   name String
 
+  email       String?
+  description String
+  type        OrganizationType
+  image       String?
+
   admins  User[] @relation("Admins")
   members User[] @relation("Members")
 
