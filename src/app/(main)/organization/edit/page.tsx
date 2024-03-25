@@ -1,6 +1,9 @@
+//has field
+//unsure how to get specific org i want
+//pretty sure everything else is good
+
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,6 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -17,8 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -27,37 +29,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { PhotoIcon } from "@heroicons/react/24/outline";
+import { MdEdit } from "react-icons/md";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newOrgSchema } from "@/lib/validators/Organization";
-import { useRouter } from "next/navigation";
-import { PhotoIcon } from "@heroicons/react/24/outline";
-import { createClient } from "@/utils/supabase/client";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
+import { capitalizeFirstLetter } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 import { v4 as uuidv4 } from "uuid";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { env } from "@/env";
 
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
-export default function CreateOrganization() {
-  const [isOrgization, setIsOrgization] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { control } = useForm();
-  const supabase = createClient();
+export default function NewOrgForm() {
+  const [isLoading, setIsLoading] = useState(true);
+  const { data: user, isLoading: isOrgLoading } =
+    //this is WHERE YOU GET WHICH ORG UR TALKING ABOUT
+    api.users.getCurrent.useQuery({});
 
-  const { data: user } = api.users.getCurrent.useQuery();
-
-  // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
     image: File | undefined;
   };
+
   const newOrgSchemaWithFile = newOrgSchema.omit({ image: true }).extend({
     image: z.instanceof(File).optional(),
   });
+
+  const supabase = createClient();
 
   const form = useForm<NewOrgInputWithFile>({
     resolver: zodResolver(newOrgSchemaWithFile),
@@ -70,41 +74,29 @@ export default function CreateOrganization() {
     },
   });
 
-  const router = useRouter();
+  useEffect(() => {
+    if (!isOrgLoading && user) {
+      form.reset({
+        firstName: user.firstName ?? "",
+        lastName: user.lastName ?? "",
+        skills: user.skills?.map((skill) => ({ name: skill })) ?? [
+          { name: "" },
+        ],
+        bio: user.bio ?? "",
+        github: user.github ?? "",
+        linkedin: user.linkedin ?? "",
+        website: user.website ?? "",
+      });
+      setTimeout(() => setIsLoading(false), 500);
+    }
+  }, [user, isOrgLoading, form]);
 
-  const { mutate } = api.organizations.create.useMutation({
-    onSuccess: () => {
-      router.push("/");
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.error("Error creating organization:", errorMessage);
-    },
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "skills",
   });
 
-  const onSubmit = async (data: NewOrgInputWithFile) => {
-    setIsSubmitting(true);
-    const newOrgData: NewOrgInput = {
-      name: data.name,
-      email: data.email,
-      description: data.description,
-      type: data.type,
-      //image?
-    };
-
-    if (data.image) {
-      const orgImageId: string = uuidv4();
-
-      const { data: imageData } = await supabase.storage
-        .from("images")
-        .upload("organizations/" + orgImageId, data.image);
-
-      const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
-      newOrgData.image = baseStorageUrl + imageData?.path;
-    }
-
-    mutate(newOrgData);
-  };
+  const watchSkills = form.watch("skills");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -113,13 +105,57 @@ export default function CreateOrganization() {
     }
   };
 
+  const { mutate } = api.users.update.useMutation({
+    onSuccess: () => {
+      window.location.href = "/user";
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      console.error("Error creating investment:", errorMessage);
+    },
+  });
+
+  const onSubmit = async (data: NewOrgInputWithFile) => {
+    let orgImage = null;
+    if (data.image) {
+      const orgImageId: string = uuidv4();
+
+      const { data: imageData } = await supabase.storage
+        .from("organizations")
+        .upload("organizations/" + orgImageId, data.image);
+
+      const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
+      orgImage = baseStorageUrl + imageData?.path;
+    }
+
+    mutate({
+      image: orgImage,
+      name: data.name,
+      email: data.email,
+      description: data.description,
+      type: data.type,
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex w-screen justify-center p-8">
+        <Card className="w-full max-w-2xl border border-border">
+          <CardHeader>
+            <CardTitle>Loading Organization Profile...</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-screen justify-center p-8">
       <Card className="w-full max-w-2xl border border-border">
         <CardHeader>
-          <CardTitle>Create Organization</CardTitle>
+          <CardTitle>Edit Organization Profile</CardTitle>
           <CardDescription>
-            Create an organzation to list your events and gain exposure!
+            Please edit your organization's information below
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -128,10 +164,64 @@ export default function CreateOrganization() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex w-full flex-1 flex-col justify-center gap-6 text-muted-foreground"
             >
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <>
+                    <Label
+                      htmlFor="image"
+                      className="flex w-full flex-col items-center"
+                    >
+                      <div className="relative flex h-40 w-40 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                        <span className="text-center font-semibold">
+                          Change profile picture
+                        </span>
+
+                        {!field?.value ? (
+                          !user?.image ? (
+                            <PhotoIcon className="h-12 w-12" />
+                          ) : (
+                            <Image
+                              src={user?.image || ""}
+                              alt="selected image"
+                              fill
+                              style={{
+                                objectFit: "cover",
+                              }}
+                              className="rounded-full"
+                            />
+                          )
+                        ) : (
+                          <Image
+                            src={URL.createObjectURL(field.value)}
+                            alt="selected image"
+                            fill
+                            style={{
+                              objectFit: "cover",
+                            }}
+                            className="rounded-full"
+                          />
+                        )}
+                      </div>
+                      <div className="relative z-10 -mt-7 ml-12 h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-blue-300">
+                        <MdEdit className="color-black ml-1 mt-1 h-5 w-5" />
+                      </div>{" "}
+                    </Label>
+                    <Input
+                      id="image"
+                      type="file"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
+                    />
+                  </>
+                )}
+              />
+
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
-                  name="OrgName"
+                  name="firstName"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Organization Name</FormLabel>
@@ -144,10 +234,10 @@ export default function CreateOrganization() {
                 />
                 <FormField
                   control={form.control}
-                  name="OrgEmail"
+                  name="lastName"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel className="">Email</FormLabel>
+                      <FormLabel className="">Organization Email</FormLabel>
                       <FormControl>
                         <Input placeholder="Email" {...field} />
                       </FormControl>
@@ -156,7 +246,6 @@ export default function CreateOrganization() {
                   )}
                 />
               </div>
-
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
@@ -215,7 +304,7 @@ export default function CreateOrganization() {
 
               <FormField
                 control={form.control}
-                name="description"
+                name="bio"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
@@ -230,62 +319,10 @@ export default function CreateOrganization() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <>
-                    <Label
-                      htmlFor="image"
-                      className="my-4 flex w-full flex-col items-center"
-                    >
-                      <div className="relative flex h-60 w-60 flex-col items-center justify-center rounded-2xl bg-gray-50">
-                        {!field?.value ? (
-                          <>
-                            <PhotoIcon className="h-10 w-10" color="darkgray" />
-                            <span className="text-center font-semibold">
-                              Click to add your organization's profile image
-                            </span>
-                            <span className="text-xs">
-                              JPEG or PNG, no larger than 10 MB
-                            </span>
-                          </>
-                        ) : (
-                          <Image
-                            src={URL.createObjectURL(field.value)}
-                            alt="selected image"
-                            fill
-                            style={{
-                              objectFit: "cover",
-                            }}
-                            className="rounded-2xl"
-                          />
-                        )}
-                      </div>
-                    </Label>
-                    <Input
-                      id="image"
-                      type="file"
-                      style={{ display: "none" }}
-                      onChange={handleImageChange}
-                    />
-                  </>
-                )}
-              />
 
-              <div className="flex justify-center">
-                <Button
-                  variant="default"
-                  className="my-4 w-1/2 justify-center"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting && (
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Submit
-                </Button>
-              </div>
+              <Button variant="default" className="my-4 w-full" type="submit">
+                Submit
+              </Button>
             </form>
           </Form>
         </CardContent>
