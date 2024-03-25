@@ -66,6 +66,7 @@ export default function CreateOrganization() {
       email: undefined,
       description: undefined,
       image: undefined,
+      type: undefined,
     },
   });
 
@@ -88,6 +89,7 @@ export default function CreateOrganization() {
       email: data.email,
       description: data.description,
       type: data.type,
+      //image?
     };
 
     if (data.image) {
