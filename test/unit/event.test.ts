@@ -50,6 +50,7 @@ test("Event Creation - Error Not Verified", async () => {
     title: "Test event",
     date: new Date(),
     description: "Test description",
+    image: "https://picsum.photos/200",
     type: "ONLINE_VIDEO",
     duration: 60,
     userHostId: testUser?.id,
@@ -66,6 +67,7 @@ test("Event Creation - Successful", async () => {
     title: "Test event",
     date: new Date(),
     description: "Test description",
+    image: "https://picsum.photos/200",
     type: "ONLINE_VIDEO",
     duration: 60,
     userHostId: testUser?.id,
@@ -75,4 +77,7 @@ test("Event Creation - Successful", async () => {
   const byId = await caller.events.get({ id: event.id });
 
   expect(byId).toMatchObject(input);
+
+  // Delete the event after creation
+  await caller.events.delete({ id: event.id });
 });
