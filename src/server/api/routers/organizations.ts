@@ -2,16 +2,22 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { v4 as uuidv4 } from "uuid";
 
+import { OrganizationType } from "@prisma/client";
+
 export const organizationRouter = createTRPCRouter({
   create: privateProcedure
     .input(
-      z.object({
-        name: z.string().min(1),
-        email: z.string().min(1).optional(),
-        type: z.string().min(1),
-        description: z.string().min(50),
-        image: z.string().url().optional(),
-      }),
+      z
+        .object({
+          name: z.string().min(1),
+          email: z.string().min(1).optional(),
+          type: z.nativeEnum(OrganizationType),
+          description: z.string().min(50),
+          image: z.string().url().optional(),
+          instagram: z.string().min(1).optional(),
+          discord: z.string().min(1).optional(),
+          facebook: z.string().min(1).optional(),
+        })
     )
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({
@@ -26,12 +32,14 @@ export const organizationRouter = createTRPCRouter({
 
       const event = await ctx.db.organization.create({
         data: {
-          id: uuidv4(),
-          name: input.name,
-          email: input.email,
-          type: input.type,
-          description: input.description,
-          image: input.image,
+          name: z.string().min(1),
+          email: z.string().min(1).optional(),
+          type: z.nativeEnum(OrganizationType),
+          description: z.string().min(50),
+          image: z.string().url().optional(),
+          instagram: z.string().min(1).optional(),
+          discord: z.string().min(1).optional(),
+          facebook: z.string().min(1).optional(),
           admins: {
             connect: {
               id: ctx.user.id,
