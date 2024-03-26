@@ -214,7 +214,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                 </div>
               </CardHeader>
               {eventsAttending.length == 0 ? (
-                <CardContent className="text-center">
+                <CardContent className="mb-1 text-center">
                   This user is not registered for any events.
                 </CardContent>
               ) : (

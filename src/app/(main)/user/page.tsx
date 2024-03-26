@@ -239,7 +239,7 @@ export default async function UserPage() {
                 </div>
               </CardHeader>
               {eventsAttending.length == 0 ? (
-                <CardContent className="text-center">
+                <CardContent className="mb-2 text-center">
                   This user is not registered for any events.
                 </CardContent>
               ) : (
