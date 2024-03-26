@@ -1,14 +1,10 @@
 import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import VerifyStudentButton from "@/components/user/verifyStudentButton";
-import Link from "next/link";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
-import { FaCirclePlus } from "react-icons/fa6";
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
 import { Separator } from "@/components/ui/separator";
 
@@ -20,11 +16,15 @@ const cardStyle = {
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
 };
 
-export default async function UserPage() {
-  const user = await api.users.getCurrent.query({});
+export default async function PeerPage({ params }: { params: { id: string } }) {
+  const user = await api.users.getCurrent.query({ id: params.id });
 
-  const eventsAttending = await api.users.getEventsAttending.query({});
-  const eventsHosting = await api.users.getEventsHosting.query({});
+  const eventsAttending = await api.users.getEventsAttending.query({
+    id: params.id,
+  });
+  const eventsHosting = await api.users.getEventsHosting.query({
+    id: params.id,
+  });
 
   const userImage = user?.image ?? "";
 
@@ -176,17 +176,6 @@ export default async function UserPage() {
               </div>
             </div>
           </div>
-          <div className="mt-3 flex w-80 justify-center py-2">
-            <Link href="/user/edit">
-              <Button variant="default">Edit Profile</Button>
-            </Link>
-          </div>
-
-          {!user.isVerifiedStudent && (
-            <div className="mt-2 flex w-80 justify-center py-2">
-              <VerifyStudentButton />
-            </div>
-          )}
         </div>
 
         <div className="ml-20 mt-4 flex-col">
@@ -197,13 +186,6 @@ export default async function UserPage() {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
-                  <Link
-                    className="color-grey ml-2 mt-1"
-                    href="/organization/new"
-                    title="Create Organization"
-                  >
-                    <FaCirclePlus />
-                  </Link>
                 </div>
               </CardHeader>
               <CardContent className="text-center">
@@ -219,17 +201,10 @@ export default async function UserPage() {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
-                  <Link
-                    className="color-grey ml-2 mt-1"
-                    href="/event/new"
-                    title="Create Event"
-                  >
-                    <FaCirclePlus />
-                  </Link>
                 </div>
               </CardHeader>
               {eventsAttending.length == 0 ? (
-                <CardContent className="mb-2 text-center">
+                <CardContent className="mb-1 text-center">
                   This user is not registered for any events.
                 </CardContent>
               ) : (

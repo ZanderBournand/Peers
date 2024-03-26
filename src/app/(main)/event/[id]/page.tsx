@@ -32,8 +32,8 @@ export default async function EventPage({
 }: {
   params: { id: string };
 }) {
-  const event: EventType = await api.events.get.query({ id: params.id });
-  const user: UserType = await api.users.getCurrent.query();
+  const event: EventData = await api.events.get.query({ id: params.id });
+  const user: UserData = await api.users.getCurrent.query({});
 
   const countdownDate = countdownDays(event.date);
   const duration = formattedDuration(event.duration);
