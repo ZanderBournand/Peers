@@ -55,7 +55,7 @@ export const userRouter = createTRPCRouter({
   getCurrent: privateProcedure
     .input(z.object({ id: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      const userId = input?.id || ctx.user.id;
+      const userId = input?.id ?? ctx.user.id;
 
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
@@ -86,7 +86,7 @@ export const userRouter = createTRPCRouter({
   getEventsAttending: privateProcedure
     .input(z.object({ id: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      const userId = input?.id || ctx.user.id;
+      const userId = input?.id ?? ctx.user.id;
 
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
@@ -104,7 +104,7 @@ export const userRouter = createTRPCRouter({
   getEventsHosting: privateProcedure
     .input(z.object({ id: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      const userId = input?.id || ctx.user.id;
+      const userId = input?.id ?? ctx.user.id;
 
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
