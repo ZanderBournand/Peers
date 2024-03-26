@@ -12,7 +12,7 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const userData = user && (await api.users.getCurrent.query());
+  const userData = user && (await api.users.getCurrent.query({}));
   const events = user && (await api.events.getAll.query());
 
   const filteredEvent = events?.sort((a, b) => {
