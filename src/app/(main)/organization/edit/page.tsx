@@ -91,13 +91,6 @@ export default function NewOrgForm() {
     }
   }, [org, isOrgLoading, form]);
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "skills",
-  });
-
-  const watchSkills = form.watch("skills");
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -134,6 +127,9 @@ export default function NewOrgForm() {
       email: data.email,
       description: data.description,
       type: data.type,
+      instagram: data.instagram,
+      facebook: data.facebook,
+      discord: data.discord,
     });
   };
 
