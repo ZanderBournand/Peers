@@ -319,7 +319,48 @@ export default function NewOrgForm() {
                   </FormItem>
                 )}
               />
+              <div className="flex flex-row gap-4">
+                <FormField
+                  control={form.control}
+                  name="OrgName"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">Instagram</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Instagram" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="OrgEmail"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">Facebook</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Facebook" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
+                <FormField
+                  control={form.control}
+                  name="OrgEmail"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">Discord</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Discord" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <Button variant="default" className="my-4 w-full" type="submit">
                 Submit
               </Button>
