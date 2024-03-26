@@ -34,7 +34,7 @@ export default function UserPageEventCarousel({ events }: EventCarouselProps) {
     <Carousel className="my-2 ml-6 w-11/12 items-center justify-center">
       <CarouselContent className="mx-2">
         {events.map((event) => (
-          <CarouselItem className="mx-1 basis-2/5 pl-4">
+          <CarouselItem key={event.id} className="mx-1 basis-2/5 pl-4">
             <Link href={`/event/${event.id}`}>
               <div className="items-center justify-center">
                 <div className="flex">
