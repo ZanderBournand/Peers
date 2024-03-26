@@ -239,7 +239,7 @@ export default function CreateOrganization() {
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
-                  name="OrgName"
+                  name="OrgInstagram"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Instagram</FormLabel>
@@ -252,7 +252,7 @@ export default function CreateOrganization() {
                 />
                 <FormField
                   control={form.control}
-                  name="OrgEmail"
+                  name="OrgFacebook"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Facebook</FormLabel>
@@ -266,7 +266,7 @@ export default function CreateOrganization() {
 
                 <FormField
                   control={form.control}
-                  name="OrgEmail"
+                  name="OrgDiscord"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Discord</FormLabel>
