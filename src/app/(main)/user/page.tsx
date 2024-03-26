@@ -11,6 +11,7 @@ import UserPageOrgCarousel from "@/components/organizations/UserPageOrgCarousel"
 import { FaCirclePlus } from "react-icons/fa6";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
+import { Separator } from "@/components/ui/separator";
 
 const cardStyle = {
   width: "580px",
@@ -214,7 +215,7 @@ export default async function UserPage() {
                 </CardContent>
               ) : (
                 <CardContent>
-                  <div className="-ml-4 font-bold">Their orgs:</div>
+                  <div className="font-bold">Their orgs:</div>
                   <UserPageOrgCarousel organizations={organizationsAdmin} />
                 </CardContent>
               )}
@@ -243,17 +244,18 @@ export default async function UserPage() {
                 </CardContent>
               ) : (
                 <CardContent>
-                  <div className="-ml-4 font-bold">Upcoming Events:</div>
+                  <div className="font-bold">Upcoming Events:</div>
                   <UserPageEventCarousel events={eventsAttending} />
                 </CardContent>
               )}
+              <Separator className="-mt-6 mb-2 mx-auto w-5/6 bg-gray-400"/>
               {eventsHosting.length == 0 ? (
                 <CardContent className="text-center">
                   This user is not hosting any events.
                 </CardContent>
               ) : (
                 <CardContent>
-                  <div className="-ml-4 font-bold">Hosting Events:</div>
+                  <div className="font-bold">Hosting Events:</div>
                   <UserPageEventCarousel events={eventsHosting} />
                 </CardContent>
               )}
