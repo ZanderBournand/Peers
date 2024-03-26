@@ -29,7 +29,7 @@ const OauthButton: React.FC<{ provider: Provider }> = ({ provider }) => {
     return (
       <Button
         variant="outline"
-        className="mb-2 w-full font-normal text-muted-foreground"
+        className="text-muted-foreground mb-2 w-full font-normal"
         onClick={() => handleLogin().catch(console.error)}
       >
         <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ const OauthButton: React.FC<{ provider: Provider }> = ({ provider }) => {
     return (
       <Button
         variant="outline"
-        className="mb-2 w-full font-normal text-muted-foreground"
+        className="text-muted-foreground mb-2 w-full font-normal"
         onClick={handleLogin}
       >
         <div className="flex items-center gap-2">

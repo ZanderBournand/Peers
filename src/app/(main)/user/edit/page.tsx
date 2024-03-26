@@ -17,44 +17,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
-import { PhotoIcon } from "@heroicons/react/24/outline";
-import { MdEdit } from "react-icons/md";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newUserSchema } from "@/lib/validators/User";
+import { newUserSchema } from "@/lib/validators/newUser";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
-import { v4 as uuidv4 } from "uuid";
-import { env } from "@/env";
 
 export type NewUserInput = z.infer<typeof newUserSchema>;
 
 export default function NewUserForm() {
   const [isLoading, setIsLoading] = useState(true);
   const { data: user, isLoading: isUserLoading } =
-    api.users.getCurrent.useQuery({});
+    api.users.getCurrent.useQuery();
 
-  type NewUserInputWithFile = Omit<NewUserInput, "image"> & {
-    image: File | undefined;
-  };
-
-  const newUserSchemaWithFile = newUserSchema.omit({ image: true }).extend({
-    image: z.instanceof(File).optional(),
-  });
-
-  const supabase = createClient();
-
-  const form = useForm<NewUserInputWithFile>({
-    resolver: zodResolver(newUserSchemaWithFile),
+  const form = useForm<NewUserInput>({
+    resolver: zodResolver(newUserSchema),
     defaultValues: {
-      image: undefined,
       firstName: "",
       lastName: "",
       skills: [{ name: "" }],
@@ -89,16 +72,11 @@ export default function NewUserForm() {
 
   const watchSkills = form.watch("skills");
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      form.setValue("image", file);
-    }
-  };
+  const router = useRouter();
 
   const { mutate } = api.users.update.useMutation({
     onSuccess: () => {
-      window.location.href = "/user";
+      router.push("/user");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -106,23 +84,9 @@ export default function NewUserForm() {
     },
   });
 
-  const onSubmit = async (data: NewUserInputWithFile) => {
+  const onSubmit = async (data: NewUserInput) => {
     const skillsList = data.skills.map((skill) => skill.name);
-
-    let userImage = null;
-    if (data.image) {
-      const userImageId: string = uuidv4();
-
-      const { data: imageData } = await supabase.storage
-        .from("images")
-        .upload("users/" + userImageId, data.image);
-
-      const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
-      userImage = baseStorageUrl + imageData?.path;
-    }
-
     mutate({
-      image: userImage,
       firstName: capitalizeFirstLetter(data.firstName),
       lastName: capitalizeFirstLetter(data.lastName),
       skills: skillsList,
@@ -131,6 +95,8 @@ export default function NewUserForm() {
       linkedin: data.linkedin,
       website: data.website,
     });
+
+    router.refresh();
   };
 
   if (isLoading) {
@@ -158,59 +124,6 @@ export default function NewUserForm() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex w-full flex-1 flex-col justify-center gap-6 text-muted-foreground"
             >
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <>
-                    <Label
-                      htmlFor="image"
-                      className="flex w-full flex-col items-center"
-                    >
-                      <div
-                        className="relative -mt-2 flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-full border-2 bg-gray-50"
-                        title="Change profile picture"
-                      >
-                        {!field?.value ? (
-                          !user?.image ? (
-                            <PhotoIcon className="h-12 w-12" />
-                          ) : (
-                            <Image
-                              src={user?.image || ""}
-                              alt="selected image"
-                              fill
-                              style={{
-                                objectFit: "cover",
-                              }}
-                              className="rounded-full"
-                            />
-                          )
-                        ) : (
-                          <Image
-                            src={URL.createObjectURL(field.value)}
-                            alt="selected image"
-                            fill
-                            style={{
-                              objectFit: "cover",
-                            }}
-                            className="rounded-full"
-                          />
-                        )}
-                      </div>
-                      <div className="relative z-10 -mt-7 ml-12 h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-blue-300">
-                        <MdEdit className="color-black ml-1 mt-1 h-5 w-5" />
-                      </div>{" "}
-                    </Label>
-                    <Input
-                      id="image"
-                      type="file"
-                      style={{ display: "none" }}
-                      onChange={handleImageChange}
-                    />
-                  </>
-                )}
-              />
-
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}

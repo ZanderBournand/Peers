@@ -1,18 +1,12 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  const { supabase } = createClient(request);
+  const { supabase, response } = createClient(request);
+
   await supabase.auth.getSession();
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-url", request.url);
-
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  return response;
 }
 
 export const config = {

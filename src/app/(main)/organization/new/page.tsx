@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -43,8 +44,12 @@ import { env } from "@/env";
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
 export default function CreateOrganization() {
+  const [isOrgization, setIsOrgization] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { control } = useForm();
   const supabase = createClient();
+
+  const { data: user } = api.users.getCurrent.useQuery();
 
   // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
@@ -59,7 +64,6 @@ export default function CreateOrganization() {
     defaultValues: {
       name: undefined,
       email: undefined,
-      type: undefined,
       description: undefined,
       image: undefined,
       type: undefined,
@@ -86,7 +90,6 @@ export default function CreateOrganization() {
     const newOrgData: NewOrgInput = {
       name: data.name,
       email: data.email,
-      type: data.type,
       description: data.description,
       type: data.type,
       instagram: undefined,
@@ -134,7 +137,7 @@ export default function CreateOrganization() {
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="OrgName"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Organization Name</FormLabel>
@@ -147,7 +150,7 @@ export default function CreateOrganization() {
                 />
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="OrgEmail"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Email</FormLabel>
