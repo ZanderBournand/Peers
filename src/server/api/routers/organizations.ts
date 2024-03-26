@@ -13,6 +13,9 @@ export const organizationRouter = createTRPCRouter({
           type: z.nativeEnum(OrganizationType),
           description: z.string().min(50),
           image: z.string().url().optional(),
+          instagram: z.string().min(1).optional(),
+          discord: z.string().min(1).optional(),
+          facebook: z.string().min(1).optional(),
         })
         //not sure i need the following code:
         // .refine(
@@ -37,6 +40,9 @@ export const organizationRouter = createTRPCRouter({
           type: z.nativeEnum(OrganizationType),
           description: z.string().min(50),
           image: z.string().url().optional(),
+          instagram: z.string().min(1).optional(),
+          discord: z.string().min(1).optional(),
+          facebook: z.string().min(1).optional(),
         },
       });
 

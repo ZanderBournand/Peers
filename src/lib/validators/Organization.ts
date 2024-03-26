@@ -7,4 +7,7 @@ export const newOrgSchema = z.object({
   type: z.nativeEnum(OrganizationType),
   description: z.string().min(50),
   image: z.string().url().optional(),
+  instagram: z.string().min(1).optional(),
+  discord: z.string().min(1).optional(),
+  facebook: z.string().min(1).optional(),
 });

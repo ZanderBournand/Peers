@@ -67,6 +67,9 @@ export default function CreateOrganization() {
       description: undefined,
       image: undefined,
       type: undefined,
+      instagram: undefined,
+      discord: undefined,
+      facebook: undefined,
     },
   });
 
@@ -89,6 +92,9 @@ export default function CreateOrganization() {
       email: data.email,
       description: data.description,
       type: data.type,
+      instagram: undefined,
+      discord: undefined,
+      facebook: undefined,
       //image?
     };
 
@@ -230,6 +236,48 @@ export default function CreateOrganization() {
                   </FormItem>
                 )}
               />
+              <div className="flex flex-row gap-4">
+                <FormField
+                  control={form.control}
+                  name="OrgName"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">Instagram</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Instagram" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="OrgEmail"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">Facebook</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Facebook" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="OrgEmail"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">Discord</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Discord" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="image"
