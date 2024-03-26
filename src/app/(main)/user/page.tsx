@@ -248,7 +248,7 @@ export default async function UserPage() {
                   <UserPageEventCarousel events={eventsAttending} />
                 </CardContent>
               )}
-              <Separator className="-mt-6 mb-2 mx-auto w-5/6 bg-gray-400"/>
+              <Separator className="mx-auto -mt-6 mb-2 w-5/6 bg-gray-400" />
               {eventsHosting.length == 0 ? (
                 <CardContent className="text-center">
                   This user is not hosting any events.
