@@ -9,11 +9,12 @@ datasource db {
 }
 
 model User {
-  id        String @id
-  email     String @unique
-  username  String @unique
+  id        String  @id
+  email     String  @unique
+  username  String  @unique
   firstName String?
   lastName  String?
+  image     String?
 
   skills String[]
   bio    String?
@@ -21,6 +22,9 @@ model User {
   github   String?
   linkedin String?
   website  String?
+
+  isVerifiedStudent Boolean
+  university        String?
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
@@ -45,15 +49,17 @@ model Organization {
 }
 
 model Event {
-  id    String @id @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
+  id    String @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
   title String
 
-  location    String?
-  date        DateTime
-  description String
-  image       String?
-  type        EventType
-  duration    Int
+  location        String?
+  locationDetails String?
+  date            DateTime
+  description     String
+  image           String?
+  type            EventType
+  duration        Int
+  tags            Tag[]
 
   userHostId String?
   userHost   User?         @relation("UserHost", fields: [userHostId], references: [id])
@@ -63,8 +69,22 @@ model Event {
   attendees User[] @relation("Attendees")
 }
 
+model Tag {
+  id       String  @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  category String
+  name     String
+  events   Event[]
+}
+
+model Verification_Code {
+  userId    String   @id
+  createdAt DateTime
+  code      String
+}
+
 enum EventType {
-  ONLINE
+  ONLINE_VIDEO
+  ONLINE_AUDIO
   IN_PERSON
 }
 

@@ -6,6 +6,22 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
 import { db } from "@/server/db";
+import { mg } from "@/server/mg";
+
+import { type User } from "@supabase/supabase-js";
+
+type CreateContextOptions = {
+  user: User | null;
+  headers: Headers | null;
+};
+
+export const createInnerTRPCContext = (opts: CreateContextOptions) => {
+  return {
+    ...opts,
+    db,
+    mg,
+  };
+};
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const supabase = createClient(cookies());
@@ -14,11 +30,10 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return {
+  return createInnerTRPCContext({
     user,
-    db,
     ...opts,
-  };
+  });
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -36,6 +51,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 });
 
 export const createTRPCRouter = t.router;
+
+export const createCallerFactory = t.createCallerFactory;
 
 export const publicProcedure = t.procedure;
 

@@ -2,6 +2,8 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
+import { BellAlertIcon } from "@heroicons/react/24/outline";
+import { api } from "@/trpc/react";
 
 const routes: { title: string; href: string }[] = [
   { title: "Discover", href: "/discover" },
@@ -15,6 +17,8 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  const user = api.users.getCurrent.useQuery({}).data;
 
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border px-6 lg:px-14">
@@ -32,6 +36,15 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {route.title}
             </Link>
           ))}
+          {user && !user?.firstName && !user?.lastName && (
+            <Link
+              href="/user/edit"
+              className="py-flex-row ml-2 mt-1 flex h-8 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
+            >
+              <BellAlertIcon className="mr-1 h-5 w-5" />
+              Complete your profile!
+            </Link>
+          )}
         </div>
       </div>
 

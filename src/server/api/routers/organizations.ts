@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
+import { v4 as uuidv4 } from "uuid";
 
 import { OrganizationType } from "@prisma/client";
 
@@ -17,23 +18,19 @@ export const organizationRouter = createTRPCRouter({
           discord: z.string().min(1).optional(),
           facebook: z.string().min(1).optional(),
         })
-        //not sure i need the following code:
-        // .refine(
-        //   (data) => {
-        //     // Either userHostId or orgHostId should be provided, but not both
-        //     return (
-        //       (data.userHostId == undefined) !== (data.orgHostId == undefined)
-        //     );
-        //   },
-        //   {
-        //     message:
-        //       "Either userHostId or orgHostId should be provided, but not both",
-        //     path: ["userHostId", "orgHostId"],
-        //   },
-        // ),
     )
     .mutation(async ({ ctx, input }) => {
-      const event = await ctx.db.event.create({
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.user.id },
+      });
+
+      if (!user?.isVerifiedStudent) {
+        throw new Error(
+          "User is not a verified student. Only verified users can create events.",
+        );
+      }
+
+      const event = await ctx.db.organization.create({
         data: {
           name: z.string().min(1),
           email: z.string().min(1).optional(),
@@ -43,9 +40,29 @@ export const organizationRouter = createTRPCRouter({
           instagram: z.string().min(1).optional(),
           discord: z.string().min(1).optional(),
           facebook: z.string().min(1).optional(),
+          admins: {
+            connect: {
+              id: ctx.user.id,
+            },
+          },
         },
       });
 
       return event;
+    }),
+  getAdminOrganizations: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const organizations = await ctx.db.organization.findMany({
+        where: {
+          admins: {
+            some: {
+              id: input.userId,
+            },
+          },
+        },
+      });
+
+      return organizations;
     }),
 });
