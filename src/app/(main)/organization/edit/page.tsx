@@ -49,7 +49,7 @@ export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
 export default function NewOrgForm() {
   const [isLoading, setIsLoading] = useState(true);
-  const { data: user, isLoading: isOrgLoading } =
+  const { data: org, isLoading: isOrgLoading } =
     //this is WHERE YOU GET WHICH ORG UR TALKING ABOUT
     api.users.getCurrent.useQuery({});
 
@@ -75,21 +75,21 @@ export default function NewOrgForm() {
   });
 
   useEffect(() => {
-    if (!isOrgLoading && user) {
+    if (!isOrgLoading && org) {
       form.reset({
-        firstName: user.firstName ?? "",
-        lastName: user.lastName ?? "",
-        skills: user.skills?.map((skill) => ({ name: skill })) ?? [
+        firstName: org.firstName ?? "",
+        lastName: org.lastName ?? "",
+        skills: org.skills?.map((skill) => ({ name: skill })) ?? [
           { name: "" },
         ],
-        bio: user.bio ?? "",
-        github: user.github ?? "",
-        linkedin: user.linkedin ?? "",
-        website: user.website ?? "",
+        bio: org.bio ?? "",
+        github: org.github ?? "",
+        linkedin: org.linkedin ?? "",
+        website: org.website ?? "",
       });
       setTimeout(() => setIsLoading(false), 500);
     }
-  }, [user, isOrgLoading, form]);
+  }, [org, isOrgLoading, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -105,7 +105,7 @@ export default function NewOrgForm() {
     }
   };
 
-  const { mutate } = api.users.update.useMutation({
+  const { mutate } = api.organizations.update.useMutation({
     onSuccess: () => {
       window.location.href = "/user";
     },
@@ -179,11 +179,11 @@ export default function NewOrgForm() {
                         </span>
 
                         {!field?.value ? (
-                          !user?.image ? (
+                          !org?.image ? (
                             <PhotoIcon className="h-12 w-12" />
                           ) : (
                             <Image
-                              src={user?.image || ""}
+                              src={org?.image || ""}
                               alt="selected image"
                               fill
                               style={{
