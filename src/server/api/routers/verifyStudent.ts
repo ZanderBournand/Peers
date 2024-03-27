@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
+import startCase from "lodash/startCase";
 
 export const verifyStudentRouter = createTRPCRouter({
   sendVerificationCode: privateProcedure
@@ -53,6 +54,7 @@ export const verifyStudentRouter = createTRPCRouter({
     .input(
       z.object({
         code: z.string(),
+        university: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -66,7 +68,10 @@ export const verifyStudentRouter = createTRPCRouter({
       ) {
         await ctx.db.user.update({
           where: { id: ctx.user.id },
-          data: { isVerifiedStudent: true },
+          data: {
+            isVerifiedStudent: true,
+            university: startCase(input.university),
+          },
         });
 
         await ctx.db.verification_Code.delete({

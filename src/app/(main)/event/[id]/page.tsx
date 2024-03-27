@@ -29,7 +29,7 @@ export default async function EventPage({
   params: { id: string };
 }) {
   const event: EventData = await api.events.get.query({ id: params.id });
-  const user: UserData = await api.users.getCurrent.query();
+  const user: UserData = await api.users.getUser.query({});
 
   const duration = getFormattedDuration(event.duration);
   const formattedDate = event.date.toLocaleString("en-US", {

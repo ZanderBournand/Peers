@@ -8,7 +8,6 @@ import { api } from "@/trpc/react";
 const routes: { title: string; href: string }[] = [
   { title: "Discover", href: "/discover" },
   { title: "My Events", href: "/myevents" },
-  { title: "Profile", href: "/user" },
 ];
 
 const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -18,7 +17,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     setMenuOpen(!menuOpen);
   };
 
-  const user = api.users.getCurrent.useQuery().data;
+  const user = api.users.getUser.useQuery({}).data;
 
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border px-6 lg:px-14">
@@ -36,6 +35,12 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {route.title}
             </Link>
           ))}
+          <Link
+            href={"/user/" + user?.id}
+            className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
+          >
+            {"Profile"}
+          </Link>
           {user && !user?.firstName && !user?.lastName && (
             <Link
               href="/user/edit"

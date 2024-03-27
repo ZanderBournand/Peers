@@ -130,7 +130,10 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   const onCodeSubmit = async (data: { verifyCode: string }) => {
-    isVerificationCodeCorrect({ code: data.verifyCode });
+    isVerificationCodeCorrect({
+      code: data.verifyCode,
+      university: university,
+    });
   };
 
   return (

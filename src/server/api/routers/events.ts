@@ -140,25 +140,40 @@ export const eventRouter = createTRPCRouter({
 
       return { success: true };
     }),
-  getCurrentUserEvents: privateProcedure.query(async ({ ctx }) => {
-    const events = await ctx.db.event.findMany({
-      where: {
-        attendees: {
-          some: {
-            id: ctx.user.id,
-          },
+  getEventsAttending: privateProcedure
+    .input(z.object({ id: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.id ?? ctx.user.id;
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        include: {
+          attends: true,
         },
-      },
-      include: {
-        userHost: true,
-        orgHost: true,
-      },
-    });
+      });
 
-    if (!events) {
-      throw new Error("No events found for this user");
-    }
+      if (!user) {
+        throw new Error("User not found");
+      }
 
-    return events;
-  }),
+      return user.attends;
+    }),
+  getEventsHosting: privateProcedure
+    .input(z.object({ id: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.id ?? ctx.user.id;
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        include: {
+          hostEvents: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user.hostEvents;
+    }),
 });

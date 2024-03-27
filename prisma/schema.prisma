@@ -14,6 +14,7 @@ model User {
   username  String  @unique
   firstName String?
   lastName  String?
+  image     String
 
   skills String[]
   bio    String?
@@ -23,6 +24,7 @@ model User {
   website  String?
 
   isVerifiedStudent Boolean
+  university        String?
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
