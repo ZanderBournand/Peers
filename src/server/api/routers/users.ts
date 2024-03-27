@@ -26,7 +26,7 @@ export const userRouter = createTRPCRouter({
   update: privateProcedure
     .input(
       z.object({
-        image: z.string().url().optional().nullable(),
+        image: z.string().url(),
         firstName: z.string(),
         lastName: z.string(),
         skills: z.array(z.string()),

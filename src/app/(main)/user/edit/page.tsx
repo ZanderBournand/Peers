@@ -175,7 +175,7 @@ export default function NewUserForm() {
                           src={
                             field.value
                               ? URL.createObjectURL(field.value)
-                              : user?.image
+                              : user?.image ?? ""
                           }
                           alt="selected image"
                           fill
