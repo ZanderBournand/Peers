@@ -38,8 +38,9 @@ export type NewUserInput = z.infer<typeof newUserSchema>;
 
 export default function NewUserForm() {
   const [isLoading, setIsLoading] = useState(true);
-  const { data: user, isLoading: isUserLoading } =
-    api.users.getCurrent.useQuery({});
+  const { data: user, isLoading: isUserLoading } = api.users.getUser.useQuery(
+    {},
+  );
 
   type NewUserInputWithFile = Omit<NewUserInput, "image"> & {
     image: File | undefined;
@@ -176,7 +177,7 @@ export default function NewUserForm() {
                             <PhotoIcon className="h-12 w-12" />
                           ) : (
                             <Image
-                              src={user?.image || ""}
+                              src={user?.image}
                               alt="selected image"
                               fill
                               style={{
@@ -197,9 +198,9 @@ export default function NewUserForm() {
                           />
                         )}
                       </div>
-                      <div className="relative z-10 -mt-7 ml-12 h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-blue-300">
-                        <MdEdit className="color-black ml-1 mt-1 h-5 w-5" />
-                      </div>{" "}
+                      <div className="relative z-10 -mt-7 ml-12 h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-violet-600">
+                        <MdEdit color="white" className="ml-1 mt-1 h-5 w-5" />
+                      </div>
                     </Label>
                     <Input
                       id="image"

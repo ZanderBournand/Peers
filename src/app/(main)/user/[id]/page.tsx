@@ -10,6 +10,7 @@ import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { MdEdit } from "react-icons/md";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
 
 const cardStyle = {
@@ -21,8 +22,8 @@ const cardStyle = {
 };
 
 export default async function PeerPage({ params }: { params: { id: string } }) {
-  const actualUser = await api.users.getCurrent.query({});
-  const user = await api.users.getCurrent.query({ id: params.id });
+  const actualUser = await api.users.getUser.query({});
+  const user = await api.users.getUser.query({ id: params.id });
 
   const isCurrentUser = actualUser?.id === user?.id;
 
@@ -187,7 +188,10 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             <div>
               <div className="mt-3 flex w-80 justify-center py-2">
                 <Link href="/user/edit">
-                  <Button>Edit Profile</Button>
+                  <Button>
+                    <MdEdit color="white" className="mr-2 h-5 w-5" />
+                    Edit Profile
+                  </Button>
                 </Link>
               </div>
 

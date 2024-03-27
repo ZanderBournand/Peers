@@ -17,7 +17,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     setMenuOpen(!menuOpen);
   };
 
-  const user = api.users.getCurrent.useQuery({}).data;
+  const user = api.users.getUser.useQuery({}).data;
 
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border px-6 lg:px-14">
