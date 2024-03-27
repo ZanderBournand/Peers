@@ -52,7 +52,7 @@ export const userRouter = createTRPCRouter({
       });
       return user;
     }),
-  getCurrent: privateProcedure
+  getUser: privateProcedure
     .input(z.object({ id: z.string().optional() }))
     .query(async ({ ctx, input }) => {
       const userId = input?.id ?? ctx.user.id;

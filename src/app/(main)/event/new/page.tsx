@@ -61,7 +61,7 @@ export default function CreateEvent() {
 
   const { control } = useForm();
 
-  const { data: user } = api.users.getCurrent.useQuery({});
+  const { data: user } = api.users.getUser.useQuery({});
   const { data: allTags } = api.tags.getAll.useQuery();
 
   const supabase = createClient();

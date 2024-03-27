@@ -13,7 +13,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import type { EventData } from "@/lib/interfaces/eventData";
-import { getFormattedDuration } from "@/lib/utils";
 
 interface EventCarouselProps {
   events: EventData[];
@@ -61,16 +60,18 @@ export default function UserPageEventCarousel({ events }: EventCarouselProps) {
                   </div>
                 </div>
                 <div className="mx-4 my-4 flex flex-col">
-                  <p className="truncate text-base text-sm font-bold">
-                    {event.title}
-                  </p>
+                  <p className="truncate text-sm font-bold">{event.title}</p>
                   <p className="mt-1 flex flex-row items-center text-xs text-slate-800">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formatEventDateTime(event.date)}
                   </p>
                   <p className="mt-1 flex flex-row items-center text-xs text-slate-800">
                     <IoTimeOutline className="mr-2 h-4 w-4" />
-                    {getFormattedDuration(event.duration)}
+                    {event.date.toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "numeric",
+                      hour12: true,
+                    })}
                   </p>
                 </div>
               </div>
