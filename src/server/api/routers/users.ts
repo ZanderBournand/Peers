@@ -83,40 +83,4 @@ export const userRouter = createTRPCRouter({
       });
       return Boolean(user);
     }),
-  getEventsAttending: privateProcedure
-    .input(z.object({ id: z.string().optional() }))
-    .query(async ({ ctx, input }) => {
-      const userId = input?.id ?? ctx.user.id;
-
-      const user = await ctx.db.user.findUnique({
-        where: { id: userId },
-        include: {
-          attends: true,
-        },
-      });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      return user.attends;
-    }),
-  getEventsHosting: privateProcedure
-    .input(z.object({ id: z.string().optional() }))
-    .query(async ({ ctx, input }) => {
-      const userId = input?.id ?? ctx.user.id;
-
-      const user = await ctx.db.user.findUnique({
-        where: { id: userId },
-        include: {
-          hostEvents: true,
-        },
-      });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      return user.hostEvents;
-    }),
 });

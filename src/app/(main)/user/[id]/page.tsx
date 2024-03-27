@@ -27,14 +27,12 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
 
   const isCurrentUser = actualUser?.id === user?.id;
 
-  const eventsAttending = await api.users.getEventsAttending.query({
+  const eventsAttending = await api.events.getEventsAttending.query({
     id: params.id,
   });
-  const eventsHosting = await api.users.getEventsHosting.query({
+  const eventsHosting = await api.events.getEventsHosting.query({
     id: params.id,
   });
-
-  const userImage = user?.image ?? "";
 
   if (!user) return null;
 
@@ -53,7 +51,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             }}
           >
             <Avatar className="size-20 hover:cursor-pointer">
-              <AvatarImage src={userImage} />
+              <AvatarImage src={user?.image ?? ""} />
               <AvatarFallback>Peer</AvatarFallback>
             </Avatar>
             <p

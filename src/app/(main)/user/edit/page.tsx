@@ -18,7 +18,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { PhotoIcon } from "@heroicons/react/24/outline";
 import { MdEdit } from "react-icons/md";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +40,7 @@ export default function NewUserForm() {
   const { data: user, isLoading: isUserLoading } = api.users.getUser.useQuery(
     {},
   );
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   type NewUserInputWithFile = Omit<NewUserInput, "image"> & {
     image: File | undefined;
@@ -99,7 +99,7 @@ export default function NewUserForm() {
 
   const { mutate } = api.users.update.useMutation({
     onSuccess: () => {
-      window.location.href = "/user";
+      window.location.href = "/user/" + user?.id;
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -123,7 +123,7 @@ export default function NewUserForm() {
     }
 
     mutate({
-      image: userImage,
+      image: data.image ? userImage : user?.image,
       firstName: capitalizeFirstLetter(data.firstName),
       lastName: capitalizeFirstLetter(data.lastName),
       skills: skillsList,
@@ -172,31 +172,19 @@ export default function NewUserForm() {
                         className="relative -mt-2 flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-full border-2 bg-gray-50"
                         title="Change profile picture"
                       >
-                        {!field?.value ? (
-                          !user?.image ? (
-                            <PhotoIcon className="h-12 w-12" />
-                          ) : (
-                            <Image
-                              src={user?.image}
-                              alt="selected image"
-                              fill
-                              style={{
-                                objectFit: "cover",
-                              }}
-                              className="rounded-full"
-                            />
-                          )
-                        ) : (
-                          <Image
-                            src={URL.createObjectURL(field.value)}
-                            alt="selected image"
-                            fill
-                            style={{
-                              objectFit: "cover",
-                            }}
-                            className="rounded-full"
-                          />
-                        )}
+                        <Image
+                          src={
+                            field.value
+                              ? URL.createObjectURL(field.value)
+                              : user?.image
+                          }
+                          alt="selected image"
+                          fill
+                          style={{
+                            objectFit: "cover",
+                          }}
+                          className="rounded-full"
+                        />
                       </div>
                       <div className="relative z-10 -mt-7 ml-12 h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-violet-600">
                         <MdEdit color="white" className="ml-1 mt-1 h-5 w-5" />

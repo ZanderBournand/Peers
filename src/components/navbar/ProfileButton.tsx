@@ -38,7 +38,6 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
   }, [ref]);
 
   const userData = api.users.getUser.useQuery({}).data;
-  const userImage = userData?.image ?? "";
 
   if (!user) return null;
   return (
@@ -47,7 +46,7 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
         className="hover:cursor-pointer"
         onClick={() => setMenuOpen(!menuOpen)}
       >
-        <AvatarImage src={userImage} />
+        <AvatarImage src={userData?.image ?? ""} />
         <AvatarFallback>Peer</AvatarFallback>
       </Avatar>
 
@@ -56,7 +55,7 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
           <div className="flex items-center">
             <div className="pr-4">
               <Avatar onClick={() => setMenuOpen(!menuOpen)}>
-                <AvatarImage src={userImage} />
+                <AvatarImage src={userData?.image ?? ""} />
                 <AvatarFallback>Peer</AvatarFallback>
               </Avatar>
             </div>
