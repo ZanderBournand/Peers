@@ -5,8 +5,12 @@ import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import VerifyStudentButton from "@/components/user/verifyStudentButton";
 
 const cardStyle = {
   width: "580px",
@@ -17,7 +21,10 @@ const cardStyle = {
 };
 
 export default async function PeerPage({ params }: { params: { id: string } }) {
+  const actualUser = await api.users.getCurrent.query({});
   const user = await api.users.getCurrent.query({ id: params.id });
+
+  const isCurrentUser = actualUser?.id === user?.id;
 
   const eventsAttending = await api.users.getEventsAttending.query({
     id: params.id,
@@ -176,6 +183,21 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
+          {isCurrentUser && (
+            <div>
+              <div className="mt-3 flex w-80 justify-center py-2">
+                <Link href="/user/edit">
+                  <Button>Edit Profile</Button>
+                </Link>
+              </div>
+
+              {!user.isVerifiedStudent && (
+                <div className="mt-2 flex w-80 justify-center py-2">
+                  <VerifyStudentButton />
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="ml-20 mt-4 flex-col">
@@ -186,6 +208,15 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
+                  {isCurrentUser && (
+                    <Link
+                      className="color-grey ml-1.5 mt-1.5"
+                      href="/organization/new"
+                      title="Create Organization"
+                    >
+                      <AiOutlinePlusCircle className="color-grey" />
+                    </Link>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="text-center">
@@ -201,6 +232,15 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
+                  {isCurrentUser && (
+                    <Link
+                      className="color-grey ml-1.5 mt-1.5"
+                      href="/event/new"
+                      title="Create Event"
+                    >
+                      <AiOutlinePlusCircle className="color-grey" />
+                    </Link>
+                  )}
                 </div>
               </CardHeader>
               {eventsAttending.length == 0 ? (
