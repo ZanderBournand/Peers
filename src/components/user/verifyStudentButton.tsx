@@ -2,17 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { useVerificationAlert } from "../../lib/context/VerificationContext";
-import { PiStudentFill } from "react-icons/pi";
+import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 const VerifyStudentButton: React.FC<object> = () => {
   const verificationAlert = useVerificationAlert();
 
   return (
     <Button
-      variant="default"
+      variant="outline"
       onClick={verificationAlert?.openAlert}
-      style={{ backgroundColor: "red" }}
+      className="bg-green-200/20"
     >
-      <PiStudentFill className="mr-2 h-5 w-5" />
+      <CheckBadgeIcon className="mr-2 h-6 w-6" color="green"/>
       Verify Your Student Status!
     </Button>
   );

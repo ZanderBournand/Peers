@@ -4,7 +4,7 @@ import type { EventData } from "@/lib/interfaces/eventData";
 import FilteredEventsSection from "@/components/events/FilteredEventsSection";
 
 export default async function MyEventsPage() {
-  const events: EventData[] = await api.events.getCurrentUserEvents.query();
+  const events: EventData[] = await api.events.getEventsAttending.query({});
 
   return (
     <div className="flex flex-col items-center justify-center px-8 pb-32">
