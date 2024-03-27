@@ -40,7 +40,6 @@ export default function NewUserForm() {
   const { data: user, isLoading: isUserLoading } = api.users.getUser.useQuery(
     {},
   );
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
   type NewUserInputWithFile = Omit<NewUserInput, "image"> & {
     image: File | undefined;
