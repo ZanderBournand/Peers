@@ -7,12 +7,14 @@ config();
 export interface TestUser {
   id?: string;
   email: string;
+  image: string;
   password: string;
   username: string;
 }
 
 export const baseTestUser: TestUser = {
   email: "test_user@peers.test",
+  image: "https://picsum.photos/200",
   password: "123456",
   username: "TEST_USER",
 };
@@ -41,7 +43,8 @@ export const createTestDBUser = async (
   const newDBUser = await supabase.from("User").upsert({
     id: user.id,
     email: user?.email,
-    username: user.username,
+    image: user?.image,
+    username: user?.username,
     isVerifiedStudent: false,
   });
 
