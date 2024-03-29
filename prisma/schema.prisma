@@ -33,6 +33,15 @@ model User {
   attends    Event[] @relation("Attendees")
 }
 
+model University {
+  name            String @id
+  web_pages       String[]
+  alpha_two_code  String?
+  state_province  String?
+  domains         String[]
+  country         String?
+}
+
 model Organization {
   id   String @id
   name String

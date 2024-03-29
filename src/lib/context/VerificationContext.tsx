@@ -48,7 +48,6 @@ import {
   verifyCodeSchema,
 } from "@/lib/validators/verification";
 import { api } from "@/trpc/react";
-import uniDomains from "universities_and_domains.json";
 import { useRouter } from "next/navigation";
 
 export type CodeInput = z.infer<typeof verifyCodeSchema>;
@@ -136,6 +135,9 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
+  const universities =
+    api.universities.getAllUniversities.useQuery().data ?? [];
+
   return (
     <VerificationContext.Provider value={{ openAlert }}>
       {children}
@@ -157,7 +159,7 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                 className="w-[400px] justify-between"
               >
                 {university
-                  ? uniDomains.find(
+                  ? universities.find(
                       (uni) =>
                         uni.name.toLocaleLowerCase() ===
                         university.toLowerCase(),
@@ -171,7 +173,7 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                 <CommandInput placeholder="Search university..." />
                 <CommandEmpty>No university found.</CommandEmpty>
                 <CommandGroup>
-                  {uniDomains.map((uni) => (
+                  {universities.map((uni) => (
                     <CommandItem
                       key={uni.name}
                       value={uni.name}
