@@ -48,8 +48,14 @@ model University {
 }
 
 model Organization {
-  id   String @id
+  id   String @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
   name String
+
+  email       String?
+  description String
+  type        OrganizationType
+  image       String?
+  university   String?
 
   admins  User[] @relation("Admins")
   members User[] @relation("Members")
@@ -95,4 +101,28 @@ enum EventType {
   ONLINE_VIDEO
   ONLINE_AUDIO
   IN_PERSON
+}
+
+enum OrganizationType {
+  BUSINESS
+  ENGINEERING
+  JOURNALISM
+  AGRICULTURE
+  ART
+  DENTRISTRY
+  DESIGN
+  CONSTRUCTION
+  EDUCATION
+  LAW
+  SCIENCE
+  MEDICINE
+  NURSING
+  PHARMACY
+  VETERINARY
+  PUBLIC_HEALTH
+  FARMING
+  VOLUNEERING
+  SPORTS
+  E_SPORTS
+  OTHER
 }

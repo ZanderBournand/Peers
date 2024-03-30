@@ -20,50 +20,54 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const user = api.users.getUser.useQuery({}).data;
 
   return (
-    <div className="flex h-16 items-center justify-between border-b border-b-border px-6 lg:px-14">
-      <div className="flex items-center">
-        <Link href={"/"} className="shrink-0">
-          <h1 className="text-2xl font-bold text-accent-foreground">Peers</h1>
-        </Link>
-        <div className="hidden w-full justify-end gap-1 bg-background px-4 py-2 sm:flex">
-          {routes.map((route, index) => (
+    <div className="flex h-16 items-center justify-between border-b border-b-border">
+      <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-6 lg:px-14">
+        <div className="flex items-center ">
+          <Link href={"/"} className="shrink-0">
+            <h1 className="text-2xl font-bold text-accent-foreground">Peers</h1>
+          </Link>
+          <div className="hidden w-full justify-end gap-1 bg-background px-4 py-2 sm:flex">
+            {routes.map((route, index) => (
+              <Link
+                key={index}
+                href={route.href}
+                className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
+              >
+                {route.title}
+              </Link>
+            ))}
             <Link
-              key={index}
-              href={route.href}
+              href={"/user/" + user?.id}
               className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
             >
-              {route.title}
+              {"Profile"}
             </Link>
-          ))}
-          <Link
-            href={"/user/" + user?.id}
-            className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-          >
-            {"Profile"}
-          </Link>
-          {user && !user?.firstName && !user?.lastName && (
-            <Link
-              href="/user/edit"
-              className="py-flex-row ml-2 mt-1 flex h-8 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
-            >
-              <BellAlertIcon className="mr-1 h-5 w-5" />
-              Complete your profile!
-            </Link>
-          )}
+            {user && !user?.firstName && !user?.lastName && (
+              <Link
+                href="/user/edit"
+                className="py-flex-row ml-2 mt-1 flex h-8 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
+              >
+                <BellAlertIcon className="mr-1 h-5 w-5" />
+                Complete your profile!
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
 
-      {children}
+        {children}
 
-      {menuOpen && <MobileMenu toggleMenu={toggleMenu}>{children}</MobileMenu>}
-
-      <button onClick={toggleMenu} className="sm:hidden">
-        {menuOpen ? (
-          <XMarkIcon className="h-7 w-7" />
-        ) : (
-          <Bars3Icon className="h-7 w-7" />
+        {menuOpen && (
+          <MobileMenu toggleMenu={toggleMenu}>{children}</MobileMenu>
         )}
-      </button>
+
+        <button onClick={toggleMenu} className="sm:hidden">
+          {menuOpen ? (
+            <XMarkIcon className="h-7 w-7" />
+          ) : (
+            <Bars3Icon className="h-7 w-7" />
+          )}
+        </button>
+      </div>
     </div>
   );
 };

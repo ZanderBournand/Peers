@@ -11,4 +11,5 @@ export interface UserData {
   linkedin: string | null;
   website: string | null;
   isVerifiedStudent: boolean;
+  university: string | null;
 }
