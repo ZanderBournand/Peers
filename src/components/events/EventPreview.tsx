@@ -61,7 +61,7 @@ export default function EventPreview({ event }: { event: EventData }) {
             <CalendarIcon className="mr-2 h-5 w-5" />
             {formattedDate} • {formattedTime}
           </p>
-          <div className="text-md flex flex-row items-center text-slate-600">
+          <div className="text-md flex flex-row items-center text-sm text-slate-600">
             Hosted by:
             <div className="ml-2 inline-flex items-center rounded-full border border-gray-100 bg-white px-1 text-sm hover:shadow-sm">
               {event.userHost ? (

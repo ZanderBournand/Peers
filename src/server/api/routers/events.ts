@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "../../../lib/validators/Tag";
-
 import { EventType } from "@prisma/client";
 import { sortUpcomingEvents } from "@/lib/utils";
+import { type EventData } from "@/lib/interfaces/eventData";
 
 export const eventRouter = createTRPCRouter({
   create: privateProcedure
@@ -67,15 +67,21 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
-  getAll: privateProcedure.query(async ({ ctx }) => {
-    const events = await ctx.db.event.findMany({
-      include: {
-        userHost: true,
-        orgHost: true,
-      },
-    });
-    return events;
-  }),
+  getAll: privateProcedure
+    .input(z.object({ filter: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      let events: EventData[] = await ctx.db.event.findMany({
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      if (input?.filter === "upcoming") {
+        events = sortUpcomingEvents(events);
+      }
+      return events;
+    }),
   get: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -94,6 +100,76 @@ export const eventRouter = createTRPCRouter({
       }
 
       return event;
+    }),
+  // TODO: Expand the recommended algorithm (NEED USER SKILLS TO BE REVAMPED)
+  getRecommended: privateProcedure
+    .input(z.object({ userId: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.userId ?? ctx.user.id;
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        include: { attends: { include: { userHost: true, orgHost: true } } },
+      });
+
+      const hostIds = user?.attends
+        .map((event) => event.userHostId ?? event.orgHostId)
+        .filter((id) => id !== null) as string[];
+
+      const recommendedEvents: EventData[] = await ctx.db.event.findMany({
+        where: {
+          OR: [{ userHostId: { in: hostIds } }, { orgHostId: { in: hostIds } }],
+        },
+      });
+
+      const sortedEvents = sortUpcomingEvents(recommendedEvents);
+
+      return sortedEvents;
+    }),
+  getUniversity: privateProcedure
+    .input(z.object({ university: z.string() }))
+    .query(async ({ ctx, input }) => {
+      let events: EventData[] = await ctx.db.event.findMany({
+        where: {
+          OR: [
+            {
+              userHost: {
+                university: input.university,
+              },
+            },
+            {
+              orgHost: {
+                university: input.university,
+              },
+            },
+          ],
+        },
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      events = sortUpcomingEvents(events);
+
+      return events;
+    }),
+  getCategory: privateProcedure
+    .input(z.object({ category: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const events: EventData[] = await ctx.db.event.findMany({
+        where: {
+          tags: {
+            some: {
+              category: input.category,
+            },
+          },
+        },
+      });
+
+      const sortedEvents = sortUpcomingEvents(events);
+
+      return sortedEvents;
     }),
   toggleAttendance: privateProcedure
     .input(
@@ -149,7 +225,12 @@ export const eventRouter = createTRPCRouter({
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
         include: {
-          attends: true,
+          attends: {
+            include: {
+              userHost: true,
+              orgHost: true,
+            },
+          },
         },
       });
 
@@ -167,7 +248,12 @@ export const eventRouter = createTRPCRouter({
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
         include: {
-          hostEvents: true,
+          hostEvents: {
+            include: {
+              userHost: true,
+              orgHost: true,
+            },
+          },
         },
       });
 
@@ -205,5 +291,49 @@ export const eventRouter = createTRPCRouter({
       });
 
       return event;
+    }),
+  getRecommendedHosts: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { id: input.userId },
+        include: { attends: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const attendedEventIds = user.attends.map((event) => event.id);
+
+      const organizations = await ctx.db.organization.findMany({
+        where: {
+          AND: [
+            { hostEvents: { some: {} } },
+            {
+              OR: [
+                { hostEvents: { some: { id: { in: attendedEventIds } } } },
+                { university: user.university },
+              ],
+            },
+          ],
+        },
+      });
+
+      const users = await ctx.db.user.findMany({
+        where: {
+          AND: [
+            { hostEvents: { some: {} } },
+            {
+              OR: [
+                { hostEvents: { some: { id: { in: attendedEventIds } } } },
+                { university: user.university },
+              ],
+            },
+          ],
+        },
+      });
+
+      return { users, organizations };
     }),
 });
