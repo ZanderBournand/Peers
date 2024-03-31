@@ -8,7 +8,6 @@ import HostSection from "@/components/events/HostSection";
 import EventCalendar from "@/components/events/EventCalendar";
 import StatusPing from "@/components/events/StatusPing";
 import { type UserData } from "@/lib/interfaces/userData";
-import { type EventData } from "@/lib/interfaces/eventData";
 import moment from "moment";
 
 export default async function AuthButton() {
@@ -18,21 +17,23 @@ export default async function AuthButton() {
   } = await supabase.auth.getUser();
 
   const userData = user && (await api.users.getUser.query({}));
-  const userEvents: EventData[] =
-    (await api.events.getEventsAttending.query({})) ?? [];
 
-  const recommendedEvents: EventData[] =
-    (user && (await api.events.getRecommended.query({}))) ?? [];
-  const universityEvents: EventData[] =
-    (user &&
-      (await api.events.getUniversity.query({
-        university: userData?.university ?? "",
-      }))) ??
-    [];
+  const userEventsPromise = api.events.getEventsAttending.query({});
+  const recommendedEventsPromise = user && api.events.getRecommended.query({});
+  const universityEventsPromise =
+    user &&
+    api.events.getUniversity.query({
+      university: userData?.university ?? "",
+    });
+  const recommendedHostsPromise = api.events.getRecommendedHosts.query({});
 
-  const recommendedHosts =
-    (await api.events.getRecommendedHosts.query({ userId: user?.id ?? "" })) ??
-    [];
+  const [userEvents, recommendedEvents, universityEvents, recommendedHosts] =
+    await Promise.all([
+      userEventsPromise,
+      recommendedEventsPromise,
+      universityEventsPromise,
+      recommendedHostsPromise,
+    ]);
 
   const nextEvent = userEvents
     .filter((event) =>
@@ -69,25 +70,33 @@ export default async function AuthButton() {
             )}
           </div>
         </div>
-        <div className="mt-12 flex w-full flex-row">
-          <div className="flex w-9/12 flex-shrink-0 flex-col">
-            <div className="flex w-11/12 flex-col">
-              <EventSection
-                title="Recommended Events"
-                events={recommendedEvents}
-                redirect="/feed/recommendations"
-              />
-              <EventSection
-                title="University of Florida"
-                events={universityEvents}
-                redirect="/feed/university"
-              />
+        <div className="flex w-full flex-col items-center md:flex-row md:items-start">
+          <div className="order-2 mt-10 flex w-full flex-shrink-0 flex-col md:order-1 md:w-9/12">
+            <div className="flex w-full flex-col md:w-11/12">
+              {recommendedEvents && recommendedEvents?.length > 0 && (
+                <EventSection
+                  title="Recommended Events"
+                  events={recommendedEvents}
+                  redirect="/feed/recommendations"
+                />
+              )}
+              {universityEvents && universityEvents?.length > 0 && (
+                <EventSection
+                  title="University of Florida"
+                  events={universityEvents}
+                  redirect="/feed/university"
+                />
+              )}
               <EventCategories />
-              <HostSection hosts={recommendedHosts} />
+              {recommendedHosts &&
+                (recommendedHosts?.users?.length > 0 ||
+                  recommendedHosts?.organizations?.length > 0) && (
+                  <HostSection hosts={recommendedHosts} />
+                )}
             </div>
           </div>
-          <div className="sticky top-0 mt-6 flex w-3/12 flex-shrink-0 flex-col items-center">
-            <div className="sticky top-24 flex flex-col rounded-xl border px-4 py-2 shadow-sm">
+          <div className="order-1 mt-10 flex w-3/12 flex-shrink-0 flex-col items-center md:sticky md:top-0 md:order-2 md:mt-16">
+            <div className="flex  flex-col rounded-xl border px-4 py-2 shadow-sm md:sticky md:top-24">
               <EventCalendar events={userEvents} />
             </div>
           </div>

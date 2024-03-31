@@ -120,6 +120,10 @@ export const eventRouter = createTRPCRouter({
         where: {
           OR: [{ userHostId: { in: hostIds } }, { orgHostId: { in: hostIds } }],
         },
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
       });
 
       const sortedEvents = sortUpcomingEvents(recommendedEvents);
@@ -273,10 +277,12 @@ export const eventRouter = createTRPCRouter({
       return event;
     }),
   getRecommendedHosts: privateProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(z.object({ userId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
+      const userId = input?.userId ?? ctx.user.id;
+
       const user = await ctx.db.user.findUnique({
-        where: { id: input.userId },
+        where: { id: userId },
         include: { attends: true },
       });
 
