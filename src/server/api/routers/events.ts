@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "../../../lib/validators/Tag";
-import { EventType } from "@prisma/client";
+import { EventType, TagCategory } from "@prisma/client";
 import { sortUpcomingEvents } from "@/lib/utils";
 import { type EventData } from "@/lib/interfaces/eventData";
 
@@ -116,15 +116,24 @@ export const eventRouter = createTRPCRouter({
         .map((event) => event.userHostId ?? event.orgHostId)
         .filter((id) => id !== null) as string[];
 
-      const recommendedEvents: EventData[] = await ctx.db.event.findMany({
-        where: {
-          OR: [{ userHostId: { in: hostIds } }, { orgHostId: { in: hostIds } }],
-        },
+      const queryOptions = {
+        // Empty "where" clause in case user has no event data
+        // -> in that case, make recommended events all upcoming events
+        where: {},
         include: {
           userHost: true,
           orgHost: true,
         },
-      });
+      };
+
+      if (hostIds.length > 0) {
+        queryOptions.where = {
+          OR: [{ userHostId: { in: hostIds } }, { orgHostId: { in: hostIds } }],
+        };
+      }
+
+      const recommendedEvents: EventData[] =
+        await ctx.db.event.findMany(queryOptions);
 
       const sortedEvents = sortUpcomingEvents(recommendedEvents);
 
@@ -159,7 +168,7 @@ export const eventRouter = createTRPCRouter({
       return events;
     }),
   getCategory: privateProcedure
-    .input(z.object({ category: z.string() }))
+    .input(z.object({ category: z.nativeEnum(TagCategory) }))
     .query(async ({ ctx, input }) => {
       const events: EventData[] = await ctx.db.event.findMany({
         where: {

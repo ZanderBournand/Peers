@@ -5,7 +5,6 @@ import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -13,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
+import CreateEventIcon from "@/components/events/CreateEventIcon";
+import CreateOrganizationIcon from "@/components/organizations/CreateOrganizationIcon";
 
 const cardStyle = {
   width: "580px",
@@ -228,15 +229,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
-                  {isCurrentUser && (
-                    <Link
-                      className="color-grey ml-1.5 mt-1.5"
-                      href="/organization/new"
-                      title="Create Organization"
-                    >
-                      <AiOutlinePlusCircle className="color-grey" />
-                    </Link>
-                  )}
+                  {isCurrentUser && <CreateOrganizationIcon userData={user} />}
                 </div>
               </CardHeader>
               <CardContent className="text-center">
@@ -252,15 +245,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
-                  {isCurrentUser && (
-                    <Link
-                      className="color-grey ml-1.5 mt-1.5"
-                      href="/event/new"
-                      title="Create Event"
-                    >
-                      <AiOutlinePlusCircle className="color-grey" />
-                    </Link>
-                  )}
+                  {isCurrentUser && <CreateEventIcon userData={user} />}
                 </div>
               </CardHeader>
               {eventsAttending.length == 0 ? (
