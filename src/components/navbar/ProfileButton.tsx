@@ -69,7 +69,7 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
             <Link
               onClick={() => setMenuOpen(false)}
               className="hover:text-muted-foreground/70"
-              href="/user"
+              href={"/user/" + userData?.id}
             >
               Profile
             </Link>

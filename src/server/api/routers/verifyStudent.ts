@@ -1,6 +1,36 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
-import startCase from "lodash/startCase";
+
+function titleCase(name: string): string {
+  const minorWords = [
+    "of",
+    "the",
+    "in",
+    "and",
+    "a",
+    "an",
+    "to",
+    "for",
+    "with",
+    "on",
+    "at",
+  ];
+
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word: string, index: number, array: string[]) => {
+      if (
+        index === 0 ||
+        index === array.length - 1 ||
+        !minorWords.includes(word)
+      ) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      return word;
+    })
+    .join(" ");
+}
 
 export const verifyStudentRouter = createTRPCRouter({
   sendVerificationCode: privateProcedure
@@ -66,11 +96,12 @@ export const verifyStudentRouter = createTRPCRouter({
         verificationCode?.code === input.code &&
         verificationCode.createdAt.getTime() + 1000 * 60 * 5 > Date.now()
       ) {
+        const university = titleCase(input.university);
         await ctx.db.user.update({
           where: { id: ctx.user.id },
           data: {
             isVerifiedStudent: true,
-            university: startCase(input.university),
+            university: university,
           },
         });
 

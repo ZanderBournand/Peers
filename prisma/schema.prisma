@@ -9,12 +9,12 @@ datasource db {
 }
 
 model User {
-  id        String  @id
-  email     String  @unique
-  username  String  @unique
-  firstName String?
-  lastName  String?
-  image     String
+  id          String  @id
+  email       String  @unique
+  username    String  @unique
+  firstName   String?
+  lastName    String?
+  image       String
 
   skills String[]
   bio    String?
@@ -34,12 +34,14 @@ model User {
 }
 
 model University {
-  name            String @id
-  web_pages       String[]
-  alpha_two_code  String?
-  state_province  String?
-  domains         String[]
-  country         String?
+  name              String @id
+  web_pages         String[]
+  alpha_two_code    String?
+  state_province    String?
+  domains           String[]
+  country           String?
+  logo              String?
+  is_logo_uploaded  Boolean
 }
 
 model Organization {

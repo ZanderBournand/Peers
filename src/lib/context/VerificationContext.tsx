@@ -108,12 +108,23 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
       onSuccess: (result) => {
         if (result) {
           setCodeVerified(true);
+          setUniversityLogo();
         } else {
           setCodeVerified(false);
         }
       },
       onError: (e) => {
         console.error("Failed to verify code", e);
+      },
+    });
+
+  const { mutate: setUniversityLogo } =
+    api.universities.setUniversityLogo.useMutation({
+      onSuccess: () => {
+        console.log("University logo set");
+      },
+      onError: (e) => {
+        console.error("Failed to set university logo", e);
       },
     });
 
@@ -161,8 +172,7 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                 {university
                   ? universities.find(
                       (uni) =>
-                        uni.name.toLocaleLowerCase() ===
-                        university.toLowerCase(),
+                        uni.name.toUpperCase() === university.toUpperCase(),
                     )?.name
                   : "Select your university"}
                 <ChevronsUpDown className="mr-2 h-4 w-4" />
