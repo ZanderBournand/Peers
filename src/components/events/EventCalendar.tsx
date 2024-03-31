@@ -14,24 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { getDisplayName } from "@/lib/utils";
 import Link from "next/link";
-
-const css = `
-.number-container {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .number-container::after {
-    position: absolute;
-    bottom: 0px; /* Adjust this value to position the dot */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 7px; /* Width of the dot */
-    height: 7px; /* Height of the dot */
-    background-color: #7c3aed; /* Color of the dot - bright purple */
-    border-radius: 50%; /* Ensures the dot is circular */
-  }
-`;
+import "@/styles/other.css";
 
 interface EventCalendarProps {
   events: EventData[];
@@ -107,7 +90,6 @@ export default function EventCalendar({ events }: EventCalendarProps) {
 
   return (
     <>
-      <style>{css}</style>
       <Calendar
         mode="single"
         selected={date}
@@ -116,8 +98,7 @@ export default function EventCalendar({ events }: EventCalendarProps) {
           events: eventDays,
         }}
         modifiersClassNames={{
-          events: "number-container",
-          //events: "bg-purple-100/50 text-accent-foreground",
+          events: "calendar-event-day",
         }}
       />
       <p className="mt-4 font-semibold">Your events</p>

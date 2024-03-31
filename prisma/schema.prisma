@@ -92,7 +92,7 @@ model Event {
 
 model Tag {
   id       String  @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
-  category String
+  category TagCategory
   name     String
   events   Event[]
 }
@@ -131,4 +131,17 @@ enum OrganizationType {
   SPORTS
   E_SPORTS
   OTHER
+}
+
+enum TagCategory {
+  TECH
+  ART
+  SPORTS
+  LANGUAGE
+  BUSINESS
+  EDUCATION
+  SOCIAL_IMPACT
+  SCIENCE_AND_ENGINEERING
+  CULTURE_AND_HISTORY
+  PERSONAL_DEVELOPMENT
 }

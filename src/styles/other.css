@@ -1,0 +1,16 @@
+.calendar-event-day {
+  position: relative;
+  display: inline-block;
+}
+
+.calendar-event-day::after {
+  content: "";
+  position: absolute;
+  bottom: 0px; /* Adjust this value to position the dot */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 7px; /* Width of the dot */
+  height: 7px; /* Height of the dot */
+  background-color: #7c3aed; /* Color of the dot - bright purple */
+  border-radius: 50%; /* Ensures the dot is circular */
+}

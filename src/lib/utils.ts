@@ -113,3 +113,16 @@ export const eventCountdownTime = (
           diffDays < 7 ? "day" : "week",
         )}`;
 };
+
+export function formatTagName(tagName: string) {
+  // Replace underscores with spaces and convert to title case
+  let formatted = tagName
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+
+  // Replace "And" with "&"
+  formatted = formatted.replace("And", "&");
+
+  return formatted;
+}
