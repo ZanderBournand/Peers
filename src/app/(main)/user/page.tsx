@@ -55,7 +55,7 @@ export default async function UserPage() {
               </Button>
             </Link>
 
-            <Link href="/createOrganization">
+            <Link href="/organization/new">
                 <Button 
                   variant="default"
                   className="mx-4 justify-center"

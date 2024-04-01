@@ -51,6 +51,7 @@ export default function NewOrgForm() {
   const [isLoading, setIsLoading] = useState(true);
   const { data: org, isLoading: isOrgLoading } =
     //this is WHERE YOU GET WHICH ORG UR TALKING ABOUT
+    //AND THEN UR DONE
     api.users.getCurrent.useQuery({});
 
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
@@ -68,9 +69,13 @@ export default function NewOrgForm() {
     defaultValues: {
       name: undefined,
       email: undefined,
+      university: undefined,
       description: undefined,
       image: undefined,
       type: undefined,
+      instagram: undefined,
+      facebook: undefined,
+      discord: undefined
     },
   });
 
@@ -125,6 +130,7 @@ export default function NewOrgForm() {
       image: orgImage,
       name: data.name,
       email: data.email,
+      university: data.university,
       description: data.description,
       type: data.type,
       instagram: data.instagram,
@@ -169,7 +175,7 @@ export default function NewOrgForm() {
                       htmlFor="image"
                       className="flex w-full flex-col items-center"
                     >
-                      <div className="relative flex h-40 w-40 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                      <div className="relative flex h-40 w-40 flex-col items-center justify-center bg-gray-50">
                         <span className="text-center font-semibold">
                           Change profile picture
                         </span>
@@ -196,7 +202,7 @@ export default function NewOrgForm() {
                             style={{
                               objectFit: "cover",
                             }}
-                            className="rounded-full"
+                            className="rounded-2xl"
                           />
                         )}
                       </div>
@@ -242,6 +248,19 @@ export default function NewOrgForm() {
                   )}
                 />
               </div>
+              <FormField
+                  control={form.control}
+                  name="university"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">University</FormLabel>
+                      <FormControl>
+                        <Input placeholder="University" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}

@@ -18,7 +18,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -44,7 +43,7 @@ import { env } from "@/env";
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
 export default function CreateOrganization() {
-  const [isOrgization, setIsOrgization] = useState(false);
+  // const [isOrgization, setIsOrgization] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { control } = useForm();
   const supabase = createClient();
@@ -64,6 +63,7 @@ export default function CreateOrganization() {
     defaultValues: {
       name: undefined,
       email: undefined,
+      university: undefined,
       description: undefined,
       image: undefined,
       type: undefined,
@@ -90,11 +90,12 @@ export default function CreateOrganization() {
     const newOrgData: NewOrgInput = {
       name: data.name,
       email: data.email,
+      university: data.university,
       description: data.description,
       type: data.type,
-      instagram: undefined,
-      discord: undefined,
-      facebook: undefined,
+      instagram: data.instagram,
+      discord: data.discord,
+      facebook: data.facebook,
       //image?
     };
 
@@ -108,7 +109,6 @@ export default function CreateOrganization() {
       const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
       newOrgData.image = baseStorageUrl + imageData?.path;
     }
-
     mutate(newOrgData);
   };
 
@@ -162,6 +162,20 @@ export default function CreateOrganization() {
                   )}
                 />
               </div>
+              
+              <FormField
+                  control={form.control}
+                  name="University"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="">University</FormLabel>
+                      <FormControl>
+                        <Input placeholder="University" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
               <div className="flex flex-row gap-4">
                 <FormField

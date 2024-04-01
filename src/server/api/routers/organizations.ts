@@ -9,13 +9,14 @@ export const organizationRouter = createTRPCRouter({
       z
         .object({
           name: z.string().min(1),
-          email: z.string().min(1).optional(),
+          email: z.string().min(1).optional().nullable(),
+          university: z.string().min(1).optional().nullable(),
           type: z.nativeEnum(OrganizationType),
           description: z.string().min(50),
-          image: z.string().url().optional(),
-          instagram: z.string().min(1).optional(),
-          discord: z.string().min(1).optional(),
-          facebook: z.string().min(1).optional(),
+          image: z.string().url().optional().nullable(),
+          instagram: z.string().min(1).optional().nullable(),
+          discord: z.string().min(1).optional().nullable(),
+          facebook: z.string().min(1).optional().nullable(),
         })
         //not sure i need the following code:
         // .refine(
@@ -32,20 +33,21 @@ export const organizationRouter = createTRPCRouter({
         //   },
         // ),
     )
-    .mutation(async ({ ctx, input }) => {
-      const event = await ctx.db.event.create({
-        data: {
-          name: z.string().min(1),
-          email: z.string().min(1).optional(),
-          type: z.nativeEnum(OrganizationType),
-          description: z.string().min(50),
-          image: z.string().url().optional(),
-          instagram: z.string().min(1).optional(),
-          discord: z.string().min(1).optional(),
-          facebook: z.string().min(1).optional(),
-        },
-      });
+    // .mutation(async ({ ctx, input }) => {
+    //   const org = await ctx.db.org.create({
+    //     data: {
+    //       name: z.string().min(1),
+    //       email: z.string().min(1).optional(),
+    //       university: z.string().min(1).optional(),
+    //       type: z.nativeEnum(OrganizationType),
+    //       description: z.string().min(50),
+    //       image: z.string().url().optional(),
+    //       instagram: z.string().min(1).optional(),
+    //       discord: z.string().min(1).optional(),
+    //       facebook: z.string().min(1).optional(),
+    //     },
+    //   });
 
-      return event;
-    }),
+    //   return org;
+    // }),
 });
