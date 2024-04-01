@@ -3,22 +3,38 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import { BellAlertIcon } from "@heroicons/react/24/outline";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
+import { createClient } from "@/utils/supabase/client";
 
 const routes: { title: string; href: string }[] = [
-  { title: "Discover", href: "/discover" },
   { title: "My Events", href: "/myevents" },
   { title: "Profile", href: "/user" },
 ];
 
 const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  const supabase = createClient();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   const user = api.users.getCurrent.useQuery().data;
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSearchSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (searchValue) {
+      window.location.href = `/search?term=${searchValue}`;
+    }
+  };
 
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border px-6 lg:px-14">
@@ -45,6 +61,22 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               Complete your profile!
             </Link>
           )}
+          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Search"
+            className="px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-primary"
+            value={searchValue}
+            onChange={handleSearchChange}
+          />
+          <Button 
+            type="submit"
+            className="bg-accent-primary text-white px-4 py-1 rounded-md"
+            onClick={() => console.log("Button clicked")}
+          >
+            Search
+          </Button>
+          </form>
         </div>
       </div>
 
