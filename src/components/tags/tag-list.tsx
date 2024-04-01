@@ -34,49 +34,51 @@ export const TagList: React.FC<TagListProps> = ({
   };
 
   return (
-    <div
-      className={cn("rounded-md", {
-        "flex flex-wrap gap-2": direction === "row",
-        "flex flex-col gap-2": direction === "column",
-      })}
-    >
-      {draggable ? (
-        <SortableList
-          onSortEnd={onSortEnd}
-          className="list flex flex-wrap gap-2"
-          dropTarget={<DropTarget />}
-        >
-          {tags.map((tagObj) => (
-            <SortableItem key={tagObj.id}>
-              <div
-                onMouseDown={() => handleMouseDown(tagObj.id)}
-                onMouseLeave={handleMouseUp}
-                className={cn(
-                  {
-                    "rounded-md border border-solid border-primary":
-                      draggedTagId === tagObj.id,
-                  },
-                  "transition-all duration-200 ease-in-out",
-                )}
-              >
-                {customTagRenderer ? (
-                  customTagRenderer(tagObj)
-                ) : (
-                  <Tag tagObj={tagObj} {...tagListProps} />
-                )}
-              </div>
-            </SortableItem>
-          ))}
-        </SortableList>
-      ) : (
-        tags.map((tagObj) =>
-          customTagRenderer ? (
-            customTagRenderer(tagObj)
-          ) : (
-            <Tag key={tagObj.id} tagObj={tagObj} {...tagListProps} />
-          ),
-        )
-      )}
-    </div>
+    tags.length > 0 && (
+      <div
+        className={cn("rounded-md", {
+          "flex flex-wrap gap-2": direction === "row",
+          "flex flex-col gap-2": direction === "column",
+        })}
+      >
+        {draggable ? (
+          <SortableList
+            onSortEnd={onSortEnd}
+            className="list flex flex-wrap gap-2"
+            dropTarget={<DropTarget />}
+          >
+            {tags.map((tagObj) => (
+              <SortableItem key={tagObj.id}>
+                <div
+                  onMouseDown={() => handleMouseDown(tagObj.id)}
+                  onMouseLeave={handleMouseUp}
+                  className={cn(
+                    {
+                      "rounded-md border border-solid border-primary":
+                        draggedTagId === tagObj.id,
+                    },
+                    "transition-all duration-200 ease-in-out",
+                  )}
+                >
+                  {customTagRenderer ? (
+                    customTagRenderer(tagObj)
+                  ) : (
+                    <Tag tagObj={tagObj} {...tagListProps} />
+                  )}
+                </div>
+              </SortableItem>
+            ))}
+          </SortableList>
+        ) : (
+          tags.map((tagObj) =>
+            customTagRenderer ? (
+              customTagRenderer(tagObj)
+            ) : (
+              <Tag key={tagObj.id} tagObj={tagObj} {...tagListProps} />
+            ),
+          )
+        )}
+      </div>
+    )
   );
 };
