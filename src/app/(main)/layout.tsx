@@ -5,6 +5,7 @@ import { VerificationProvider } from "@/lib/context/VerificationContext";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { Toaster } from "@/components/ui/sonner";
 
 const RootLayout: React.FC<{ children: React.ReactNode }> = async ({
   children,
@@ -24,9 +25,8 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = async ({
       <Navbar>
         <AuthComponent />
       </Navbar>
-      <VerificationProvider>
-        {children}
-      </VerificationProvider>
+      <VerificationProvider>{children}</VerificationProvider>
+      <Toaster position="top-right" />
     </>
   );
 };
