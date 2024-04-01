@@ -22,7 +22,7 @@ import { headers } from "next/headers";
 import AttendButton from "@/components/events/AttendButton";
 import Link from "next/link";
 import type { UserData } from "@/lib/interfaces/userData";
-import type { EventData, addressSections } from "@/lib/interfaces/eventData";
+import type { EventData } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import EventStatus from "@/components/events/EventStatus";
 import { VideoCallButton } from "@/components/events/VideoCallButton";
@@ -45,10 +45,6 @@ export default async function EventPage({
     hour12: true,
   });
 
-  const addressSections: addressSections | null = getAddressSections(
-    event?.location,
-  );
-
   const eventLink = headers().get("x-url");
   const eventJoinStatus = shouldDisplayJoinButton(event.date, event.duration);
 
@@ -56,16 +52,17 @@ export default async function EventPage({
     <div className="flex items-center justify-center pb-32">
       <div className="my-16 flex w-full max-w-screen-xl flex-row self-center">
         <div className="flex w-8/12 flex-col items-start px-20">
-          <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50">
+          <div className="relative flex aspect-video w-full items-center justify-center rounded-xl bg-gray-50">
             {event.image ? (
               <Image
                 src={event.image}
                 alt="selected image"
                 fill
+                sizes="100%"
                 style={{
                   objectFit: "cover",
                 }}
-                className="rounded-lg transition-opacity duration-500 group-hover:opacity-70"
+                className="rounded-xl transition-opacity duration-500 group-hover:opacity-70"
               />
             ) : (
               <div className="flex items-center justify-center text-gray-500">
@@ -159,6 +156,7 @@ export default async function EventPage({
                     src={event.image}
                     alt="selected image"
                     fill
+                    sizes="100%"
                     style={{
                       objectFit: "cover",
                     }}

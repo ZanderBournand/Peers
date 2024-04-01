@@ -73,7 +73,7 @@ test.describe("Auth - Create Event Button", () => {
 
     await page.waitForURL("**/event/new");
     await expect(
-      page.getByRole("heading", { name: "Create Event" }),
+      page.getByRole("heading", { name: "Create an Event" }),
     ).toBeVisible();
   });
 });

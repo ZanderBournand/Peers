@@ -10,9 +10,9 @@ import {
   UserIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import type { EventData, addressSections } from "@/lib/interfaces/eventData";
+import type { EventData } from "@/lib/interfaces/eventData";
 import moment from "moment";
-import { getAddressSections, getDisplayName } from "@/lib/utils";
+import { getDisplayName } from "@/lib/utils";
 
 export default function EventPreview({ event }: { event: EventData }) {
   const eventDate = new Date(event.date);
@@ -29,10 +29,6 @@ export default function EventPreview({ event }: { event: EventData }) {
     minute: "2-digit",
   });
 
-  const addressSections: addressSections | null = getAddressSections(
-    event?.location,
-  );
-
   return (
     <Link href={`/event/${event.id}`}>
       <div className="group mx-4 my-4 flex w-72 flex-col overflow-hidden rounded-2xl border border-transparent transition-all duration-300 hover:border-gray-100 hover:shadow-sm">
@@ -43,6 +39,7 @@ export default function EventPreview({ event }: { event: EventData }) {
                 src={event.image}
                 alt="selected image"
                 fill
+                sizes="100%"
                 style={{
                   objectFit: "cover",
                 }}
@@ -102,19 +99,9 @@ export default function EventPreview({ event }: { event: EventData }) {
               </div>
             )}
             {event.type === "IN_PERSON" && !isEventPassed && (
-              <div className="flex flex-row items-center">
-                <div className="my-2 min-w-[80px] rounded-md bg-green-200 bg-opacity-30 px-2 py-1 text-sm text-green-800">
-                  In-person
-                </div>
-                <div className="flex flex-row items-center">
-                  <MapPinIcon className="ml-2 mr-1 h-5 w-5" />
-                  <span className="flex flex-row items-center truncate text-slate-600">
-                    <span className="inline-block max-w-[125px] truncate">
-                      {addressSections?.city}
-                    </span>
-                    , {addressSections?.state}
-                  </span>
-                </div>
+              <div className="my-2 flex w-max flex-row items-center rounded-md bg-green-200 bg-opacity-30 px-2 py-1 text-sm text-green-800">
+                <MapPinIcon className="mr-1 h-5 w-5" />
+                {"In-person"}
               </div>
             )}
           </div>

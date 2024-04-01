@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock.json', 'prisma/schema.prisma') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock.json', 'prisma/schema.prisma') }}
 
       - name: Prettier
         run: npm run test:prettier
@@ -58,7 +58,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock.json', 'prisma/schema.prisma') }}
 
       - name: ESLint
         run: npm run test:eslint
@@ -75,7 +75,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock.json', 'prisma/schema.prisma') }}
 
       - name: Setup environment variables
         env:
@@ -97,7 +97,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock.json', 'prisma/schema.prisma') }}
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
