@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { UserData } from "@/lib/interfaces/userData";
+import moment from "moment";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -71,4 +72,23 @@ export function getAddressSections(fullAddress: string | null | undefined) {
     };
   }
   return null;
+}
+
+export function shouldDisplayJoinButton(
+  eventDate: Date,
+  eventDuration: number,
+): string {
+  // Convert event date and duration to moment objects
+  const eventStart = moment(eventDate);
+  const tenMinutesBeforeStart = eventStart.clone().subtract(10, "minutes");
+
+  const eventEnd = eventStart.clone().add(eventDuration, "minutes");
+
+  const now = moment();
+  // Check if the current time is within the event duration or within the next 10 minutes
+  return now.isBetween(tenMinutesBeforeStart, eventEnd)
+    ? "live"
+    : now.isBefore(tenMinutesBeforeStart)
+      ? "upcoming"
+      : "ended";
 }

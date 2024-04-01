@@ -122,7 +122,7 @@ export default function NewUserForm() {
     }
 
     mutate({
-      image: data.image ? userImage : user?.image,
+      image: data.image ? userImage ?? "" : user?.image ?? "",
       firstName: capitalizeFirstLetter(data.firstName),
       lastName: capitalizeFirstLetter(data.lastName),
       skills: skillsList,

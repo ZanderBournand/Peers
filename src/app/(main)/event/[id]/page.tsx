@@ -7,12 +7,15 @@ import {
   VideoCameraIcon,
   MicrophoneIcon,
   InformationCircleIcon,
+  SignalIcon,
+  NoSymbolIcon,
 } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import {
   getDisplayName,
   getAddressSections,
   getFormattedDuration,
+  shouldDisplayJoinButton,
 } from "@/lib/utils";
 import ShareButton from "@/components/events/ShareButton";
 import { headers } from "next/headers";
@@ -22,6 +25,7 @@ import type { UserData } from "@/lib/interfaces/userData";
 import type { EventData, addressSections } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import EventStatus from "@/components/events/EventStatus";
+import { VideoCallButton } from "@/components/events/VideoCallButton";
 
 export default async function EventPage({
   params,
@@ -46,6 +50,7 @@ export default async function EventPage({
   );
 
   const eventLink = headers().get("x-url");
+  const eventJoinStatus = shouldDisplayJoinButton(event.date, event.duration);
 
   return (
     <div className="flex items-center justify-center pb-32">
@@ -133,10 +138,12 @@ export default async function EventPage({
         </div>
         <div className="sticky top-0 flex w-4/12 flex-col px-4">
           <div className="sticky top-10 flex flex-col">
-            <div className="flex flex-row justify-center">
-              <ShareButton textToCopy={eventLink} />
-              <AttendButton user={user} event={event} />
-            </div>
+            {eventJoinStatus !== "ended" && (
+              <div className="flex flex-row justify-center">
+                <ShareButton textToCopy={eventLink} />
+                <AttendButton user={user} event={event} />
+              </div>
+            )}
             <Link
               href={
                 event.userHost
@@ -190,30 +197,49 @@ export default async function EventPage({
                   <p className="text-sm text-gray-500">Aprox. {duration}</p>
                 </div>
               </div>
-              {event.type === "ONLINE_VIDEO" && (
+              {(event.type === "ONLINE_VIDEO" ||
+                event.type === "ONLINE_AUDIO") && (
                 <div className="my-4 flex w-full flex-row items-center px-4">
-                  <VideoCameraIcon
-                    className="mr-4 h-6 w-6 flex-shrink-0"
-                    color="gray"
-                  />
-                  <p>
-                    The live video stream will become available here{" "}
-                    <span className="font-bold">10 minutes</span> before the
-                    event starts
-                  </p>
-                </div>
-              )}
-              {event.type === "ONLINE_AUDIO" && (
-                <div className="my-4 flex w-full flex-row items-center px-4">
-                  <MicrophoneIcon
-                    className="mr-4 h-6 w-6 flex-shrink-0"
-                    color="gray"
-                  />
-                  <p>
-                    The audio video stream will become available here{" "}
-                    <span className="font-bold">10 minutes</span> before the
-                    event starts
-                  </p>
+                  {eventJoinStatus === "live" ? (
+                    <>
+                      <SignalIcon
+                        className="mr-4 h-6 w-6 flex-shrink-0"
+                        color="gray"
+                      />
+                      <VideoCallButton
+                        type={event.type === "ONLINE_VIDEO" ? "video" : "audio"}
+                      />
+                    </>
+                  ) : eventJoinStatus === "upcoming" ? (
+                    <>
+                      {event.type === "ONLINE_VIDEO" ? (
+                        <VideoCameraIcon
+                          className="mr-4 h-6 w-6 flex-shrink-0"
+                          color="gray"
+                        />
+                      ) : (
+                        <MicrophoneIcon
+                          className="mr-4 h-6 w-6 flex-shrink-0"
+                          color="gray"
+                        />
+                      )}
+                      <p>
+                        The live{" "}
+                        {event.type === "ONLINE_VIDEO" ? "video" : "audio"}{" "}
+                        stream will become available here{" "}
+                        <span className="font-bold">10 minutes</span> before the
+                        event starts
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <NoSymbolIcon
+                        className="mr-4 h-6 w-6 flex-shrink-0"
+                        color="gray"
+                      />
+                      <p>This event has ended</p>
+                    </>
+                  )}
                 </div>
               )}
               {event.type === "IN_PERSON" && (
@@ -224,11 +250,9 @@ export default async function EventPage({
                       color="gray"
                     />
                     <div className="flex-start flex flex-col">
-                      <p>{addressSections?.place}</p>
+                      <p>{event?.location?.split(",")[0]}</p>
                       <p className="text-sm text-gray-500">
-                        {addressSections?.address &&
-                          addressSections?.address + " · "}
-                        {addressSections?.city}, {addressSections?.state}
+                        {event?.location?.split(",").slice(1).join(",")}
                       </p>
                     </div>
                   </div>
