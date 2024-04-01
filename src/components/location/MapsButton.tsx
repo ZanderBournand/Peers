@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -45,7 +47,7 @@ export default function MapsButton({
 
   return (
     <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button
           variant="outline"
           type="button"
@@ -80,7 +82,7 @@ export default function MapsButton({
               </p>
               <Input
                 value={locationDetailsInput ?? ""}
-                className="mt-4 h-8 rounded-none border-x-0 border-t-0 focus-visible:ring-0"
+                className="mt-4 focus-visible:ring-transparent"
                 placeholder="Any specifics..."
                 onChange={(e) => setLocationDetailsInput(e.target.value)}
                 autoFocus
