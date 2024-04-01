@@ -35,6 +35,17 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSearchSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (searchValue) {
+      window.location.href = `/search?term=${searchValue}`;
+    }
+  };
+
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border px-6 lg:px-14">
       <div className="flex items-center">
