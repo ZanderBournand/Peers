@@ -13,7 +13,6 @@ import {
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import {
   getDisplayName,
-  getAddressSections,
   getFormattedDuration,
   shouldDisplayJoinButton,
 } from "@/lib/utils";
@@ -22,7 +21,7 @@ import { headers } from "next/headers";
 import AttendButton from "@/components/events/AttendButton";
 import Link from "next/link";
 import type { UserData } from "@/lib/interfaces/userData";
-import type { EventData, addressSections } from "@/lib/interfaces/eventData";
+import type { EventData } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import EventStatus from "@/components/events/EventStatus";
 import { VideoCallButton } from "@/components/events/VideoCallButton";
@@ -44,10 +43,6 @@ export default async function EventPage({
     minute: "numeric",
     hour12: true,
   });
-
-  const addressSections: addressSections | null = getAddressSections(
-    event?.location,
-  );
 
   const eventLink = headers().get("x-url");
   const eventJoinStatus = shouldDisplayJoinButton(event.date, event.duration);
