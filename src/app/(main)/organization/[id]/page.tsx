@@ -26,13 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import ShareButton from "@/components/organizations/ShareButton";
 import Link from "next/link";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { MdEdit } from "react-icons/md";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import ShareButton from "@/components/events/ShareButton";
-import { headers } from "next/headers";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -149,6 +148,11 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     );
   }
 
+  //const orgLink = headers().get("x-url");
+
+  // const router = useRouter();
+  // const currentLink = `${router.pathname}/${org.id}`;
+
   return (
     <div className="flex items-center justify-center pb-32">
       <div className="my-16 flex w-full max-w-screen-xl flex-row justify-center self-center pb-6">
@@ -235,6 +239,7 @@ export default function OrgPage({ params }: { params: { id: string } }) {
             </Link>
           </div>
         </div>
+        <ShareButton textToCopy={"http://localhost:3000/organization/" + org.id} />
       </div>
     </div>
   );
