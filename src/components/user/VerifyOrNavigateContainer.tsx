@@ -12,7 +12,7 @@ interface VerificationNavigationIconProps {
   children: ReactNode;
 }
 
-export default function VerifyIconContainer({
+export default function VerifyOrNavigateContainer({
   user,
   navigationLink,
   elementId,
@@ -22,7 +22,6 @@ export default function VerifyIconContainer({
   const verificationAlert = useVerificationAlert();
 
   const handleClick = () => {
-    console.log(user?.isVerifiedStudent);
     if (!user?.isVerifiedStudent) {
       verificationAlert?.openAlert();
     } else {
@@ -33,7 +32,7 @@ export default function VerifyIconContainer({
   return (
     <a
       id={elementId}
-      className="color-grey ml-1.5 mt-1.5 cursor-pointer"
+      className="mx-1 cursor-pointer"
       onClick={handleClick}
       title="Create Event"
     >
