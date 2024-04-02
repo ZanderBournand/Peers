@@ -203,9 +203,7 @@ export default async function EventPage({
                         className="mr-4 h-6 w-6 flex-shrink-0"
                         color="gray"
                       />
-                      <VideoCallButton
-                        type={event.type === "ONLINE_VIDEO" ? "video" : "audio"}
-                      />
+                      <VideoCallButton type={event.type} />
                     </>
                   ) : eventJoinStatus === "upcoming" ? (
                     <>
@@ -221,11 +219,11 @@ export default async function EventPage({
                         />
                       )}
                       <p>
-                        The live{" "}
-                        {event.type === "ONLINE_VIDEO" ? "video" : "audio"}{" "}
-                        stream will become available here{" "}
-                        <span className="font-bold">10 minutes</span> before the
-                        event starts
+                        The live
+                        {event.type === "ONLINE_VIDEO" ? " video " : " audio "}
+                        stream will become available here
+                        <span className="font-bold"> 10 minutes </span>before
+                        the event starts
                       </p>
                     </>
                   ) : (
