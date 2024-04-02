@@ -13,7 +13,7 @@ export default function ShareButton({ textToCopy }: ShareButtonProps) {
   return (
     <Button
       variant="outline"
-      className="text-md mx-4 h-12 w-1/5 flex-row"
+      className="text-md mx-4 h-12 w-1/8 flex-row"
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(textToCopy ?? "");
