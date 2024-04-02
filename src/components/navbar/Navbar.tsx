@@ -23,7 +23,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border px-6 lg:px-14">
       <div className="flex items-center">
-        <Link href={"/"} className="shrink-0">
+        <Link href={"/"} className="shrink-0" legacyBehavior>
           <h1 className="text-2xl font-bold text-accent-foreground">Peers</h1>
         </Link>
         <div className="hidden w-full justify-end gap-1 bg-background px-4 py-2 sm:flex">
@@ -32,7 +32,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               key={index}
               href={route.href}
               className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-            >
+              legacyBehavior>
               {route.title}
             </Link>
           ))}
@@ -40,7 +40,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link
               href="/user/edit"
               className="py-flex-row ml-2 mt-1 flex h-8 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
-            >
+              legacyBehavior>
               <BellAlertIcon className="mr-1 h-5 w-5" />
               Complete your profile!
             </Link>
@@ -76,7 +76,7 @@ const MobileMenu: React.FC<{
             href={route.href}
             onClick={toggleMenu}
             className={`inline-flex h-10 w-full items-center text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
-          >
+            legacyBehavior>
             {route.title}
           </Link>
         ))}

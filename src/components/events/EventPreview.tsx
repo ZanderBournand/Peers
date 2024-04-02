@@ -34,7 +34,7 @@ export default function EventPreview({ event }: { event: EventData }) {
   );
 
   return (
-    <Link href={`/event/${event.id}`}>
+    <Link href={`/event/${event.id}`} legacyBehavior>
       <div className="group mx-4 my-4 flex w-72 flex-col overflow-hidden rounded-2xl border border-transparent transition-all duration-300 hover:border-gray-100 hover:shadow-sm">
         <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50">
           {event.image ? (

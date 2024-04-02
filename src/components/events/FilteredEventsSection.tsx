@@ -83,7 +83,7 @@ export default function FilteredEventsSection({
           </p>
           <div className="flex flex-row items-center">
             {/* TODO: link the button to the discover screen w/ the proper filtering */}
-            <Link href="/">
+            <Link href="/" legacyBehavior>
               <Button
                 variant="outline"
                 className="mt-4 flex flex-row items-center rounded-lg"

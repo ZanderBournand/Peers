@@ -12,60 +12,58 @@ import Link from "next/link";
 export default async function UserPage() {
   const user = await api.users.getCurrent.query();
 
-  return (
-    user && (
-      <div className="flex w-full justify-center ">
-        <Card className="mt-12 w-full max-w-xl">
-          <CardHeader>
-            <CardTitle>
-              {user.firstName} {user.lastName}
-            </CardTitle>
-            <CardDescription>{user.email}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center">
-            <p className="pr-1">Skills:</p>
-            {user.skills.map((skill, index) => (
-              <p
-                key={index}
-                className="w-min rounded-full border border-border px-2 py-0.5"
-              >
-                {skill}
-              </p>
-            ))}
+  return user && (
+    <div className="flex w-full justify-center ">
+      <Card className="mt-12 w-full max-w-xl">
+        <CardHeader>
+          <CardTitle>
+            {user.firstName} {user.lastName}
+          </CardTitle>
+          <CardDescription>{user.email}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center">
+          <p className="pr-1">Skills:</p>
+          {user.skills.map((skill, index) => (
+            <p
+              key={index}
+              className="w-min rounded-full border border-border px-2 py-0.5"
+            >
+              {skill}
+            </p>
+          ))}
+        </CardContent>
+        <CardContent>
+          <p>Bio: {user.bio}</p>
+        </CardContent>
+        <div className="flex">
+          <CardContent>
+            <p>Github: {user.github}</p>
           </CardContent>
           <CardContent>
-            <p>Bio: {user.bio}</p>
+            <p>Linkedin: {user.linkedin}</p>
           </CardContent>
-          <div className="flex">
-            <CardContent>
-              <p>Github: {user.github}</p>
-            </CardContent>
-            <CardContent>
-              <p>Linkedin: {user.linkedin}</p>
-            </CardContent>
-            <CardContent>
-              <p>Website: {user.website}</p>
-            </CardContent>
-          </div>
-          <CardContent className="flex justify-center">
-            <Link href="/user/edit">
-              <Button variant="default" className="mx-4 justify-center"
+          <CardContent>
+            <p>Website: {user.website}</p>
+          </CardContent>
+        </div>
+        <CardContent className="flex justify-center">
+          <Link href="/user/edit" legacyBehavior>
+            <Button variant="default" className="mx-4 justify-center"
 >
-                Edit Profile
-              </Button>
-            </Link>
+              Edit Profile
+            </Button>
+          </Link>
 
-            <Link href="/organization/new">
-                <Button 
-                  variant="default"
-                  className="mx-4 justify-center"
-                  type="button"
-                  >
-                    Create Organization</Button>
-              </Link>
-          </CardContent>
-        </Card>
-      </div>
-    )
+          <Link href="/organization/new" legacyBehavior>
+              <Button 
+                variant="default"
+                className="mx-4 justify-center"
+                type="button"
+                >
+                  Create Organization</Button>
+            </Link>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

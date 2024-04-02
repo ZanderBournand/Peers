@@ -144,7 +144,7 @@ export default async function EventPage({
                   : `/org/${event.orgHost?.id}`
               }
               className="mt-8 flex flex-row rounded-xl border shadow-sm"
-            >
+              legacyBehavior>
               <div className="relative mx-2 my-2 flex aspect-square h-24 items-center justify-center ">
                 {/* TODO: Add user/org image */}
                 {event.image ? (

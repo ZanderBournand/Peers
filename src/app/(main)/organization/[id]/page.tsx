@@ -14,6 +14,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -25,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import Link from 'next/link';
+import Link from "next/link";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { MdEdit } from "react-icons/md";
 import { Label } from "@/components/ui/label";
@@ -148,8 +149,6 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     );
   }
 
-
-
   return (
     <div className="flex items-center justify-center pb-32">
       <div className="my-16 flex w-full max-w-screen-xl flex-row justify-center self-center pb-6">
@@ -171,13 +170,21 @@ export default function OrgPage({ params }: { params: { id: string } }) {
               </div>
             )}
           </div>
-          <div className="flex items-center justify-center pb-6">
-            <CardTitle>
+          <div className="flex items-center justify-center pb-2">
+            <CardTitle style={{ fontSize: "34px" }}>
               {org.name} @ {org.university}
-              <CardDescription>{org.email}</CardDescription>
             </CardTitle>
           </div>
-          <div className="flex items-center justify-center">
+          <div className="inline-block">
+            <div style={{fontSize: "22px" }} className="block inline flex items-center justify-center rounded-lg bg-orange-100/50 px-2 py-1 text-sm text-slate-800">
+              {org.email}
+            </div>
+          </div>
+
+          <div
+            style={{ paddingTop: "30px" }}
+            className="flex items-center justify-center"
+          >
             <CardTitle>Club Description:</CardTitle>
           </div>
           <div className="flex items-center justify-center pb-6">
@@ -217,18 +224,17 @@ export default function OrgPage({ params }: { params: { id: string } }) {
           </div>
 
           <div style={{ paddingTop: "30px", textAlign: "center" }}>
-  <div>IF IS AN ADMIN</div>
-  <Link href={`/organization/edit/${org.id}`}>
-    <a>
-      <Button className="items-center justify-center" style={{ padding: "20px 40px", fontSize: "24px" }}>
-        Edit
-      </Button>
-    </a>
-  </Link>
-</div>
-
+            <div>IF IS AN ADMIN</div>
+            <Link href={`/organization/edit/${org.id}`}>
+              <Button
+                className="items-center justify-center"
+                style={{ padding: "20px 40px", fontSize: "24px" }}
+              >
+                Edit
+              </Button>
+            </Link>
+          </div>
         </div>
-        SHARE BUTTON HERE
       </div>
     </div>
   );
