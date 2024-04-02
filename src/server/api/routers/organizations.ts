@@ -33,21 +33,21 @@ export const organizationRouter = createTRPCRouter({
         //   },
         // ),
     )
-    // .mutation(async ({ ctx, input }) => {
-    //   const org = await ctx.db.org.create({
-    //     data: {
-    //       name: z.string().min(1),
-    //       email: z.string().min(1).optional(),
-    //       university: z.string().min(1).optional(),
-    //       type: z.nativeEnum(OrganizationType),
-    //       description: z.string().min(50),
-    //       image: z.string().url().optional(),
-    //       instagram: z.string().min(1).optional(),
-    //       discord: z.string().min(1).optional(),
-    //       facebook: z.string().min(1).optional(),
-    //     },
-    //   });
+    .mutation(async ({ ctx, input }) => {
+      const org = await ctx.db.organization.create({
+        data: {
+          name: z.string().min(1),
+          email: z.string().min(1).optional(),
+          university: z.string().min(1).optional(),
+          type: z.nativeEnum(OrganizationType),
+          description: z.string().min(50),
+          image: z.string().url().optional(),
+          instagram: z.string().min(1).optional(),
+          discord: z.string().min(1).optional(),
+          facebook: z.string().min(1).optional(),
+        },
+      });
 
-    //   return org;
-    // }),
+      return org;
+    }),
 });

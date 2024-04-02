@@ -43,12 +43,8 @@ import { env } from "@/env";
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
 export default function CreateOrganization() {
-  // const [isOrgization, setIsOrgization] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { control } = useForm();
   const supabase = createClient();
-
-  const { data: user } = api.users.getCurrent.useQuery();
 
   // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
@@ -64,9 +60,9 @@ export default function CreateOrganization() {
       name: undefined,
       email: undefined,
       university: undefined,
+      type: undefined,
       description: undefined,
       image: undefined,
-      type: undefined,
       instagram: undefined,
       discord: undefined,
       facebook: undefined,
@@ -75,13 +71,13 @@ export default function CreateOrganization() {
 
   const router = useRouter();
 
-  const { mutate } = api.organizations.create.useMutation({
+  const { mutate } = api.organization.create.useMutation({
     onSuccess: () => {
       router.push("/");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.error("Error creating organization:", errorMessage);
+      console.error("Error creating organization:", errorMessage); 
     },
   });
 
@@ -91,8 +87,8 @@ export default function CreateOrganization() {
       name: data.name,
       email: data.email,
       university: data.university,
-      description: data.description,
       type: data.type,
+      description: data.description,
       instagram: data.instagram,
       discord: data.discord,
       facebook: data.facebook,
@@ -109,6 +105,7 @@ export default function CreateOrganization() {
       const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
       newOrgData.image = baseStorageUrl + imageData?.path;
     }
+
     mutate(newOrgData);
   };
 
@@ -137,7 +134,7 @@ export default function CreateOrganization() {
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
-                  name="OrgName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Organization Name</FormLabel>
@@ -150,7 +147,7 @@ export default function CreateOrganization() {
                 />
                 <FormField
                   control={form.control}
-                  name="OrgEmail"
+                  name="email"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Email</FormLabel>
@@ -162,10 +159,9 @@ export default function CreateOrganization() {
                   )}
                 />
               </div>
-              
               <FormField
                   control={form.control}
-                  name="University"
+                  name="university"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">University</FormLabel>
@@ -176,7 +172,6 @@ export default function CreateOrganization() {
                     </FormItem>
                   )}
                 />
-
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
