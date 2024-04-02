@@ -62,7 +62,6 @@ export default function CreateOrganization() {
       type: undefined,
       description: undefined,
       image: undefined,
-      type: undefined,
       instagram: undefined,
       discord: undefined,
       facebook: undefined,
@@ -88,10 +87,9 @@ export default function CreateOrganization() {
       email: data.email,
       type: data.type,
       description: data.description,
-      type: data.type,
-      instagram: undefined,
-      discord: undefined,
-      facebook: undefined,
+      instagram: data.instagram,
+      discord: data.discord,
+      facebook: data.facebook,
       //image?
     };
 
