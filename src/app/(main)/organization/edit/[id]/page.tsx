@@ -44,16 +44,20 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "@/env";
+import { OrganizationData } from "@/lib/interfaces/organizationData";
+import { appRouter } from "@/server/api/root";
 
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
-export default function NewOrgForm() {
+export default function OrgPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const [isLoading, setIsLoading] = useState(true);
   const { data: org, isLoading: isOrgLoading } =
-    //this is WHERE YOU GET WHICH ORG UR TALKING ABOUT
-    //AND THEN UR DONE
-    api.users.getCurrent.useQuery({});
-
+    api.organizations.getCurrent.useQuery({id: params.id});
+    
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
     image: File | undefined;
   };
@@ -82,15 +86,13 @@ export default function NewOrgForm() {
   useEffect(() => {
     if (!isOrgLoading && org) {
       form.reset({
-        firstName: org.firstName ?? "",
-        lastName: org.lastName ?? "",
-        skills: org.skills?.map((skill) => ({ name: skill })) ?? [
-          { name: "" },
-        ],
-        bio: org.bio ?? "",
-        github: org.github ?? "",
-        linkedin: org.linkedin ?? "",
-        website: org.website ?? "",
+        name: org.name ?? "",
+        email: org.email ?? "",
+        type: org.type ?? "",
+        description: org.description ?? "",
+        instagram: org.instagram ?? "",
+        facebook: org.facebook ?? "",
+        discord: org.discord ?? "",
       });
       setTimeout(() => setIsLoading(false), 500);
     }
@@ -105,7 +107,7 @@ export default function NewOrgForm() {
 
   const { mutate } = api.organizations.update.useMutation({
     onSuccess: () => {
-      window.location.href = "/user";
+      window.location.href = '/organization/view/${id}';
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -127,12 +129,12 @@ export default function NewOrgForm() {
     }
 
     mutate({
-      image: orgImage,
       name: data.name,
       email: data.email,
       university: data.university,
       description: data.description,
       type: data.type,
+      image: data.image,
       instagram: data.instagram,
       facebook: data.facebook,
       discord: data.discord,
@@ -191,7 +193,7 @@ export default function NewOrgForm() {
                               style={{
                                 objectFit: "cover",
                               }}
-                              className="rounded-full"
+                              className="rounded-2xl"
                             />
                           )
                         ) : (
@@ -228,7 +230,7 @@ export default function NewOrgForm() {
                     <FormItem className="w-full">
                       <FormLabel className="">Organization Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Name" {...field} />
+                        <Input defaultValue={org.name} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -241,7 +243,7 @@ export default function NewOrgForm() {
                     <FormItem className="w-full">
                       <FormLabel className="">Organization Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Email" {...field} />
+                        <Input defaultValue={org.email} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -255,7 +257,7 @@ export default function NewOrgForm() {
                     <FormItem className="w-full">
                       <FormLabel className="">University</FormLabel>
                       <FormControl>
-                        <Input placeholder="University" {...field} />
+                        <Input defaultValue={org.university} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -274,7 +276,7 @@ export default function NewOrgForm() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select the type of organization" />
+                            <SelectValue defaultValue={org.type} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -319,13 +321,13 @@ export default function NewOrgForm() {
 
               <FormField
                 control={form.control}
-                name="bio"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tell us about the organization"
+                        defaultValue={org.description}
                         className="resize-none"
                         {...field}
                       />
@@ -337,12 +339,12 @@ export default function NewOrgForm() {
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
-                  name="OrgName"
+                  name="Instagram"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Instagram</FormLabel>
                       <FormControl>
-                        <Input placeholder="Instagram" {...field} />
+                        <Input defaultValue={org.instagram} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -350,12 +352,12 @@ export default function NewOrgForm() {
                 />
                 <FormField
                   control={form.control}
-                  name="OrgEmail"
+                  name="Facebook"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Facebook</FormLabel>
                       <FormControl>
-                        <Input placeholder="Facebook" {...field} />
+                        <Input defaultValue={org.facebook} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -364,12 +366,12 @@ export default function NewOrgForm() {
 
                 <FormField
                   control={form.control}
-                  name="OrgEmail"
+                  name="Discord"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="">Discord</FormLabel>
                       <FormControl>
-                        <Input placeholder="Discord" {...field} />
+                        <Input defaultValue={org.discord} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

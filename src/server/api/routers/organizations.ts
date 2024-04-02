@@ -20,9 +20,10 @@ export const organizationRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const org = await ctx.db.organization.create({
+      const org = await ctx.db.organization.update({
+        where: { id: ctx.organization.id },
         data: {
-          id: uuidv4(),
+          //id: uuidv4(),
           name: input.name,
           email: input.email,
           university: input.university,
@@ -34,6 +35,20 @@ export const organizationRouter = createTRPCRouter({
           facebook: input.facebook,
         },
       });
+      
+      return org;
+    }),
+
+    getCurrent: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const org = await ctx.db.organization.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!org) {
+        throw new Error("Organization not found");
+      }
 
       return org;
     }),
