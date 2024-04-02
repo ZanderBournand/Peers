@@ -23,7 +23,7 @@ export const organizationRouter = createTRPCRouter({
       const org = await ctx.db.organization.update({
         where: { id: ctx.organization.id },
         data: {
-          //id: uuidv4(),
+          id: uuidv4(),
           name: input.name,
           email: input.email,
           university: input.university,
