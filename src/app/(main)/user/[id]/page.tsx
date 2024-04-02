@@ -123,7 +123,11 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               borderTop: "0px",
             }}
           >
-            <p>{user.bio}</p>
+            {user.bio ? (
+              <p>{user.bio}</p>
+            ) : (
+              <p>This user has not provided a bio.</p>
+            )}
           </div>
           <div
             className="flex w-80 flex-col items-center justify-center border-2 py-2"
