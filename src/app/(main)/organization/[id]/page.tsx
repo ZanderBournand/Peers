@@ -155,8 +155,8 @@ export default function OrgPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="flex items-center justify-center pb-32">
-      <div className="my-16 flex w-full max-w-screen-xl flex-row justify-center self-center pb-6">
-        <div className="flex w-8/12 flex-col items-start px-20 pb-6">
+      <div className="my-16 flex w-full max-w-screen-xl flex-row justify-center self-center pb-7">
+        <div className="flex w-8/12 flex-col items-start px-20 pb-7">
           <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50">
             {org.image ? (
               <Image
@@ -191,11 +191,11 @@ export default function OrgPage({ params }: { params: { id: string } }) {
           >
             <CardTitle>Club Description:</CardTitle>
           </div>
-          <div className="flex items-center justify-center pb-6">
+          <div className="flex items-center justify-center pb-7">
             {org.description}
           </div>
           <CardTitle>Club Leader(s):</CardTitle>
-          <div className="flex items-center justify-center pb-6">
+          <div className="flex items-center justify-center pb-7">
             ADD ADMIN NAME(S) HERE
           </div>
 
