@@ -18,8 +18,12 @@ import CreateEventIcon from "@/components/events/CreateEventIcon";
 import CreateOrganizationIcon from "@/components/organizations/CreateOrganizationIcon";
 =======
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
+<<<<<<< HEAD
 import VerifyIconContainer from "@/components/user/VerifyIconContainer";
 >>>>>>> 455bd81 (reduced code redundancy)
+=======
+import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
+>>>>>>> edf2388 (small changes to navigation container)
 
 const cardStyle = {
   width: "580px",
@@ -234,18 +238,18 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
           <div className="flex items-center justify-center">
             <Card style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
-                <div className="flex flex-row items-end">
+                <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
                   {isCurrentUser && (
-                    <VerifyIconContainer
+                    <VerifyOrNavigateContainer
                       user={user}
-                      elementId="#create-organization-link"
+                      elementId="create-organization-link"
                       navigationLink="/organization/new"
                     >
                       <PlusCircleIcon className="h-6 w-6" />
-                    </VerifyIconContainer>
+                    </VerifyOrNavigateContainer>
                   )}
                 </div>
               </CardHeader>
@@ -267,18 +271,18 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
           <div className="flex items-center justify-center">
             <Card className="mt-6" style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
-                <div className="flex flex-row items-end">
+                <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
                   {isCurrentUser && (
-                    <VerifyIconContainer
+                    <VerifyOrNavigateContainer
                       user={user}
-                      elementId="#create-event-link"
+                      elementId="create-event-link"
                       navigationLink="/event/new"
                     >
                       <PlusCircleIcon className="h-6 w-6" />
-                    </VerifyIconContainer>
+                    </VerifyOrNavigateContainer>
                   )}
                 </div>
               </CardHeader>
