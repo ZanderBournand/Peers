@@ -8,6 +8,7 @@ export const organizationRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
+        id: z.string(),
         name: z.string().min(1),
         email: z.string().min(1).optional().nullable(),
         university: z.string().min(1),
@@ -23,7 +24,8 @@ export const organizationRouter = createTRPCRouter({
       const org = await ctx.db.organization.update({
         where: { id: ctx.organization.id },
         data: {
-          id: uuidv4(),
+          //id: uuidv4(), //is diff here
+          id: input.id,
           name: input.name,
           email: input.email,
           university: input.university,
@@ -31,11 +33,42 @@ export const organizationRouter = createTRPCRouter({
           description: input.description,
           image: input.image,
           instagram: input.instagram,
-          discord: input.discord,
           facebook: input.facebook,
+          discord: input.discord,
         },
       });
-      
+      return org;
+    }),
+    update: privateProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string(),
+        university: z.string(),
+        tpye: z.string(),
+        description: z.string(),
+        image: z.string(),
+        instagram: z.string(),
+        facebook: z.string(),
+        discord: z.string(),
+
+      }),
+    )
+    .mutation(async ({ ctx, input}) => {
+      const org = await ctx.db.organization.update({
+        where: { id: ctx.organization.id},
+        data: {
+          name: input.name,
+          email: input.email,
+          university: input.university,
+          type: input.type,
+          description: input.description,
+          image: input.image,
+          instagram: input.instagram,
+          facebook: input.facebook,
+          discord: input.discord,
+        }
+      });
       return org;
     }),
 

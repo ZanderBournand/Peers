@@ -107,7 +107,7 @@ export default function OrgPage({
 
   const { mutate } = api.organizations.update.useMutation({
     onSuccess: () => {
-      window.location.href = '/organization/view/${id}';
+      window.location.href = '/organization/${id}';
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
