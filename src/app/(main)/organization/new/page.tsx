@@ -71,13 +71,13 @@ export default function CreateOrganization() {
 
   const router = useRouter();
 
-  const { mutate } = api.organization.create.useMutation({
+  const { mutate } = api.organizations.create.useMutation({
     onSuccess: () => {
       router.push("/");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.error("Error creating organization:", errorMessage); 
+      console.error("Error creating organization:", errorMessage);
     },
   });
 
@@ -160,18 +160,18 @@ export default function CreateOrganization() {
                 />
               </div>
               <FormField
-                  control={form.control}
-                  name="university"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel className="">University</FormLabel>
-                      <FormControl>
-                        <Input placeholder="University" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                control={form.control}
+                name="university"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="">University</FormLabel>
+                    <FormControl>
+                      <Input placeholder="University" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}

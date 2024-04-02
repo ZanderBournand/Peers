@@ -32,16 +32,16 @@ model User {
 }
 
 model Organization {
-  id   String @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  id   String @id 
   name String
   email       String?
   university  String
   description String
-  type        OrganizationType
+  type        String
   image       String?
-  instagram   String
-  facebook    String
-  discord     String
+  instagram   String?
+  facebook    String?
+  discord     String?
 
   admins  User[] @relation("Admins")
   members User[] @relation("Members")

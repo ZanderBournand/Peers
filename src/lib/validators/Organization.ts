@@ -5,7 +5,7 @@ export const newOrgSchema = z.object({
   name: z.string().min(1),
   email: z.string().min(1).optional().nullable(),
   university: z.string().min(1).optional().nullable(),
-  type: z.nativeEnum(OrganizationType),
+  type: z.string().min(1),
   description: z.string().min(50),
   image: z.string().url().optional().nullable(),
   instagram: z.string().min(1).optional().nullable(),
