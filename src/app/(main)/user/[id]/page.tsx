@@ -36,7 +36,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
   });
 
   const university = await api.universities.getUniversity.query({
-    name: user.university ?? "",
+    name: user.university_name ?? "",
   });
 
   if (!user) return null;
@@ -110,7 +110,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   ) : (
                     <PiStudentFill className="mr-2" />
                   )}
-                  {user.university}
+                  {user.university_name}
                 </p>
               </div>
             )}

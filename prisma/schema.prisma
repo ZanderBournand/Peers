@@ -9,12 +9,12 @@ datasource db {
 }
 
 model User {
-  id          String  @id
-  email       String  @unique
-  username    String  @unique
-  firstName   String?
-  lastName    String?
-  image       String
+  id        String  @id
+  email     String  @unique
+  username  String  @unique
+  firstName String?
+  lastName  String?
+  image     String
 
   skills String[]
   bio    String?
@@ -24,24 +24,28 @@ model User {
   website  String?
 
   isVerifiedStudent Boolean
-  university        String?
+
+  university_name  String?
+  university       University? @relation("Students", fields: [university_name], references: [name])
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
 
-  hostEvents Event[] @relation("UserHost")
-  attends    Event[] @relation("Attendees")
+  hostEvents     Event[] @relation("UserHost")
+  attends        Event[] @relation("Attendees")
 }
 
 model University {
-  name              String @id
-  web_pages         String[]
-  alpha_two_code    String?
-  state_province    String?
-  domains           String[]
-  country           String?
-  logo              String?
-  is_logo_uploaded  Boolean
+  name             String   @id
+  web_pages        String[]
+  alpha_two_code   String?
+  state_province   String?
+  domains          String[]
+  country          String?
+  logo             String?
+  is_logo_uploaded Boolean
+
+  students User[] @relation("Students")
 }
 
 model Organization {

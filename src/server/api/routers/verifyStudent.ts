@@ -101,7 +101,11 @@ export const verifyStudentRouter = createTRPCRouter({
           where: { id: ctx.user.id },
           data: {
             isVerifiedStudent: true,
-            university: university,
+            university: {
+              connect: {
+                name: university,
+              },
+            },
           },
         });
 
