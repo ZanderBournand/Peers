@@ -59,12 +59,4 @@ export const universityRouter = createTRPCRouter({
 
     return updatedUni;
   }),
-  getUniversityLogo: privateProcedure
-    .input(z.object({ name: z.string().optional() }))
-    .query(async ({ ctx, input }) => {
-      const university = await ctx.db.university.findUnique({
-        where: { name: input.name },
-      });
-      return university?.logo;
-    }),
 });
