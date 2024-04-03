@@ -36,7 +36,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
   });
 
   const university = await api.universities.getUniversity.query({
-    name: user.university_name ?? "",
+    name: user.universityName ?? "",
   });
 
   if (!user) return null;
@@ -96,7 +96,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                     fontSize: "1.01rem",
                   }}
                 >
-                  {university?.is_logo_uploaded ? (
+                  {university?.isLogoUploaded ? (
                     <Image
                       src={university.logo ?? ""}
                       alt="selected image"
@@ -110,7 +110,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   ) : (
                     <PiStudentFill className="mr-2" />
                   )}
-                  {user.university_name}
+                  {user.universityName}
                 </p>
               </div>
             )}

@@ -23,15 +23,15 @@ export const universityRouter = createTRPCRouter({
       where: { id: ctx.user.id },
     });
 
-    if (!user?.university_name) {
+    if (!user?.universityName) {
       return null;
     }
 
     const university = await ctx.db.university.findUnique({
-      where: { name: user?.university_name },
+      where: { name: user?.universityName },
     });
 
-    if (!university?.logo || university?.is_logo_uploaded) {
+    if (!university?.logo || university?.isLogoUploaded) {
       return null;
     }
 
@@ -53,8 +53,8 @@ export const universityRouter = createTRPCRouter({
     console.log("URL: " + url);
 
     const updatedUni = await ctx.db.university.update({
-      where: { name: user.university_name },
-      data: { logo: url, is_logo_uploaded: true },
+      where: { name: user.universityName },
+      data: { logo: url, isLogoUploaded: true },
     });
 
     return updatedUni;
