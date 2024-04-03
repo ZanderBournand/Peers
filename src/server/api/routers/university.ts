@@ -36,11 +36,10 @@ export const universityRouter = createTRPCRouter({
       const supabase = createClient(cookies());
       const response = await fetch(university.logo);
       const blob = await response.blob();
-      const file = new File([blob], uuidv4(), { type: "image/png" });
 
       const { data: imageData, error } = await supabase.storage
         .from("images")
-        .upload(`universities/${file.name}`, file);
+        .upload(`universities/${uuidv4()}`, blob);
 
       if (error) {
         console.error("Error uploading new logo", error);

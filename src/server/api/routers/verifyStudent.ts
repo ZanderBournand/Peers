@@ -65,14 +65,13 @@ export const verifyStudentRouter = createTRPCRouter({
         verificationCode?.code === input.code &&
         verificationCode.createdAt.getTime() + 1000 * 60 * 5 > Date.now()
       ) {
-        const university = input.university;
         await ctx.db.user.update({
           where: { id: ctx.user.id },
           data: {
             isVerifiedStudent: true,
             university: {
               connect: {
-                name: university,
+                name: input.university,
               },
             },
           },
