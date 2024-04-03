@@ -79,7 +79,7 @@ export default function OrgPage({
       type: undefined,
       instagram: undefined,
       facebook: undefined,
-      discord: undefined
+      discord: undefined,
     },
   });
 
@@ -88,6 +88,7 @@ export default function OrgPage({
       form.reset({
         name: org.name ?? "",
         email: org.email ?? "",
+        university: org.university ?? "",
         type: org.type ?? "",
         description: org.description ?? "",
         instagram: org.instagram ?? "",
@@ -107,7 +108,7 @@ export default function OrgPage({
 
   const { mutate } = api.organizations.update.useMutation({
     onSuccess: () => {
-      window.location.href = '/organization/${id}';
+      window.location.href = '/organization/' + org.id;
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -121,7 +122,7 @@ export default function OrgPage({
       const orgImageId: string = uuidv4();
 
       const { data: imageData } = await supabase.storage
-        .from("organizations")
+        .from("images")
         .upload("organizations/" + orgImageId, data.image);
 
       const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
@@ -129,12 +130,13 @@ export default function OrgPage({
     }
 
     mutate({
+      id: org.id,
       name: data.name,
       email: data.email,
       university: data.university,
       description: data.description,
       type: data.type,
-      image: data.image,
+      image: data.image ? orgImage: org?.image,
       instagram: data.instagram,
       facebook: data.facebook,
       discord: data.discord,

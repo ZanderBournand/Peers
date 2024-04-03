@@ -54,6 +54,8 @@ export default function CreateOrganization() {
     image: z.instanceof(File).optional(),
   });
 
+  const { data: user } = api.users.getCurrent.useQuery();
+
   const form = useForm<NewOrgInputWithFile>({
     resolver: zodResolver(newOrgSchemaWithFile),
     defaultValues: {
@@ -92,7 +94,6 @@ export default function CreateOrganization() {
       instagram: data.instagram,
       discord: data.discord,
       facebook: data.facebook,
-      //image?
     };
 
     if (data.image) {
@@ -105,6 +106,8 @@ export default function CreateOrganization() {
       const baseStorageUrl = env.NEXT_PUBLIC_SUPABASE_STORAGE_URL;
       newOrgData.image = baseStorageUrl + imageData?.path;
     }
+
+    //newOrgData.orgHostId = user?.id;
 
     mutate(newOrgData);
   };

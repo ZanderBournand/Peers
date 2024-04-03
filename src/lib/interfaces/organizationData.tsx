@@ -1,4 +1,4 @@
-import { type OrganizationType } from "@prisma/client";
+//import { type OrganizationType } from "@prisma/client";
 
 export interface OrganizationData {
   id: string;

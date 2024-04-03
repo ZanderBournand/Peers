@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { OrganizationType } from "@prisma/client";
+//import { OrganizationType } from "@prisma/client";
 
 export const newOrgSchema = z.object({
   name: z.string().min(1),

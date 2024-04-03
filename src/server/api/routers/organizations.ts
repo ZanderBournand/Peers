@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { v4 as uuidv4 } from "uuid";
 
-import { OrganizationType } from "@prisma/client";
+//import { OrganizationType } from "@prisma/client";
 
 export const organizationRouter = createTRPCRouter({
   create: privateProcedure
@@ -24,8 +24,8 @@ export const organizationRouter = createTRPCRouter({
       const org = await ctx.db.organization.update({
         where: { id: ctx.organization.id },
         data: {
-          //id: uuidv4(), //is diff here
-          id: input.id,
+          id: uuidv4(),
+          //id: input.id,
           name: input.name,
           email: input.email,
           university: input.university,
@@ -42,21 +42,21 @@ export const organizationRouter = createTRPCRouter({
     update: privateProcedure
     .input(
       z.object({
+        id: z.string(),
         name: z.string(),
         email: z.string(),
         university: z.string(),
-        tpye: z.string(),
+        type: z.string(),
         description: z.string(),
         image: z.string(),
         instagram: z.string(),
         facebook: z.string(),
         discord: z.string(),
-
       }),
     )
     .mutation(async ({ ctx, input}) => {
       const org = await ctx.db.organization.update({
-        where: { id: ctx.organization.id},
+        where: { id: input.id},
         data: {
           name: input.name,
           email: input.email,

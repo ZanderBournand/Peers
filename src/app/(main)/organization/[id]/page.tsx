@@ -175,7 +175,7 @@ export default function OrgPage({ params }: { params: { id: string } }) {
             )}
           </div>
           <div className="flex items-center justify-center pb-2">
-            <CardTitle style={{ fontSize: "34px" }}>
+            <CardTitle style={{ fontSize: "34px", paddingTop: "30px"  }}>
               {org.name} @ {org.university}
             </CardTitle>
           </div>

@@ -133,6 +133,7 @@ export default function CreateEvent() {
 
     if (isOrgEvent) {
       // TODO: handle creation via organization
+      
     } else {
       newEventData.userHostId = user?.id;
     }

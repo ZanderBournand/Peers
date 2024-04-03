@@ -13,5 +13,4 @@ export const newEventSchema = z.object({
   duration: z.number().int().min(1),
   tags: TagSchema.array().optional().nullable(),
   userHostId: z.string().optional().nullable(),
-  orgHostId: z.string().optional().nullable(),
 });
