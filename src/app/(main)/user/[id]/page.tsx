@@ -35,9 +35,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
     id: params.id,
   });
 
-  const university = await api.universities.getUniversity.query({
-    name: user.universityName ?? "",
-  });
+  const university = user?.university;
 
   if (!user) return null;
 

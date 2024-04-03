@@ -108,7 +108,7 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
       onSuccess: (result) => {
         if (result) {
           setCodeVerified(true);
-          setUniversityLogo();
+          setUniversityLogo({ universityName: university });
         } else {
           setCodeVerified(false);
         }
@@ -187,12 +187,8 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                     <CommandItem
                       key={uni.name}
                       value={uni.name}
-                      onSelect={(currentUniversity) => {
-                        setUniversity(
-                          currentUniversity === university
-                            ? ""
-                            : currentUniversity,
-                        );
+                      onSelect={() => {
+                        setUniversity(uni.name === university ? "" : uni.name);
                         setOpenCombo(false);
                         setDomains(uni.domains);
                       }}

@@ -26,7 +26,7 @@ model User {
   isVerifiedStudent Boolean
 
   universityName  String?
-  university       University? @relation("Students", fields: [universityName], references: [name])
+  university      University? @relation("Students", fields: [universityName], references: [name])
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
@@ -44,6 +44,7 @@ model University {
   country          String?
   logo             String?
   isLogoUploaded   Boolean
+  students         User[] @relation("Students")
 }
 
 model Organization {

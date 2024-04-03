@@ -18,45 +18,42 @@ export const universityRouter = createTRPCRouter({
       });
       return university;
     }),
-  setUniversityLogo: privateProcedure.mutation(async ({ ctx }) => {
-    const user = await ctx.db.user.findUnique({
-      where: { id: ctx.user.id },
-    });
+  setUniversityLogo: privateProcedure
+    .input(
+      z.object({
+        universityName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const university = await ctx.db.university.findUnique({
+        where: { name: input.universityName },
+      });
 
-    if (!user?.universityName) {
-      return null;
-    }
+      if (!university?.logo || university?.isLogoUploaded) {
+        return null;
+      }
 
-    const university = await ctx.db.university.findUnique({
-      where: { name: user?.universityName },
-    });
+      const supabase = createClient(cookies());
+      const response = await fetch(university.logo);
+      const blob = await response.blob();
+      const file = new File([blob], uuidv4(), { type: "image/png" });
 
-    if (!university?.logo || university?.isLogoUploaded) {
-      return null;
-    }
+      const { data: imageData, error } = await supabase.storage
+        .from("images")
+        .upload(`universities/${file.name}`, file);
 
-    const supabase = createClient(cookies());
-    const response = await fetch(university.logo);
-    const blob = await response.blob();
-    const file = new File([blob], uuidv4(), { type: "image/png" });
+      if (error) {
+        console.error("Error uploading new logo", error);
+        throw new Error("Error uploading new logo");
+      }
 
-    const { data: imageData, error } = await supabase.storage
-      .from("images")
-      .upload(`universities/${file.name}`, file);
+      const url = `${env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/${imageData?.path}`;
 
-    if (error) {
-      console.error("Error uploading new logo", error);
-      throw new Error("Error uploading new logo");
-    }
+      const updatedUni = await ctx.db.university.update({
+        where: { name: user.universityName },
+        data: { logo: url, isLogoUploaded: true },
+      });
 
-    const url = `${env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/${imageData?.path}`;
-    console.log("URL: " + url);
-
-    const updatedUni = await ctx.db.university.update({
-      where: { name: user.universityName },
-      data: { logo: url, isLogoUploaded: true },
-    });
-
-    return updatedUni;
-  }),
+      return updatedUni;
+    }),
 });

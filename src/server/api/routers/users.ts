@@ -59,6 +59,9 @@ export const userRouter = createTRPCRouter({
 
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
+        include: {
+          university: true,
+        },
       });
 
       if (!user) {
