@@ -50,7 +50,7 @@ export const universityRouter = createTRPCRouter({
       const url = `${env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/${imageData?.path}`;
 
       const updatedUni = await ctx.db.university.update({
-        where: { name: user.universityName },
+        where: { name: university.name },
         data: { logo: url, isLogoUploaded: true },
       });
 
