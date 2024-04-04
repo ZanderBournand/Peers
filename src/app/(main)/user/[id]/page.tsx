@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MdEdit } from "react-icons/md";
+import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
 
 const cardStyle = {
@@ -51,7 +52,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             }}
           >
             <Avatar className="size-20 hover:cursor-pointer">
-              <AvatarImage src={user?.image ?? ""} />
+              <AvatarImage src={user.image ?? ""} />
               <AvatarFallback>Peer</AvatarFallback>
             </Avatar>
             <p
@@ -91,8 +92,21 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                     fontSize: "1.01rem",
                   }}
                 >
-                  <PiStudentFill className="-ml-2 mr-1 h-5 w-5" />
-                  {user.university}
+                  {user?.university?.isLogoUploaded ? (
+                    <Image
+                      src={user?.university?.logo ?? ""}
+                      alt="selected image"
+                      width={20}
+                      height={20}
+                      style={{
+                        objectFit: "cover",
+                      }}
+                      className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
+                    />
+                  ) : (
+                    <PiStudentFill className="mr-2" />
+                  )}
+                  {user?.university?.name}
                 </p>
               </div>
             )}
@@ -105,7 +119,11 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               borderTop: "0px",
             }}
           >
-            <p>{user.bio}</p>
+            {user.bio ? (
+              <p>{user.bio}</p>
+            ) : (
+              <p>This user has not provided a bio.</p>
+            )}
           </div>
           <div
             className="flex w-80 flex-col items-center justify-center border-2 py-2"

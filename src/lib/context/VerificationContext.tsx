@@ -48,7 +48,6 @@ import {
   verifyCodeSchema,
 } from "@/lib/validators/verification";
 import { api } from "@/trpc/react";
-import uniDomains from "universities_and_domains.json";
 import { useRouter } from "next/navigation";
 
 export type CodeInput = z.infer<typeof verifyCodeSchema>;
@@ -109,12 +108,23 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
       onSuccess: (result) => {
         if (result) {
           setCodeVerified(true);
+          setUniversityLogo({ universityName: university });
         } else {
           setCodeVerified(false);
         }
       },
       onError: (e) => {
         console.error("Failed to verify code", e);
+      },
+    });
+
+  const { mutate: setUniversityLogo } =
+    api.universities.setUniversityLogo.useMutation({
+      onSuccess: () => {
+        console.log("University logo set");
+      },
+      onError: (e) => {
+        console.error("Failed to set university logo", e);
       },
     });
 
@@ -135,6 +145,9 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
       university: university,
     });
   };
+
+  const universities =
+    api.universities.getAllUniversities.useQuery().data ?? [];
 
   return (
     <VerificationContext.Provider value={{ openAlert }}>
@@ -157,10 +170,9 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                 className="w-[400px] justify-between"
               >
                 {university
-                  ? uniDomains.find(
+                  ? universities.find(
                       (uni) =>
-                        uni.name.toLocaleLowerCase() ===
-                        university.toLowerCase(),
+                        uni.name.toUpperCase() === university.toUpperCase(),
                     )?.name
                   : "Select your university"}
                 <ChevronsUpDown className="mr-2 h-4 w-4" />
@@ -171,16 +183,12 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
                 <CommandInput placeholder="Search university..." />
                 <CommandEmpty>No university found.</CommandEmpty>
                 <CommandGroup>
-                  {uniDomains.map((uni) => (
+                  {universities.map((uni) => (
                     <CommandItem
                       key={uni.name}
                       value={uni.name}
-                      onSelect={(currentUniversity) => {
-                        setUniversity(
-                          currentUniversity === university
-                            ? ""
-                            : currentUniversity,
-                        );
+                      onSelect={() => {
+                        setUniversity(uni.name === university ? "" : uni.name);
                         setOpenCombo(false);
                         setDomains(uni.domains);
                       }}

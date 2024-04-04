@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
-import startCase from "lodash/startCase";
 
 export const verifyStudentRouter = createTRPCRouter({
   sendVerificationCode: privateProcedure
@@ -70,7 +69,11 @@ export const verifyStudentRouter = createTRPCRouter({
           where: { id: ctx.user.id },
           data: {
             isVerifiedStudent: true,
-            university: startCase(input.university),
+            university: {
+              connect: {
+                name: input.university,
+              },
+            },
           },
         });
 
