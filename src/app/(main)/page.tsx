@@ -9,6 +9,8 @@ import EventCalendar from "@/components/events/EventCalendar";
 import StatusPing from "@/components/events/StatusPing";
 import { type UserData } from "@/lib/interfaces/userData";
 import moment from "moment";
+import Image from "next/image";
+import { PiStudentFill } from "react-icons/pi";
 
 export default async function AuthButton() {
   const supabase = createClient(cookies());
@@ -23,7 +25,7 @@ export default async function AuthButton() {
   const universityEventsPromise =
     user &&
     api.events.getUniversity.query({
-      university: userData?.university ?? "",
+      university: userData?.universityName ?? "",
     });
   const recommendedHostsPromise =
     user && api.events.getRecommendedHosts.query({});
@@ -36,35 +38,36 @@ export default async function AuthButton() {
       recommendedHostsPromise,
     ]);
 
-  const nextEvent = userEvents
-    ?.filter((event) =>
-      moment(event.date).add(event.duration, "minutes").isAfter(moment()),
-    )
-    .reduce(
-      (next, event) =>
-        moment(event.date).isBefore(moment(next?.date)) ? event : next,
-      userEvents[0],
-    );
+  const userUpcomingEvents = userEvents?.filter((event) =>
+    moment(event.date).add(event.duration, "minutes").isAfter(moment()),
+  );
 
-  const nextEventCountdown =
-    nextEvent && eventCountdownTime(nextEvent.date, nextEvent.duration);
+  const nextUserEvent = userUpcomingEvents?.reduce(
+    (next, event) =>
+      moment(event.date).isBefore(moment(next?.date)) ? event : next,
+    userUpcomingEvents[0],
+  );
+
+  const nextUserEventCountdown =
+    nextUserEvent &&
+    eventCountdownTime(nextUserEvent.date, nextUserEvent.duration);
 
   return user && userData ? (
     <div className="flex items-center justify-center pb-32">
-      <div className="mt-16 flex max-w-screen-2xl flex-col">
+      <div className="mt-16 flex max-w-screen-2xl flex-col px-12">
         <div className="flex flex-col items-center">
           <p className="flex flex-row items-center text-3xl font-bold">
             {`Hey, ${getDisplayName(userData as UserData, false)}!`}
           </p>
           <div className="mt-2 flex flex-row items-center text-2xl font-semibold text-gray-800">
-            {nextEvent ? (
+            {nextUserEvent ? (
               <>
                 Your next event is
-                {nextEventCountdown?.includes("in") && " in"}
-                <StatusPing eventType={nextEvent.type} />
-                {nextEventCountdown?.includes("in")
-                  ? nextEventCountdown.split("in")[1]
-                  : nextEventCountdown}
+                {nextUserEventCountdown?.includes("in") && " in"}
+                <StatusPing eventType={nextUserEvent.type} />
+                {nextUserEventCountdown?.includes("in")
+                  ? nextUserEventCountdown.split("in")[1]
+                  : nextUserEventCountdown}
               </>
             ) : (
               <>No events planned? Start learning!</>
@@ -86,6 +89,22 @@ export default async function AuthButton() {
                   title="University of Florida"
                   events={universityEvents}
                   redirect="/feed/university"
+                  titleIcon={
+                    userData?.university?.isLogoUploaded ? (
+                      <Image
+                        src={userData?.university?.logo ?? ""}
+                        alt="selected image"
+                        width={30}
+                        height={30}
+                        style={{
+                          objectFit: "cover",
+                        }}
+                        className="mr-2 rounded-sm transition-opacity duration-500 group-hover:opacity-70"
+                      />
+                    ) : (
+                      <PiStudentFill className="mr-2" />
+                    )
+                  }
                 />
               )}
               <EventCategories />
@@ -96,8 +115,8 @@ export default async function AuthButton() {
                 )}
             </div>
           </div>
-          <div className="order-1 mt-10 flex w-3/12 flex-shrink-0 flex-col items-center md:sticky md:top-0 md:order-2 md:mt-16">
-            <div className="flex  flex-col rounded-xl border px-4 py-2 shadow-sm md:sticky md:top-24">
+          <div className="order-1 mt-10 flex w-3/12 flex-shrink-0 flex-col items-center md:sticky md:top-24 md:order-2 md:mt-16">
+            <div className="flex  flex-col rounded-xl border px-4 py-2 shadow-sm md:sticky">
               <EventCalendar events={userEvents ?? []} />
             </div>
           </div>

@@ -26,6 +26,7 @@ import type { EventData } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import { VideoCallButton } from "@/components/events/VideoCallButton";
 import StatusPing from "@/components/events/StatusPing";
+import { PiStudentFill } from "react-icons/pi";
 
 export default async function EventPage({
   params,
@@ -187,21 +188,33 @@ export default async function EventPage({
                 </div>
               </div>
               <div className="flex-start flex flex-col px-2 py-2">
-                <p className="mt-2 font-semibold">
-                  {event.userHost
-                    ? getDisplayName(event.userHost)
-                    : event.orgHost?.name}
-                </p>
-                <div className="mt-4 flex flex-row items-center">
+                <div className="mt-2 flex flex-row items-center">
+                  <p className="font-semibold">
+                    {event.userHost
+                      ? getDisplayName(event.userHost)
+                      : event.orgHost?.name}
+                  </p>
                   <CheckBadgeIcon
-                    className="blue blue-500 mr-1 h-6 w-6"
+                    className="blue blue-500 ml-1 h-6 w-6"
                     color="#6e13c8"
                   />
-                  <p className="text-gray-600">
-                    {event.userHost
-                      ? "Verified student"
-                      : "Verified Organization"}
-                  </p>
+                </div>
+                <div className="mt-2 flex flex-row items-center">
+                  {user?.university?.isLogoUploaded ? (
+                    <Image
+                      src={user?.university?.logo ?? ""}
+                      alt="selected image"
+                      width={23}
+                      height={23}
+                      style={{
+                        objectFit: "cover",
+                      }}
+                      className="mr-1.5 rounded-sm transition-opacity duration-500 group-hover:opacity-70"
+                    />
+                  ) : (
+                    <PiStudentFill className="mr-2" />
+                  )}
+                  <p className="text-gray-600">{user.university?.name}</p>
                 </div>
               </div>
             </Link>

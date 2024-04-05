@@ -6,19 +6,22 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 
 interface EventSectionProps {
   title: string;
+  titleIcon?: React.ReactNode;
   events: EventData[];
   redirect: string;
 }
 
 export default function EventSection({
   title,
+  titleIcon,
   events,
   redirect,
 }: EventSectionProps) {
   return (
     <div className="my-4 flex flex-col">
       <div className="mb-4 flex w-full flex-col items-start lg:flex-row lg:items-end">
-        <Link href={redirect}>
+        <Link href={redirect} className="flex flex-row items-center">
+          {titleIcon}
           <p className="text-2xl font-bold">{title}</p>
         </Link>
         <Link
@@ -30,7 +33,9 @@ export default function EventSection({
         </Link>
       </div>
       <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3">
-        {events?.map((event) => <EventPreview key={event.id} event={event} />)}
+        {events
+          ?.slice(0, 6)
+          .map((event) => <EventPreview key={event.id} event={event} />)}
       </div>
     </div>
   );

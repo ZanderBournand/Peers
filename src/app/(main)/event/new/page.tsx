@@ -130,6 +130,7 @@ export default function CreateEvent() {
     }
 
     mutate(newEventData);
+    setIsSubmitting(false);
   };
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

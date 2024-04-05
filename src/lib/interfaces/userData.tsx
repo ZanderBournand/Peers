@@ -1,3 +1,5 @@
+import { type UniversityData } from "./universityData";
+
 export interface UserData {
   image: string;
   id: string;
@@ -11,5 +13,6 @@ export interface UserData {
   linkedin: string | null;
   website: string | null;
   isVerifiedStudent: boolean;
-  university: string | null;
+  universityName?: string | null;
+  university?: UniversityData | null;
 }

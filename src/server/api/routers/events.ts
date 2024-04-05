@@ -72,7 +72,11 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       let events: EventData[] = await ctx.db.event.findMany({
         include: {
-          userHost: true,
+          userHost: {
+            include: {
+              university: true,
+            },
+          },
           orgHost: true,
         },
       });
@@ -88,7 +92,11 @@ export const eventRouter = createTRPCRouter({
       const event = await ctx.db.event.findUnique({
         where: { id: input.id },
         include: {
-          userHost: true,
+          userHost: {
+            include: {
+              university: true,
+            },
+          },
           orgHost: true,
           tags: true,
           attendees: true,
@@ -128,7 +136,17 @@ export const eventRouter = createTRPCRouter({
 
       if (hostIds.length > 0) {
         queryOptions.where = {
-          OR: [{ userHostId: { in: hostIds } }, { orgHostId: { in: hostIds } }],
+          AND: [
+            {
+              OR: [
+                { userHostId: { in: hostIds } },
+                { orgHostId: { in: hostIds } },
+              ],
+            },
+            {
+              NOT: [{ userHostId: userId }],
+            },
+          ],
         };
       }
 
@@ -147,7 +165,7 @@ export const eventRouter = createTRPCRouter({
           OR: [
             {
               userHost: {
-                university: input.university,
+                universityName: input.university,
               },
             },
             {
@@ -166,23 +184,6 @@ export const eventRouter = createTRPCRouter({
       events = sortUpcomingEvents(events);
 
       return events;
-    }),
-  getCategory: privateProcedure
-    .input(z.object({ category: z.nativeEnum(TagCategory) }))
-    .query(async ({ ctx, input }) => {
-      const events: EventData[] = await ctx.db.event.findMany({
-        where: {
-          tags: {
-            some: {
-              category: input.category,
-            },
-          },
-        },
-      });
-
-      const sortedEvents = sortUpcomingEvents(events);
-
-      return sortedEvents;
     }),
   toggleAttendance: privateProcedure
     .input(
@@ -308,7 +309,7 @@ export const eventRouter = createTRPCRouter({
             {
               OR: [
                 { hostEvents: { some: { id: { in: attendedEventIds } } } },
-                { university: user.university },
+                { university: user.universityName },
               ],
             },
           ],
@@ -319,16 +320,63 @@ export const eventRouter = createTRPCRouter({
         where: {
           AND: [
             { hostEvents: { some: {} } },
+            { id: { not: userId } },
             {
               OR: [
                 { hostEvents: { some: { id: { in: attendedEventIds } } } },
-                { university: user.university },
+                { universityName: user.universityName },
               ],
             },
           ],
         },
+        include: {
+          university: true,
+        },
       });
 
       return { users, organizations };
+    }),
+  getEventsByHosts: privateProcedure
+    .input(z.object({ hostIds: z.array(z.string()) }))
+    .query(async ({ ctx, input }) => {
+      const events: EventData[] = await ctx.db.event.findMany({
+        where: {
+          OR: [
+            { userHostId: { in: input.hostIds } },
+            { orgHostId: { in: input.hostIds } },
+          ],
+        },
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      const sortedEvents = sortUpcomingEvents(events);
+
+      return sortedEvents;
+    }),
+  getEventsByCategories: privateProcedure
+    .input(z.object({ categories: z.array(z.nativeEnum(TagCategory)) }))
+    .query(async ({ ctx, input }) => {
+      const events: EventData[] = await ctx.db.event.findMany({
+        where: {
+          tags: {
+            some: {
+              category: {
+                in: input.categories,
+              },
+            },
+          },
+        },
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      const sortedEvents = sortUpcomingEvents(events);
+
+      return sortedEvents;
     }),
 });
