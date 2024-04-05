@@ -27,6 +27,7 @@ import Map from "@/components/location/Map";
 import { VideoCallButton } from "@/components/events/VideoCallButton";
 import { PiStudentFill } from "react-icons/pi";
 import StatusPing from "@/components/events/StatusPing";
+import { PiStudentFill } from "react-icons/pi";
 
 export default async function EventPage({
   params,
