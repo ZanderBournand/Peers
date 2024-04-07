@@ -101,7 +101,6 @@ export default function NewUserForm() {
   });
 
   const onSubmit = async (data: NewUserInputWithFile) => {
-    console.log("USER INTERESTS:", data.interests);
     let userImage = null;
     if (data.image) {
       const userImageId: string = uuidv4();
@@ -250,7 +249,6 @@ export default function NewUserForm() {
                         tags={field.value}
                         className="w-full"
                         setTags={(newInterests) => {
-                          console.log("NEW:", newInterests);
                           form.setValue(
                             "interests",
                             newInterests as [TagData, ...TagData[]],

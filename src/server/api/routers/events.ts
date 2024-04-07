@@ -175,11 +175,7 @@ export const eventRouter = createTRPCRouter({
           ],
         },
         include: {
-          userHost: {
-            include: {
-              university: true,
-            },
-          },
+          userHost: true,
           orgHost: true,
         },
       });
