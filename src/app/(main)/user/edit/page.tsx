@@ -21,25 +21,28 @@ import Image from "next/image";
 import { MdEdit } from "react-icons/md";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newUserSchema } from "@/lib/validators/User";
-import { TrashIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { TagInput } from "@/components/tags/tag-input";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "@/env";
+import { type TagData } from "@/lib/interfaces/tagData";
 
 export type NewUserInput = z.infer<typeof newUserSchema>;
 
 export default function NewUserForm() {
   const [isLoading, setIsLoading] = useState(true);
+
   const { data: user, isLoading: isUserLoading } = api.users.getUser.useQuery(
     {},
   );
+  const { data: allTags } = api.tags.getAll.useQuery();
 
   type NewUserInputWithFile = Omit<NewUserInput, "image"> & {
     image: File | undefined;
@@ -57,7 +60,7 @@ export default function NewUserForm() {
       image: undefined,
       firstName: "",
       lastName: "",
-      skills: [{ name: "" }],
+      interests: [],
       bio: "",
       github: "",
       linkedin: "",
@@ -70,9 +73,7 @@ export default function NewUserForm() {
       form.reset({
         firstName: user.firstName ?? "",
         lastName: user.lastName ?? "",
-        skills: user.skills?.map((skill) => ({ name: skill })) ?? [
-          { name: "" },
-        ],
+        interests: user.interests ?? [],
         bio: user.bio ?? "",
         github: user.github ?? "",
         linkedin: user.linkedin ?? "",
@@ -81,13 +82,6 @@ export default function NewUserForm() {
       setTimeout(() => setIsLoading(false), 500);
     }
   }, [user, isUserLoading, form]);
-
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "skills",
-  });
-
-  const watchSkills = form.watch("skills");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,8 +101,7 @@ export default function NewUserForm() {
   });
 
   const onSubmit = async (data: NewUserInputWithFile) => {
-    const skillsList = data.skills.map((skill) => skill.name);
-
+    console.log("USER INTERESTS:", data.interests);
     let userImage = null;
     if (data.image) {
       const userImageId: string = uuidv4();
@@ -125,7 +118,7 @@ export default function NewUserForm() {
       image: userImage ? userImage : user?.image ?? "",
       firstName: capitalizeFirstLetter(data.firstName),
       lastName: capitalizeFirstLetter(data.lastName),
-      skills: skillsList,
+      interests: data.interests,
       bio: data.bio,
       github: data.github,
       linkedin: data.linkedin,
@@ -229,53 +222,6 @@ export default function NewUserForm() {
               </div>
               <FormField
                 control={form.control}
-                name="skills"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Skills</FormLabel>
-                    <div className="grid grid-cols-2 gap-2">
-                      {fields.map((field, index) => (
-                        <div key={field.name}>
-                          <div className="group relative flex items-center">
-                            <FormControl>
-                              <Input
-                                placeholder="Your skill"
-                                className="group-hover:pr-8"
-                                {...form.register(
-                                  `skills.${index}.name` as const,
-                                )}
-                              />
-                            </FormControl>
-                            {fields.length > 1 && (
-                              <TrashIcon
-                                className="invisible absolute right-1 h-6 w-6 text-muted-foreground/40 hover:cursor-pointer hover:text-muted-foreground/30 group-hover:visible"
-                                onClick={() => remove(index)}
-                              />
-                            )}
-                          </div>
-
-                          {form.formState.errors.skills?.[index]?.name && (
-                            <p className="text-sm font-medium text-destructive">
-                              This can&apos;t be empty
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <Button
-                      type="button"
-                      disabled={watchSkills.some((field) => !field.name)}
-                      onClick={() => append({ name: "" })}
-                      className="max-w-min"
-                    >
-                      Add Skill
-                    </Button>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
@@ -285,6 +231,36 @@ export default function NewUserForm() {
                         placeholder="Tell us a little bit about yourself"
                         className="resize-none"
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="interests"
+                render={({ field }) => (
+                  <FormItem className="mt-4 w-full">
+                    <FormLabel className="">Interests</FormLabel>
+                    <FormControl>
+                      <TagInput
+                        {...field}
+                        placeholder="Enter a topic"
+                        tags={field.value}
+                        className="w-full"
+                        setTags={(newInterests) => {
+                          console.log("NEW:", newInterests);
+                          form.setValue(
+                            "interests",
+                            newInterests as [TagData, ...TagData[]],
+                          );
+                        }}
+                        enableAutocomplete
+                        autocompleteOptions={allTags}
+                        enableStrictAutocomplete={true}
+                        value={field.value ?? []}
+                        variant="custom"
                       />
                     </FormControl>
                     <FormMessage />

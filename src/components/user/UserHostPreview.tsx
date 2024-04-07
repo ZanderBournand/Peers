@@ -54,21 +54,23 @@ export default function UserHostPreview({ user }: UserHostPreviewProps) {
           )}
           <p className="text-sm text-gray-600">{user.university?.name}</p>
         </div>
-        <div className="mt-2 flex flex-row">
-          {user?.skills?.slice(0, 2).map((skill) => (
-            <div
-              key={skill}
-              className="mr-2 rounded-lg bg-purple-100/30 px-4 py-1 text-xs text-slate-600"
-            >
-              {skill}
-            </div>
-          ))}
-          {user.skills?.length > 2 && (
-            <div className="px-4 py-1 text-xs text-slate-800">
-              +{user.skills.length - 2}
-            </div>
-          )}
-        </div>
+        {user?.interests && (
+          <div className="mt-2 flex flex-row">
+            {user?.interests?.slice(0, 2).map((interest) => (
+              <div
+                key={interest.id}
+                className="mr-2 rounded-lg bg-purple-100/30 px-2 py-1 text-xs text-slate-600"
+              >
+                {interest.name}
+              </div>
+            ))}
+            {user?.interests?.length > 2 && (
+              <div className="px-2 py-1 text-xs text-slate-800">
+                +{user?.interests.length - 2}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   );

@@ -72,11 +72,7 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       let events: EventData[] = await ctx.db.event.findMany({
         include: {
-          userHost: {
-            include: {
-              university: true,
-            },
-          },
+          userHost: true,
           orgHost: true,
         },
       });
@@ -109,7 +105,6 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
-  // TODO: Expand the recommended algorithm (NEED USER SKILLS TO BE REVAMPED)
   getRecommended: privateProcedure
     .input(z.object({ userId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
@@ -117,16 +112,19 @@ export const eventRouter = createTRPCRouter({
 
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
-        include: { attends: { include: { userHost: true, orgHost: true } } },
+        include: {
+          attends: { include: { userHost: true, orgHost: true } },
+          interests: true,
+        },
       });
 
       const hostIds = user?.attends
         .map((event) => event.userHostId ?? event.orgHostId)
         .filter((id) => id !== null) as string[];
 
+      const interestsIds = user?.interests.map((interest) => interest.id) ?? [];
+
       const queryOptions = {
-        // Empty "where" clause in case user has no event data
-        // -> in that case, make recommended events all upcoming events
         where: {},
         include: {
           userHost: true,
@@ -134,13 +132,14 @@ export const eventRouter = createTRPCRouter({
         },
       };
 
-      if (hostIds.length > 0) {
+      if (hostIds.length > 0 || interestsIds.length > 0) {
         queryOptions.where = {
           AND: [
             {
               OR: [
                 { userHostId: { in: hostIds } },
                 { orgHostId: { in: hostIds } },
+                { tags: { some: { id: { in: interestsIds } } } },
               ],
             },
             {
@@ -176,7 +175,11 @@ export const eventRouter = createTRPCRouter({
           ],
         },
         include: {
-          userHost: true,
+          userHost: {
+            include: {
+              university: true,
+            },
+          },
           orgHost: true,
         },
       });
@@ -313,7 +316,10 @@ export const eventRouter = createTRPCRouter({
 
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
-        include: { attends: true },
+        include: {
+          attends: true,
+          interests: true,
+        },
       });
 
       if (!user) {
@@ -321,6 +327,7 @@ export const eventRouter = createTRPCRouter({
       }
 
       const attendedEventIds = user.attends.map((event) => event.id);
+      const interestIds = user.interests.map((interest) => interest.id);
 
       const organizations = await ctx.db.organization.findMany({
         where: {
@@ -329,7 +336,12 @@ export const eventRouter = createTRPCRouter({
             {
               OR: [
                 { hostEvents: { some: { id: { in: attendedEventIds } } } },
-                { university: user.universityName },
+                { university: user.universityName ?? "" },
+                {
+                  hostEvents: {
+                    some: { tags: { some: { id: { in: interestIds } } } },
+                  },
+                },
               ],
             },
           ],
@@ -345,12 +357,18 @@ export const eventRouter = createTRPCRouter({
               OR: [
                 { hostEvents: { some: { id: { in: attendedEventIds } } } },
                 { universityName: user.universityName },
+                {
+                  hostEvents: {
+                    some: { tags: { some: { id: { in: interestIds } } } },
+                  },
+                },
               ],
             },
           ],
         },
         include: {
           university: true,
+          interests: true,
         },
       });
 

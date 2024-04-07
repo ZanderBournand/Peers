@@ -18,7 +18,7 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const userData = user && (await api.users.getUser.query({}));
+  const userData = await api.users.getUser.query({});
 
   const userEventsPromise = user && api.events.getEventsAttending.query({});
   const recommendedEventsPromise = user && api.events.getRecommended.query({});

@@ -16,8 +16,8 @@ model User {
   lastName  String?
   image     String
 
-  skills String[]
-  bio    String?
+  interests Tag[]   @relation("Interests")
+  bio       String?
 
   github   String?
   linkedin String?
@@ -91,10 +91,11 @@ model Event {
 }
 
 model Tag {
-  id       String  @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  id       String      @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
   category TagCategory
   name     String
   events   Event[]
+  users    User[]      @relation("Interests")
 }
 
 model Verification_Code {

@@ -57,7 +57,6 @@ export default function CreateEvent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [tags, setTags] = useState<TagData[]>([]);
 
   const supabase = createClient();
 
@@ -78,7 +77,7 @@ export default function CreateEvent() {
       image: undefined,
       type: undefined,
       duration: undefined,
-      tags: undefined,
+      tags: [],
     },
   });
 
@@ -438,10 +437,9 @@ export default function CreateEvent() {
                         <TagInput
                           {...field}
                           placeholder="Enter a topic"
-                          tags={tags}
+                          tags={field.value ?? []}
                           className="w-full"
                           setTags={(newTags) => {
-                            setTags(newTags as TagData[]);
                             form.setValue(
                               "tags",
                               newTags as [TagData, ...TagData[]],
@@ -451,6 +449,7 @@ export default function CreateEvent() {
                           autocompleteOptions={allTags}
                           enableStrictAutocomplete={true}
                           value={field.value ?? []}
+                          variant="custom"
                         />
                       </FormControl>
                       <FormMessage />

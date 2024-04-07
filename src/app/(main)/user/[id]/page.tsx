@@ -19,11 +19,21 @@ import CreateOrganizationIcon from "@/components/organizations/CreateOrganizatio
 =======
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import VerifyIconContainer from "@/components/user/VerifyIconContainer";
 >>>>>>> 455bd81 (reduced code redundancy)
 =======
 import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
 >>>>>>> edf2388 (small changes to navigation container)
+=======
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
+import { getDisplayName } from "@/lib/utils";
+>>>>>>> 9840d1a (Revamped user skills/interests)
 
 const cardStyle = {
   width: "580px",
@@ -126,18 +136,56 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             )}
           </div>
           <div
-            className="w-80 border-2 px-5 py-2"
+            className="w-80 border-2 px-2 py-3"
             style={{
               marginTop: "-1px",
               border: "1px solid grey",
               borderTop: "0px",
             }}
           >
-            {user.bio ? (
-              <p>{user.bio}</p>
-            ) : (
-              <p>This user has not provided a bio.</p>
-            )}
+            <div className="px-3">
+              {user.bio ? (
+                <p>{user.bio}</p>
+              ) : (
+                <p>This user has not provided a bio.</p>
+              )}
+            </div>
+            <div className="mt-4 flex flex-row flex-wrap gap-y-2">
+              {user?.interests?.slice(0, 3).map((interest) => (
+                <div
+                  key={interest.id}
+                  className="mr-2 rounded-lg bg-purple-100/30 px-4 py-1 text-xs text-slate-600"
+                >
+                  {interest.name}
+                </div>
+              ))}
+              {user.interests?.length > 3 && (
+                <HoverCard>
+                  <HoverCardTrigger>
+                    <p className="cursor-pointer px-4 py-1 text-xs text-slate-800 hover:underline">
+                      +{user.interests.length - 3}
+                    </p>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-[350px]">
+                    <div className="flex flex-col">
+                      <p className="ml-2 font-semibold">
+                        {getDisplayName(user, false)}&rsquo;s interests
+                      </p>
+                      <div className="mt-3 flex flex-row flex-wrap gap-y-2">
+                        {user?.interests.map((interest) => (
+                          <div
+                            key={interest.id}
+                            className="mr-2 rounded-lg bg-purple-100/30 px-4 py-1 text-xs text-slate-600"
+                          >
+                            {interest.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              )}
+            </div>
           </div>
           <div
             className="flex w-80 flex-col items-center justify-center border-2 py-2"
