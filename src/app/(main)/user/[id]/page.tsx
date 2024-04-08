@@ -53,7 +53,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
       <div className="flex items-start justify-center">
         <div className="flex-col">
           <div
-            className="mt-4 flex h-56 w-80 flex-col items-center justify-center border-2"
+            className="mt-4 flex h-64 w-80 flex-col items-center justify-center border-2"
             style={{
               border: "1px solid grey",
               borderTopLeftRadius: 10,
