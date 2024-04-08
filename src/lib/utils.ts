@@ -96,9 +96,9 @@ export const eventCountdownTime = (
   durationInMinutes: number,
 ) => {
   const diffMs = eventDate.getTime() - new Date().getTime();
-  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-  const diffHours = Math.ceil((diffMs / (1000 * 60 * 60)) % 24);
-  const diffMinutes = Math.ceil((diffMs / (1000 * 60)) % 60);
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+  const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
 
   return diffMs <= 0
     ? new Date() <= new Date(eventDate.getTime() + durationInMinutes * 60000)
@@ -109,7 +109,7 @@ export const eventCountdownTime = (
         ? `in ${pluralize(diffMinutes, "minute")}`
         : `in ${pluralize(diffHours, "hour")}`
       : `in ${pluralize(
-          diffDays < 7 ? diffDays : Math.ceil(diffDays / 7),
+          diffDays < 7 ? diffDays : Math.floor(diffDays / 7),
           diffDays < 7 ? "day" : "week",
         )}`;
 };
