@@ -5,21 +5,33 @@ import { api } from '@/trpc/react';
 import { createClient } from '@/utils/supabase/client';
 
 const SearchResults = () => {
-  const [results, setResults] = useState([]);
+    type Result = {
+        id: string;
+        title: string;
+        location: string | null;
+        date: Date;
+        description: string;
+        image: string | null;
+        duration: number;
+        userHostId: string | null;
+        orgHostId: string | null;
+      };
+      
+      const [results, setResults] = useState<Result[]>([]);
   const location = useLocation();
 
   useEffect(() => {
     const fetchResults = async () => {
         const params = new URLSearchParams(location.search);
         const term = params.get('term') || '';
-        
+
         const supabase = createClient();
-        
+
         const { data, error } = api.events.search.useQuery({ searchTerm: term });
         if (error) {
             console.error('Error fetching search results:', error);
         } else {
-            setResults(data || 'null'); // Update the type of `results` and provide a default value of an empty array
+            setResults(data || [] as Result[]); // Update the type of `results` and provide a default value of an empty array
         }
     };
 
