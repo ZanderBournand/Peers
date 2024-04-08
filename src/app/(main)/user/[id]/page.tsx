@@ -2,7 +2,7 @@ import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGraduationCap, FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
@@ -71,6 +71,14 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               }}
             >
               {user.username}
+            </p>
+            <p
+              className="mr-5 flex"
+              style={{
+                fontSize: "1.01rem",
+              }}
+            >
+              <FaGraduationCap className="mr-1 h-6 w-6" /> PeerPoints: 100
             </p>
             {user.isVerifiedStudent && (
               <div>
