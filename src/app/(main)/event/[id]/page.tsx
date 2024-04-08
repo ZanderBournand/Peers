@@ -34,6 +34,7 @@ export default async function EventPage({
 }) {
   const event: EventData = await api.events.get.query({ id: params.id });
   const user: UserData = await api.users.getUser.query({});
+  const user: UserData = await api.users.getUser.query({});
 
   const countdownDate = countdownDays(event.date);
   const duration = formattedDuration(event.duration);
@@ -53,15 +54,18 @@ export default async function EventPage({
       <div className="my-16 flex w-full max-w-screen-xl flex-row self-center">
         <div className="flex w-8/12 flex-col items-start px-20">
           <div className="relative flex aspect-video w-full items-center justify-center rounded-xl bg-gray-50">
+          <div className="relative flex aspect-video w-full items-center justify-center rounded-xl bg-gray-50">
             {event.image ? (
               <Image
                 src={event.image}
                 alt="selected image"
                 fill
                 sizes="100%"
+                sizes="100%"
                 style={{
                   objectFit: "cover",
                 }}
+                className="rounded-xl transition-opacity duration-500 group-hover:opacity-70"
                 className="rounded-xl transition-opacity duration-500 group-hover:opacity-70"
               />
             ) : (
@@ -140,9 +144,13 @@ export default async function EventPage({
                   {event.userHost
                     ? getDisplayName(event.userHost)
                     : event.orgHost?.name}
+                  {event.userHost
+                    ? getDisplayName(event.userHost)
+                    : event.orgHost?.name}
                 </div>
               </div>
               <p className="text-md my-5 whitespace-pre-line font-normal">
+                {/* TODO: Display organization bio */}
                 {/* TODO: Display organization bio */}
                 {event.userHost ? event.userHost?.bio : "[INSERT ORG BIO HERE]"}
               </p>
@@ -186,6 +194,7 @@ export default async function EventPage({
                     alt="selected image"
                     fill
                     sizes="100%"
+                    sizes="100%"
                     style={{
                       objectFit: "cover",
                     }}
@@ -200,6 +209,7 @@ export default async function EventPage({
               <div className="flex-start flex flex-col px-4 py-4">
                 <p className="mt-2 font-semibold">
                   {event.userHost
+                    ? getDisplayName(event.userHost)
                     ? getDisplayName(event.userHost)
                     : event.orgHost?.name}
                 </p>
@@ -259,12 +269,20 @@ export default async function EventPage({
                     />
                     <div className="flex-start flex flex-col">
                       <p>{event?.location?.split(",")[0]}</p>
+                      <p>{event?.location?.split(",")[0]}</p>
                       <p className="text-sm text-gray-500">
+                        {event?.location?.split(",").slice(1).join(",")}
                         {event?.location?.split(",").slice(1).join(",")}
                       </p>
                     </div>
                   </div>
                   {event.locationDetails && (
+                    <div className="mb-4 ml-12 flex w-10/12 flex-row rounded-sm">
+                      <InformationCircleIcon
+                        className="mx-1 h-5 w-5 flex-shrink-0"
+                        color="gray"
+                      />
+                      <p className="mr-1 text-sm  text-gray-600">
                     <div className="mb-4 ml-12 flex w-10/12 flex-row rounded-sm">
                       <InformationCircleIcon
                         className="mx-1 h-5 w-5 flex-shrink-0"

@@ -119,6 +119,9 @@ export default async function MyEventsPage() {
         <FilteredEventsSection events={events} filterType="currentWeek" />
         <FilteredEventsSection events={events} filterType="nextWeek" />
         <FilteredEventsSection events={events} filterType="upcoming" />
+        <FilteredEventsSection events={events} filterType="currentWeek" />
+        <FilteredEventsSection events={events} filterType="nextWeek" />
+        <FilteredEventsSection events={events} filterType="upcoming" />
       </div>
     </div>
   );
