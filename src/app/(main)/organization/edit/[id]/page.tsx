@@ -33,31 +33,23 @@ import { PhotoIcon } from "@heroicons/react/24/outline";
 import { MdEdit } from "react-icons/md";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newOrgSchema } from "@/lib/validators/Organization";
-import { TrashIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
-import { capitalizeFirstLetter } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "@/env";
-import { OrganizationData } from "@/lib/interfaces/organizationData";
-import { appRouter } from "@/server/api/root";
 
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
-export default function OrgPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function OrgPage({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const { data: org, isLoading: isOrgLoading } =
-    api.organizations.getCurrent.useQuery({id: params.id});
-    
+    api.organizations.getCurrent.useQuery({ id: params.id });
+
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
     image: File | undefined;
   };
@@ -108,7 +100,7 @@ export default function OrgPage({
 
   const { mutate } = api.organizations.update.useMutation({
     onSuccess: () => {
-      window.location.href = '/organization/' + org.id;
+      window.location.href = "/organization/" + org.id;
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -136,7 +128,7 @@ export default function OrgPage({
       university: data.university,
       description: data.description,
       type: data.type,
-      image: data.image ? orgImage: org?.image,
+      image: data.image ? orgImage : org?.image,
       instagram: data.instagram,
       facebook: data.facebook,
       discord: data.discord,
@@ -253,18 +245,18 @@ export default function OrgPage({
                 />
               </div>
               <FormField
-                  control={form.control}
-                  name="university"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel className="">University</FormLabel>
-                      <FormControl>
-                        <Input defaultValue={org.university} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                control={form.control}
+                name="university"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="">University</FormLabel>
+                    <FormControl>
+                      <Input defaultValue={org.university} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="flex flex-row gap-4">
                 <FormField
                   control={form.control}
