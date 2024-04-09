@@ -208,7 +208,6 @@ export default function OrgPage({ params }: { params: { id: string } }) {
           </div>
 
           <div style={{ paddingTop: "30px", textAlign: "center" }}>
-            <div>IF IS AN ADMIN</div>
             <Link href={`/organization/edit/${org.id}`}>
               <Button
                 className="items-center justify-center"
