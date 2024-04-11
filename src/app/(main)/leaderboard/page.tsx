@@ -1,5 +1,6 @@
 import { api } from "@/trpc/server";
 import { type UserData } from "@/lib/interfaces/userData";
+import { getDisplayName } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -11,17 +12,9 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 
-const userArr: string[] = [
-  "b78058e1-3441-4fd1-bece-689dcbcc514b",
-  "64272793-93f6-4068-892e-c9f9d4e7b7c2",
-  "0d05971f-44c0-4d69-b9a9-e2e0b2bd5ef8",
-];
+const users = await api.users.getAllUsers.query();
 
-const users: UserData[] = [];
-for (const userID of userArr) {
-  const userData = await api.users.getUser.query({ id: userID });
-  users.push(userData as UserData);
-}
+users.sort((a: UserData, b: UserData) => b.points - a.points);
 
 export default async function LeaderboardPage() {
   return (
@@ -49,24 +42,17 @@ export default async function LeaderboardPage() {
                       src={user.image}
                       width={30}
                       height={30}
-                      className="-mb-[25px] ml-2 rounded-full"
+                      className="-mb-[25px] ml-4 rounded-full"
                       alt={""}
                     />
                     <Link href={`/user/${user.id}`} className="underline">
-                      {user.firstName}
+                      {getDisplayName(user, true)}
                     </Link>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Image
-                      src={user?.university?.logo ?? ""}
-                      alt="selected image"
-                      width={20}
-                      height={20}
-                      className="-mb-5 ml-14 rounded"
-                    />
-                    {user?.university?.name ?? "No University"}
+                    <p>{user?.universityName ?? "No University"}</p>
                   </TableCell>
-                  <TableCell className="text-center">100</TableCell>
+                  <TableCell className="text-center">{user.points}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -89,7 +89,8 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                 fontSize: "1.01rem",
               }}
             >
-              <FaGraduationCap className="mr-1 h-6 w-6" /> PeerPoints: 100
+              <FaGraduationCap className="mr-1 h-6 w-6" /> PeerPoints:{" "}
+              {user.points}
             </p>
             {user.isVerifiedStudent && (
               <div>

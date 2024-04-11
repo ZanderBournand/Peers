@@ -90,4 +90,8 @@ export const userRouter = createTRPCRouter({
       });
       return Boolean(user);
     }),
+  getAllUsers: privateProcedure.query(async ({ ctx }) => {
+    const users = await ctx.db.user.findMany({});
+    return users;
+  }),
 });
