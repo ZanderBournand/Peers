@@ -37,7 +37,7 @@ model Organization {
   email       String?
   university  String
   description String
-  type        String
+  type        OrgType
   image       String?
   instagram   String?
   facebook    String?
@@ -87,4 +87,28 @@ enum EventType {
   ONLINE_VIDEO
   ONLINE_AUDIO
   IN_PERSON
+}
+
+enum OrgType {
+  BUSINESS
+  ENGINEERING
+  JOURNALISM
+  AGRICULTURE
+  ART
+  DENTRISTRY
+  DESIGN
+  CONSTRUCTION
+  EDUCATION
+  LAW
+  SCIENCE
+  MEDICINE
+  NURSING
+  PHARMACY
+  VETERINARY
+  PUBLIC_HEALTH
+  FARMING
+  VOLUNEERING
+  SPORTS
+  E_SPORTS
+  OTHER
 }

@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { v4 as uuidv4 } from "uuid";
-
-//import { OrganizationType } from "@prisma/client";
+import { OrgType } from "@prisma/client";
 
 export const organizationRouter = createTRPCRouter({
   create: privateProcedure
@@ -12,7 +11,7 @@ export const organizationRouter = createTRPCRouter({
         name: z.string().min(1),
         email: z.string().min(1).optional().nullable(),
         university: z.string().min(1),
-        type: z.string().min(1),
+        type: z.nativeEnum(OrgType),
         description: z.string().min(50),
         image: z.string().url().optional().nullable(),
         instagram: z.string().min(1).optional().nullable(),
@@ -46,7 +45,7 @@ export const organizationRouter = createTRPCRouter({
         name: z.string(),
         email: z.string(),
         university: z.string(),
-        type: z.string(),
+        type: z.nativeEnum(OrgType),
         description: z.string(),
         image: z.string(),
         instagram: z.string(),
