@@ -1,4 +1,4 @@
-import { UniversityData } from "./universityData";
+import { type UniversityData } from "./universityData";
 
 export interface UserData {
   image: string;
