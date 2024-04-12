@@ -19,7 +19,7 @@ class DailyAPI {
       const roomName = `${eventId}`;
       const truncatedName = roomName.substring(0, 40); // Room name can only be 40 characters
 
-      // Check if the room already exists
+      // if the room already exists
       const existingRoom = await this.getRoomByName(truncatedName);
       if (existingRoom) {
         console.log("Room already exists:", existingRoom);
@@ -27,7 +27,7 @@ class DailyAPI {
       }
 
       // Create a new room if it doesn't exist
-      const expirationTime = Math.floor(Date.now() / 1000) + 3600; // Current time + 1 hour in seconds
+      const expirationTime = Math.floor(Date.now() / 1000) + 10800; // Current time + 3 hours in seconds
       const response = await axios.post(
         `${DAILY_API_BASE_URL}/rooms`,
         {
@@ -46,7 +46,7 @@ class DailyAPI {
       );
 
       console.log("New room created:", response.data);
-      return response.data.url; // Return the new room URL
+      return response.data.url; // new room URL
     } catch (error) {
       console.error("Error creating or retrieving room:", error);
       throw new Error("Failed to create or retrieve room");
@@ -69,40 +69,36 @@ class DailyAPI {
       throw error; // Propagate other errors
     }
   }
-
-  // Add more methods as needed to interact with api
+  
     //Tracking participant data methods
 
     async getUserMeetingDurations(): Promise<{ [userName: string]: number }> {
       try {
-        const response: AxiosResponse<{ total_count: number; data: any[] }> = await axios.get(
-          `${DAILY_API_BASE_URL}/meetings`,
-          {
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
-            },
-          }
-        );
+        const response = await axios.get(`${DAILY_API_BASE_URL}/meetings`, {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+        });
   
         const userDurations: { [userName: string]: number } = {};
   
-        // Process each meeting
-        response.data.data.forEach((meeting) => {
-          // Process each participant in the meeting
+        // Process each meeting and calculate total duration for each user
+        response.data.data.forEach((meeting: any) => {
           meeting.participants.forEach((participant: Participant) => {
-            if (!userDurations[participant.user_name]) {
-              userDurations[participant.user_name] = 0;
+            const { user_name, duration } = participant;
+            if (!userDurations[user_name]) {
+              userDurations[user_name] = 0;
             }
-            userDurations[participant.user_name] += participant.duration;
+            userDurations[user_name] += duration;
           });
         });
-  
+        console.log("Meeting Info Response:", userDurations);
         return userDurations;
       } catch (error) {
-        console.error("Error fetching meetings:", error);
-        throw new Error("Failed to fetch meetings");
+        console.error("Error fetching meeting durations:", error);
+        throw new Error("Failed to fetch meeting durations");
       }
     }
-}
-
-export default DailyAPI;
+  }
+  
+  export default DailyAPI;

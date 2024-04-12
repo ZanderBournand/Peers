@@ -93,17 +93,15 @@ export const userRouter = createTRPCRouter({
   updatePoints: privateProcedure
     .input(
       z.object({
-        userName: z.string(), // Concatenated "firstName lastName" of the user
-        pointsToAdd: z.number(), // Points to add to the user's existing points
+        userName: z.string(), // concatenated "firstName lastName"
+        pointsToAdd: z.number(), 
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userName, pointsToAdd } = input;
 
-      // Split the userName into firstName and lastName
+      // split userName and find
       const [firstName, lastName] = userName.split(" ");
-
-      // Find the user based on firstName and lastName
       const user = await ctx.db.user.findFirst({
         where: { firstName, lastName },
       });
@@ -112,7 +110,7 @@ export const userRouter = createTRPCRouter({
         throw new Error(`User '${userName}' not found`);
       }
 
-      // Update user points
+      // updating user points
       const updatedUser = await ctx.db.user.update({
         where: { id: user.id },
         data: {
@@ -124,4 +122,24 @@ export const userRouter = createTRPCRouter({
 
       return updatedUser;
     }),
+    getPoints: privateProcedure
+    .input(z.object({ userName: z.string() })) // expects userName input
+    .query(async ({ ctx, input }) => {
+      const { userName } = input;
+
+      // split userName into firstName and lastName
+      const [firstName, lastName] = userName.split(" ");
+
+      // finding user based on firstName and lastName
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      return { points: user.points };
+    }),
+
 });

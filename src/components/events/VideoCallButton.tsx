@@ -8,7 +8,7 @@ import VideoCall from "./VideoCall";
 import { api } from "@/trpc/react";
 
 interface VideoCallButtonProps {
-  type: "ONLINE_VIDEO" | "ONLINE_AUDIO"; // Type of call
+  type: "ONLINE_VIDEO" | "ONLINE_AUDIO";
   eventId: string; // Event ID for room name
   name: string; // User name to be passed to VideoCall
 }
@@ -16,22 +16,21 @@ interface VideoCallButtonProps {
 export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
   type,
   eventId,
-  name, // Receive the name prop
+  name,
 }) => {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
 
-  const incrementPointsMutation = api.users.updatePoints.useMutation(); // No need for a function argument here
+  const incrementPointsMutation = api.users.updatePoints.useMutation();
 
   const handleJoinCall = async () => {
     try {
       const dailyAPI = new DailyAPI();
       const url = await dailyAPI.createRoomForEvent(eventId);
-      console.log("Room URL:", url); // Log
 
       // Call the mutation to increment user points
       await incrementPointsMutation.mutate({
-        userName: name, // Pass 'name' as the userName
-        pointsToAdd: 1, // Points to add when user joins the call
+        userName: name,
+        pointsToAdd: 1,
       });
 
       setRoomUrl(url);
