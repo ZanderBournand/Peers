@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { DailyProvider, useCallFrame } from "@daily-co/daily-react";
-import { identity } from "lodash";
 
 interface VideoCallProps {
   roomUrl: string;

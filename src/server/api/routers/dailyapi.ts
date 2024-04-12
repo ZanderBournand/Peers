@@ -1,9 +1,9 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 const DAILY_API_BASE_URL = "https://api.daily.co/v1";
-const apiKey = "83beff917fdee3e62e0e84304439b6e61b994251345ee213d27e7fe6c42892e4"; // FIXME: Access API key from environment variable
+const apiKey = process.env.DAILY_API_KEY; // FIXME: Access API key from environment variable
 
-// Define interface for Participant object
+// Interface for Participant object
 interface Participant {
   user_name: string;
   duration: number;
