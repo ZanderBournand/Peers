@@ -90,4 +90,38 @@ export const userRouter = createTRPCRouter({
     const users = await ctx.db.user.findMany({});
     return users;
   }),
+  updatePoints: privateProcedure
+    .input(
+      z.object({
+        userName: z.string(), // Concatenated "firstName lastName" of the user
+        pointsToAdd: z.number(), // Points to add to the user's existing points
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userName, pointsToAdd } = input;
+
+      // Split the userName into firstName and lastName
+      const [firstName, lastName] = userName.split(" ");
+
+      // Find the user based on firstName and lastName
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      // Update user points
+      const updatedUser = await ctx.db.user.update({
+        where: { id: user.id },
+        data: {
+          points: {
+            increment: pointsToAdd,
+          },
+        },
+      });
+
+      return updatedUser;
+    }),
 });

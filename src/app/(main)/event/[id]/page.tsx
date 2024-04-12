@@ -203,7 +203,11 @@ export default async function EventPage({
                         className="mr-4 h-6 w-6 flex-shrink-0"
                         color="gray"
                       />
-                      <VideoCallButton type={event.type} />
+                      <VideoCallButton
+                        type={event.type}
+                        eventId={event.id}
+                        name={user.firstName + " " + user.lastName}
+                      />
                     </>
                   ) : eventJoinStatus === "upcoming" ? (
                     <>

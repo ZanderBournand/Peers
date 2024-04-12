@@ -13,6 +13,7 @@ export const env = createEnv({
       .default("development"),
     MAILGUN_API_KEY: z.string(),
     MAILGUN_DOMAIN: z.string(),
+    DAILY_API_KEY: z.string(),
   },
 
   /**
@@ -42,6 +43,7 @@ export const env = createEnv({
     MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:
       process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    DAILY_API_KEY: process.env.DAILY_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

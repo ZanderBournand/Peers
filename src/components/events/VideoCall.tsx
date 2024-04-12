@@ -1,15 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DailyProvider, useCallFrame } from "@daily-co/daily-react";
+import { identity } from "lodash";
 
-export const VideoCall = () => {
+interface VideoCallProps {
+  roomUrl: string;
+  userName: string; // Receive the userName prop
+}
+
+const VideoCall: React.FC<VideoCallProps> = ({ roomUrl, userName }) => {
   const [inst, setInst] = useState(false);
-  const callRef = useRef(null);
+  const callRef = useRef<HTMLDivElement>(null);
+
   const callFrame = useCallFrame({
     parentEl: callRef.current,
     options: {
-      url: "https://peers-knowledge.daily.co/demo",
+      url: roomUrl, // Use the provided room URL
       iframeStyle: {
         position: "fixed",
         top: "0",
@@ -24,8 +31,8 @@ export const VideoCall = () => {
         },
       },
       showLeaveButton: true,
+      userName: userName, // Use the provided userName
     },
-    shouldCreateInstance: useCallback(() => inst, [inst]),
   });
 
   useEffect(() => {
@@ -33,15 +40,19 @@ export const VideoCall = () => {
   }, []);
 
   useEffect(() => {
-    if (!callFrame) return;
-    callFrame?.join().catch((error) => {
-      console.error("Error joining call:", error); // Handle
-    });
+    if (callFrame) {
+      callFrame.join().catch((error) => {
+        console.error("Error joining call:", error);
+        // additional handling if needed
+      });
+    }
   }, [callFrame]);
 
   return (
     <DailyProvider callObject={callFrame}>
-      <div ref={callRef} />
+      <div ref={callRef} style={{ width: "100%", height: "100%" }} />
     </DailyProvider>
   );
 };
+
+export default VideoCall;
