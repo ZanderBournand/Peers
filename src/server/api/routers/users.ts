@@ -18,6 +18,7 @@ export const userRouter = createTRPCRouter({
           email: input.email,
           username: input.username,
           isVerifiedStudent: false,
+          points: 0,
           image:
             "https://erwggivaefiaiqdqgtqb.supabase.co/storage/v1/object/public/images/users/base_profile_pic.jpg",
         },
@@ -91,7 +92,11 @@ export const userRouter = createTRPCRouter({
       return Boolean(user);
     }),
   getAllUsers: privateProcedure.query(async ({ ctx }) => {
-    const users = await ctx.db.user.findMany({});
+    const users = await ctx.db.user.findMany({
+      include: {
+        university: true,
+      },
+    });
     return users;
   }),
 });

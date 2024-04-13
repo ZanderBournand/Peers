@@ -16,4 +16,5 @@ export interface UserData {
   isVerifiedStudent: boolean;
   universityName?: string | null;
   university?: UniversityData | null;
+  points: number;
 }

@@ -2,7 +2,7 @@ import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { FaGraduationCap, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
@@ -13,7 +13,7 @@ import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
 import UserPageOrganizationCarousel from "@/components/organizations/UserPageOrgCarousel";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
 import {
   HoverCard,
@@ -66,15 +66,19 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               <AvatarImage src={user.image ?? ""} />
               <AvatarFallback>Peer</AvatarFallback>
             </Avatar>
-            <p
-              className="mt-2"
+            <div
+              className="mt-2 flex flex-row items-center"
               style={{
                 fontSize: "1.75rem",
                 fontWeight: "bold",
               }}
             >
               {user.firstName} {user.lastName}
-            </p>
+              <CheckBadgeIcon
+                className="blue blue-500 ml-1 h-6 w-6"
+                color="#6e13c8"
+              />
+            </div>
             <p
               style={{
                 fontSize: "1rem",
@@ -83,53 +87,38 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             >
               {user.username}
             </p>
-            <p
-              className="mr-5 flex"
-              style={{
-                fontSize: "1.01rem",
-              }}
-            >
-              <FaGraduationCap className="mr-1 h-6 w-6" /> PeerPoints:{" "}
-              {user.points}
-            </p>
-            {user.isVerifiedStudent && (
-              <div>
-                <p
-                  className="mr-2 flex"
-                  style={{
-                    fontSize: "1.01rem",
-                  }}
-                >
-                  <CheckBadgeIcon
-                    className="blue blue-500 mr-1 h-6 w-6"
-                    color="#6e13c8"
-                  />
-                  Verified Student
-                </p>
-                <p
-                  className="flex items-center"
-                  style={{
-                    fontSize: "1.01rem",
-                  }}
-                >
-                  {user?.university?.isLogoUploaded ? (
-                    <Image
-                      src={user?.university?.logo ?? ""}
-                      alt="selected image"
-                      width={20}
-                      height={20}
-                      style={{
-                        objectFit: "cover",
-                      }}
-                      className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
-                    />
-                  ) : (
-                    <PiStudentFill className="mr-2" />
-                  )}
-                  {user?.university?.name}
-                </p>
+            <div className="mt-4">
+              {user.isVerifiedStudent && (
+                <div>
+                  <p
+                    className="flex items-center"
+                    style={{
+                      fontSize: "1.01rem",
+                    }}
+                  >
+                    {user?.university?.isLogoUploaded ? (
+                      <Image
+                        src={user?.university?.logo ?? ""}
+                        alt="selected image"
+                        width={20}
+                        height={20}
+                        style={{
+                          objectFit: "cover",
+                        }}
+                        className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
+                      />
+                    ) : (
+                      <PiStudentFill className="mr-2" />
+                    )}
+                    {user?.university?.name}
+                  </p>
+                </div>
+              )}
+              <div className="mr-2 mt-1 flex flex-row items-center justify-center rounded-lg bg-purple-100/30 py-1 text-purple-800">
+                <BoltIcon className="mr-1 h-5 w-5" />
+                {user.points} PeerPoints
               </div>
-            )}
+            </div>
           </div>
           <div
             className="w-80 border-2 px-2 py-3"
