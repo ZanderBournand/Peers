@@ -87,7 +87,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             >
               {user.username}
             </p>
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col items-center">
               {user.isVerifiedStudent && (
                 <div>
                   <p
@@ -114,9 +114,15 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   </p>
                 </div>
               )}
-              <div className="mr-2 mt-1 flex flex-row items-center justify-center rounded-lg bg-purple-100/30 py-1 text-purple-800">
+              <div className="mr-2 mt-1 flex w-max flex-row items-center justify-center rounded-lg bg-purple-100/30 px-2 py-1 text-purple-900">
                 <BoltIcon className="mr-1 h-5 w-5" />
-                {user.points} PeerPoints
+                <p
+                  style={{
+                    fontSize: "1.01rem",
+                  }}
+                >
+                  {user.points} PeerPoints
+                </p>
               </div>
             </div>
           </div>
