@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { UserData } from "@/lib/interfaces/userData";
 import moment from "moment";
+import { type EventData } from "./interfaces/eventData";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -65,4 +66,26 @@ export function shouldDisplayJoinButton(
     : now.isBefore(tenMinutesBeforeStart)
       ? "upcoming"
       : "ended";
+}
+
+export function formatEnumName(tagName: string) {
+  // Replace underscores with spaces and convert to title case
+  let formatted = tagName
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+
+  // Replace "And" with "&"
+  formatted = formatted.replace("And", "&");
+
+  return formatted;
+}
+
+export function sortUpcomingEvents(events: EventData[]): EventData[] {
+  return events
+    .filter((event) => {
+      const endDate = moment(event.date).add(event.duration, "minutes");
+      return moment().isBefore(endDate);
+    })
+    .sort((a, b) => moment(a.date).diff(moment(b.date)));
 }

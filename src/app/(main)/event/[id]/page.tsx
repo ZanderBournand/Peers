@@ -25,6 +25,7 @@ import type { EventData } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
 import EventStatus from "@/components/events/EventStatus";
 import { VideoCallButton } from "@/components/events/VideoCallButton";
+import { PiStudentFill } from "react-icons/pi";
 
 export default async function EventPage({
   params,
@@ -111,8 +112,9 @@ export default async function EventPage({
                 </div>
               </div>
               <p className="text-md my-5 whitespace-pre-line font-normal">
-                {/* TODO: Display organization bio */}
-                {event.userHost ? event.userHost?.bio : "[INSERT ORG BIO HERE]"}
+                {event.userHost
+                  ? event.userHost?.bio
+                  : event.orgHost?.description}
               </p>
             </div>
             {event.tags && event.tags.length > 0 && (
@@ -148,41 +150,60 @@ export default async function EventPage({
               }
               className="mt-8 flex flex-row rounded-xl border shadow-sm"
             >
-              <div className="relative mx-2 my-2 flex aspect-square h-24 items-center justify-center ">
-                {/* TODO: Add user/org image */}
-                {event.image ? (
-                  <Image
-                    src={event.image}
-                    alt="selected image"
-                    fill
-                    sizes="100%"
-                    style={{
-                      objectFit: "cover",
-                    }}
-                    className="rounded-lg transition-opacity duration-500 group-hover:opacity-70"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center text-gray-500">
-                    No image available
-                  </div>
-                )}
+              <div className="flex items-center justify-center">
+                <div className="relative mx-2 my-2 flex aspect-square h-20 items-center justify-center ">
+                  {event.image ? (
+                    <Image
+                      src={
+                        event.userHost
+                          ? event?.userHost?.image ?? ""
+                          : event?.orgHost?.image ?? ""
+                      }
+                      alt="selected image"
+                      fill
+                      sizes="100%"
+                      style={{
+                        objectFit: "cover",
+                      }}
+                      className={`${
+                        event.userHost ? "rounded-full" : "rounded-lg"
+                      } transition-opacity duration-500 group-hover:opacity-70`}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center text-gray-500">
+                      No image available
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex-start flex flex-col px-4 py-4">
-                <p className="mt-2 font-semibold">
-                  {event.userHost
-                    ? getDisplayName(event.userHost)
-                    : event.orgHost?.name}
-                </p>
-                <div className="mt-4 flex flex-row items-center">
+              <div className="flex-start flex flex-col px-2 py-2">
+                <div className="mt-2 flex flex-row items-center">
+                  <p className="font-semibold">
+                    {event.userHost
+                      ? getDisplayName(event.userHost)
+                      : event.orgHost?.name}
+                  </p>
                   <CheckBadgeIcon
-                    className="blue blue-500 mr-1 h-6 w-6"
+                    className="blue blue-500 ml-1 h-6 w-6"
                     color="#6e13c8"
                   />
-                  <p className="text-gray-600">
-                    {event.userHost
-                      ? "Verified student"
-                      : "Verified Organization"}
-                  </p>
+                </div>
+                <div className="mt-2 flex flex-row items-center">
+                  {user?.university?.isLogoUploaded ? (
+                    <Image
+                      src={user?.university?.logo ?? ""}
+                      alt="selected image"
+                      width={23}
+                      height={23}
+                      style={{
+                        objectFit: "cover",
+                      }}
+                      className="mr-1.5 rounded-sm transition-opacity duration-500 group-hover:opacity-70"
+                    />
+                  ) : (
+                    <PiStudentFill className="mr-2" />
+                  )}
+                  <p className="text-gray-600">{user.university?.name}</p>
                 </div>
               </div>
             </Link>

@@ -3,6 +3,7 @@ import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "../../../lib/validators/Tag";
 
 import { EventType } from "@prisma/client";
+import { sortUpcomingEvents } from "@/lib/utils";
 
 export const eventRouter = createTRPCRouter({
   create: privateProcedure
@@ -175,6 +176,26 @@ export const eventRouter = createTRPCRouter({
       }
 
       return user.hostEvents;
+    }),
+  getOrgEvents: privateProcedure
+    .input(z.object({ orgId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const events = await ctx.db.event.findMany({
+        where: { orgHostId: input.orgId },
+        include: {
+          orgHost: true,
+          tags: true,
+          attendees: true,
+        },
+      });
+
+      if (!events) {
+        throw new Error("No events found for this organization");
+      }
+
+      const sortedEvents = sortUpcomingEvents(events);
+
+      return sortedEvents;
     }),
   delete: privateProcedure
     .input(z.object({ id: z.string() }))
