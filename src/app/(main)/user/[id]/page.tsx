@@ -325,25 +325,25 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
               </CardHeader>
-              {eventsAttending.length == 0 ? (
-                <CardContent className="mb-1 text-center">
-                  This user is not registered for any events.
-                </CardContent>
-              ) : (
-                <CardContent>
-                  <div className="font-bold">Upcoming Events:</div>
-                  <UserPageEventCarousel events={eventsAttending} />
-                </CardContent>
-              )}
-              <Separator className="mx-auto -mt-6 mb-2 w-5/6 bg-gray-400" />
               {eventsHosting.length == 0 ? (
                 <CardContent className="text-center">
                   This user is not hosting any events.
                 </CardContent>
               ) : (
                 <CardContent>
-                  <div className="font-bold">Hosting Events:</div>
+                  <div className="mb-4 font-bold">Hosting Events:</div>
                   <UserPageEventCarousel events={eventsHosting} />
+                </CardContent>
+              )}
+              <Separator className="mx-auto -mt-6 mb-6 w-5/6 bg-gray-400" />
+              {eventsAttending.length == 0 ? (
+                <CardContent className="mb-1 text-center">
+                  This user is not registered for any events.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="mb-4 font-bold">Attending Events:</div>
+                  <UserPageEventCarousel events={eventsAttending} />
                 </CardContent>
               )}
             </Card>
