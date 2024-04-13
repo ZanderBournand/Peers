@@ -16,13 +16,8 @@ model User {
   lastName  String?
   image     String
 
-  // TEMPORARY
-
-  points    Int
   skills String[]
-
-  interests Tag[]   @relation("Interests")
-  bio       String?
+  bio    String?
 
   github   String?
   linkedin String?
@@ -41,7 +36,7 @@ model User {
 }
 
 model University {
-  name           String   @id
+  name           String         @id
   webPages       String[]
   alphaTwoCode   String?
   stateProvince  String?
@@ -49,7 +44,7 @@ model University {
   country        String?
   logo           String?
   isLogoUploaded Boolean
-  students       User[]   @relation("Students")
+  students       User[]         @relation("Students")
   organizations  Organization[] @relation("Organizations")
 }
 
@@ -57,7 +52,7 @@ model Organization {
   id          String           @id
   name        String
   description String
-  email     String
+  email       String
   type        OrganizationType
   image       String
 
@@ -96,11 +91,10 @@ model Event {
 }
 
 model Tag {
-  id       String      @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
-  category TagCategory
+  id       String  @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  category String
   name     String
   events   Event[]
-  users    User[]      @relation("Interests")
 }
 
 model Verification_Code {
@@ -137,17 +131,4 @@ enum OrganizationType {
   SPORTS
   E_SPORTS
   OTHER
-}
-
-enum TagCategory {
-  TECH
-  ART
-  SPORTS
-  LANGUAGE
-  BUSINESS
-  EDUCATION
-  SOCIAL_IMPACT
-  SCIENCE_AND_ENGINEERING
-  CULTURE_AND_HISTORY
-  PERSONAL_DEVELOPMENT
 }
