@@ -120,9 +120,6 @@ export const VerificationProvider: React.FC<{ children: ReactNode }> = ({
 
   const { mutate: setUniversityLogo } =
     api.universities.setUniversityLogo.useMutation({
-      onSuccess: () => {
-        console.log("University logo set");
-      },
       onError: (e) => {
         console.error("Failed to set university logo", e);
       },

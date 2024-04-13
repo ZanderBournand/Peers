@@ -5,7 +5,6 @@ import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -14,6 +13,14 @@ import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
 import UserPageOrganizationCarousel from "@/components/organizations/UserPageOrgCarousel";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { getDisplayName } from "@/lib/utils";
 
 const cardStyle = {
   width: "580px",
@@ -116,18 +123,56 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             )}
           </div>
           <div
-            className="w-80 border-2 px-5 py-2"
+            className="w-80 border-2 px-2 py-3"
             style={{
               marginTop: "-1px",
               border: "1px solid grey",
               borderTop: "0px",
             }}
           >
-            {user.bio ? (
-              <p>{user.bio}</p>
-            ) : (
-              <p>This user has not provided a bio.</p>
-            )}
+            <div className="px-3">
+              {user.bio ? (
+                <p>{user.bio}</p>
+              ) : (
+                <p>This user has not provided a bio.</p>
+              )}
+            </div>
+            <div className="mt-4 flex flex-row flex-wrap gap-y-2">
+              {user?.interests?.slice(0, 3).map((interest) => (
+                <div
+                  key={interest.id}
+                  className="mr-2 rounded-lg bg-purple-100/30 px-4 py-1 text-xs text-slate-600"
+                >
+                  {interest.name}
+                </div>
+              ))}
+              {user.interests?.length > 3 && (
+                <HoverCard>
+                  <HoverCardTrigger>
+                    <p className="cursor-pointer px-4 py-1 text-xs text-slate-800 hover:underline">
+                      +{user.interests.length - 3}
+                    </p>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-[350px]">
+                    <div className="flex flex-col">
+                      <p className="ml-2 font-semibold">
+                        {getDisplayName(user, false)}&rsquo;s interests
+                      </p>
+                      <div className="mt-3 flex flex-row flex-wrap gap-y-2">
+                        {user?.interests.map((interest) => (
+                          <div
+                            key={interest.id}
+                            className="mr-2 rounded-lg bg-purple-100/30 px-4 py-1 text-xs text-slate-600"
+                          >
+                            {interest.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              )}
+            </div>
           </div>
           <div
             className="flex w-80 flex-col items-center justify-center border-2 py-2"
@@ -228,18 +273,18 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
           <div className="flex items-center justify-center">
             <Card style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
-                <div className="flex">
+                <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
                   {isCurrentUser && (
-                    <Link
-                      className="color-grey ml-1.5 mt-1.5"
-                      href="/organization/new"
-                      title="Create Organization"
+                    <VerifyOrNavigateContainer
+                      user={user}
+                      elementId="create-organization-link"
+                      navigationLink="/organization/new"
                     >
-                      <AiOutlinePlusCircle className="color-grey" />
-                    </Link>
+                      <PlusCircleIcon className="h-6 w-6" />
+                    </VerifyOrNavigateContainer>
                   )}
                 </div>
               </CardHeader>
@@ -261,18 +306,18 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
           <div className="flex items-center justify-center">
             <Card className="mt-6" style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
-                <div className="flex">
+                <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
                   {isCurrentUser && (
-                    <Link
-                      className="color-grey ml-1.5 mt-1.5"
-                      href="/event/new"
-                      title="Create Event"
+                    <VerifyOrNavigateContainer
+                      user={user}
+                      elementId="create-event-link"
+                      navigationLink="/event/new"
                     >
-                      <AiOutlinePlusCircle className="color-grey" />
-                    </Link>
+                      <PlusCircleIcon className="h-6 w-6" />
+                    </VerifyOrNavigateContainer>
                   )}
                 </div>
               </CardHeader>

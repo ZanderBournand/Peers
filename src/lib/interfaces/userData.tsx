@@ -1,3 +1,4 @@
+import { type TagData } from "./tagData";
 import { type UniversityData } from "./universityData";
 
 export interface UserData {
@@ -7,7 +8,7 @@ export interface UserData {
   username: string;
   firstName: string | null;
   lastName: string | null;
-  skills: string[];
+  interests?: TagData[] | null;
   bio: string | null;
   github: string | null;
   linkedin: string | null;

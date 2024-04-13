@@ -15,6 +15,7 @@ import {
   getDisplayName,
   getFormattedDuration,
   shouldDisplayJoinButton,
+  eventCountdownTime,
 } from "@/lib/utils";
 import ShareButton from "@/components/events/ShareButton";
 import { headers } from "next/headers";
@@ -23,9 +24,9 @@ import Link from "next/link";
 import type { UserData } from "@/lib/interfaces/userData";
 import type { EventData } from "@/lib/interfaces/eventData";
 import Map from "@/components/location/Map";
-import EventStatus from "@/components/events/EventStatus";
 import { VideoCallButton } from "@/components/events/VideoCallButton";
 import { PiStudentFill } from "react-icons/pi";
+import StatusPing from "@/components/events/StatusPing";
 
 export default async function EventPage({
   params,
@@ -47,6 +48,7 @@ export default async function EventPage({
 
   const eventLink = headers().get("x-url");
   const eventJoinStatus = shouldDisplayJoinButton(event.date, event.duration);
+  const endTime = new Date(event.date.getTime() + event.duration * 60000);
 
   return (
     <div className="flex items-center justify-center pb-32">
@@ -71,7 +73,16 @@ export default async function EventPage({
             )}
           </div>
           <div className="mt-8">
-            <EventStatus event={event} />
+            <div className="flex flex-row items-center">
+              {endTime > new Date() ? (
+                <StatusPing eventType={event.type} />
+              ) : (
+                <NoSymbolIcon className="mr-2 h-5 w-5" color="grey" />
+              )}
+              <p className="text-md text-xl">
+                {eventCountdownTime(event.date, event.duration)}
+              </p>
+            </div>
             <div className="mb-5 mt-1 flex flex-row items-center">
               <p className="text-2xl font-bold">{event.title}</p>
               {event.type === "ONLINE_VIDEO" && (

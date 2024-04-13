@@ -25,12 +25,12 @@ export default function UserPageOrganizationCarousel({
     <Carousel className="my-2 ml-6 w-11/12 items-center justify-center">
       <CarouselContent className="mx-2 mt-2">
         {organizations.map((organization) => (
-          <CarouselItem key={organization.id} className="mr-4 basis-1/2 pl-4">
+          <CarouselItem key={organization.id} className="mr-4 basis-2/5 pl-4">
             <Link
               href={`/organization/${organization.id}`}
-              className="flex w-56 flex-row items-center rounded-xl border"
+              className="flex flex-row items-center"
             >
-              <div className="relative mx-2 ml-4 mr-2 flex aspect-square h-12 items-center justify-center ">
+              <div className="relative flex aspect-square h-12 items-center justify-center ">
                 <Image
                   src={organization.image ?? ""}
                   alt="host image"
@@ -42,7 +42,7 @@ export default function UserPageOrganizationCarousel({
                   className="rounded-lg transition-opacity duration-500 group-hover:opacity-70"
                 />
               </div>
-              <div className="flex-start flex flex-col px-2 py-2">
+              <div className="flex-start ml-2 flex flex-col">
                 <div className="flex flex-row items-center">
                   <p className="text-sm font-semibold">{organization.name}</p>
                   <Image

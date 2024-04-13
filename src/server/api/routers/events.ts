@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "../../../lib/validators/Tag";
-
-import { EventType } from "@prisma/client";
+import { EventType, TagCategory } from "@prisma/client";
 import { sortUpcomingEvents } from "@/lib/utils";
+import { type EventData } from "@/lib/interfaces/eventData";
 
 export const eventRouter = createTRPCRouter({
   create: privateProcedure
@@ -67,22 +67,32 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
-  getAll: privateProcedure.query(async ({ ctx }) => {
-    const events = await ctx.db.event.findMany({
-      include: {
-        userHost: true,
-        orgHost: true,
-      },
-    });
-    return events;
-  }),
+  getAll: privateProcedure
+    .input(z.object({ filter: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      let events: EventData[] = await ctx.db.event.findMany({
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      if (input?.filter === "upcoming") {
+        events = sortUpcomingEvents(events);
+      }
+      return events;
+    }),
   get: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const event = await ctx.db.event.findUnique({
         where: { id: input.id },
         include: {
-          userHost: true,
+          userHost: {
+            include: {
+              university: true,
+            },
+          },
           orgHost: true,
           tags: true,
           attendees: true,
@@ -94,6 +104,85 @@ export const eventRouter = createTRPCRouter({
       }
 
       return event;
+    }),
+  getRecommended: privateProcedure
+    .input(z.object({ userId: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.userId ?? ctx.user.id;
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        include: {
+          attends: { include: { userHost: true, orgHost: true } },
+          interests: true,
+        },
+      });
+
+      const hostIds = user?.attends
+        .map((event) => event.userHostId ?? event.orgHostId)
+        .filter((id) => id !== null) as string[];
+
+      const interestsIds = user?.interests.map((interest) => interest.id) ?? [];
+
+      const queryOptions = {
+        where: {},
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      };
+
+      if (hostIds.length > 0 || interestsIds.length > 0) {
+        queryOptions.where = {
+          AND: [
+            {
+              OR: [
+                { userHostId: { in: hostIds } },
+                { orgHostId: { in: hostIds } },
+                { tags: { some: { id: { in: interestsIds } } } },
+              ],
+            },
+            {
+              NOT: [{ userHostId: userId }],
+            },
+          ],
+        };
+      }
+
+      const recommendedEvents: EventData[] =
+        await ctx.db.event.findMany(queryOptions);
+
+      const sortedEvents = sortUpcomingEvents(recommendedEvents);
+
+      return sortedEvents;
+    }),
+  getUniversity: privateProcedure
+    .input(z.object({ university: z.string() }))
+    .query(async ({ ctx, input }) => {
+      let events: EventData[] = await ctx.db.event.findMany({
+        where: {
+          OR: [
+            {
+              userHost: {
+                universityName: input.university,
+              },
+            },
+            {
+              orgHost: {
+                universityName: input.university,
+              },
+            },
+          ],
+        },
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      events = sortUpcomingEvents(events);
+
+      return events;
     }),
   toggleAttendance: privateProcedure
     .input(
@@ -149,7 +238,12 @@ export const eventRouter = createTRPCRouter({
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
         include: {
-          attends: true,
+          attends: {
+            include: {
+              userHost: true,
+              orgHost: true,
+            },
+          },
         },
       });
 
@@ -167,7 +261,12 @@ export const eventRouter = createTRPCRouter({
       const user = await ctx.db.user.findUnique({
         where: { id: userId },
         include: {
-          hostEvents: true,
+          hostEvents: {
+            include: {
+              userHost: true,
+              orgHost: true,
+            },
+          },
         },
       });
 
@@ -205,5 +304,116 @@ export const eventRouter = createTRPCRouter({
       });
 
       return event;
+    }),
+  getRecommendedHosts: privateProcedure
+    .input(z.object({ userId: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input?.userId ?? ctx.user.id;
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        include: {
+          attends: true,
+          interests: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const attendedEventIds = user.attends.map((event) => event.id);
+      const interestIds = user.interests.map((interest) => interest.id);
+
+      const organizations = await ctx.db.organization.findMany({
+        where: {
+          AND: [
+            { hostEvents: { some: {} } },
+            {
+              OR: [
+                { hostEvents: { some: { id: { in: attendedEventIds } } } },
+                { universityName: user.universityName ?? "" },
+                {
+                  hostEvents: {
+                    some: { tags: { some: { id: { in: interestIds } } } },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        include: {
+          university: true,
+        },
+      });
+
+      const users = await ctx.db.user.findMany({
+        where: {
+          AND: [
+            { hostEvents: { some: {} } },
+            { id: { not: userId } },
+            {
+              OR: [
+                { hostEvents: { some: { id: { in: attendedEventIds } } } },
+                { universityName: user.universityName },
+                {
+                  hostEvents: {
+                    some: { tags: { some: { id: { in: interestIds } } } },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        include: {
+          university: true,
+          interests: true,
+        },
+      });
+
+      return { users, organizations };
+    }),
+  getEventsByHosts: privateProcedure
+    .input(z.object({ hostIds: z.array(z.string()) }))
+    .query(async ({ ctx, input }) => {
+      const events: EventData[] = await ctx.db.event.findMany({
+        where: {
+          OR: [
+            { userHostId: { in: input.hostIds } },
+            { orgHostId: { in: input.hostIds } },
+          ],
+        },
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      const sortedEvents = sortUpcomingEvents(events);
+
+      return sortedEvents;
+    }),
+  getEventsByCategories: privateProcedure
+    .input(z.object({ categories: z.array(z.nativeEnum(TagCategory)) }))
+    .query(async ({ ctx, input }) => {
+      const events: EventData[] = await ctx.db.event.findMany({
+        where: {
+          tags: {
+            some: {
+              category: {
+                in: input.categories,
+              },
+            },
+          },
+        },
+        include: {
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      const sortedEvents = sortUpcomingEvents(events);
+
+      return sortedEvents;
     }),
 });

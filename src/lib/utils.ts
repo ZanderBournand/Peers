@@ -1,8 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { UserData } from "@/lib/interfaces/userData";
-import moment from "moment";
 import { type EventData } from "./interfaces/eventData";
+import moment from "moment";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -89,3 +89,26 @@ export function sortUpcomingEvents(events: EventData[]): EventData[] {
     })
     .sort((a, b) => moment(a.date).diff(moment(b.date)));
 }
+
+export const eventCountdownTime = (
+  eventDate: Date,
+  durationInMinutes: number,
+) => {
+  const diffMs = eventDate.getTime() - new Date().getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+  const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+  return diffMs <= 0
+    ? new Date() <= new Date(eventDate.getTime() + durationInMinutes * 60000)
+      ? "live now!"
+      : "this event has ended"
+    : diffDays === 0
+      ? diffHours === 0
+        ? `in ${pluralize(diffMinutes, "minute")}`
+        : `in ${pluralize(diffHours, "hour")}`
+      : `in ${pluralize(
+          diffDays < 7 ? diffDays : Math.floor(diffDays / 7),
+          diffDays < 7 ? "day" : "week",
+        )}`;
+};
