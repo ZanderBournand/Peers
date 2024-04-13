@@ -94,7 +94,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         userName: z.string(), // concatenated "firstName lastName"
-        pointsToAdd: z.number(), 
+        pointsToAdd: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -122,7 +122,7 @@ export const userRouter = createTRPCRouter({
 
       return updatedUser;
     }),
-    getPoints: privateProcedure
+  getPoints: privateProcedure
     .input(z.object({ userName: z.string() })) // expects userName input
     .query(async ({ ctx, input }) => {
       const { userName } = input;
@@ -141,5 +141,4 @@ export const userRouter = createTRPCRouter({
 
       return { points: user.points };
     }),
-
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { DailyProvider, useCallFrame } from "@daily-co/daily-react";
 
 interface VideoCallProps {
@@ -9,7 +9,6 @@ interface VideoCallProps {
 }
 
 const VideoCall: React.FC<VideoCallProps> = ({ roomUrl, userName }) => {
-  const [inst, setInst] = useState(false);
   const callRef = useRef<HTMLDivElement>(null);
 
   const callFrame = useCallFrame({
@@ -33,10 +32,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomUrl, userName }) => {
       userName: userName, // Use the provided userName
     },
   });
-
-  useEffect(() => {
-    setInst(true);
-  }, []);
 
   useEffect(() => {
     if (callFrame) {

@@ -9,8 +9,8 @@ import { api } from "@/trpc/react";
 
 interface VideoCallButtonProps {
   type: "ONLINE_VIDEO" | "ONLINE_AUDIO";
-  eventId: string; // Event ID for room name
-  name: string; // User name to be passed to VideoCall
+  eventId: string;
+  name: string;
 }
 
 export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
@@ -25,15 +25,15 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
   const handleJoinCall = async () => {
     try {
       const dailyAPI = new DailyAPI();
-      const url = await dailyAPI.createRoomForEvent(eventId);
+      const roomUrl = await dailyAPI.createRoomForEvent(eventId);
 
       // Call the mutation to increment user points
-      await incrementPointsMutation.mutate({
+      incrementPointsMutation.mutate({
         userName: name,
         pointsToAdd: 1,
       });
 
-      setRoomUrl(url);
+      setRoomUrl(roomUrl);
     } catch (error) {
       console.error("Error creating room:", error);
       // Handle error
@@ -54,8 +54,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
         )}
         Join Call
       </Button>
-      {roomUrl && <VideoCall roomUrl={roomUrl} userName={name} />}{" "}
-      {/* Pass roomUrl and userName prop to VideoCall */}
+      {roomUrl && <VideoCall roomUrl={roomUrl} userName={name} />}
     </div>
   );
 };
