@@ -5,7 +5,7 @@ import Image from "next/image";
 import { type UserData } from "@/lib/interfaces/userData";
 import { type OrganizationData } from "@/lib/interfaces/organizationData";
 import UserHostPreview from "@/components/user/UserHostPreview";
-import OrgHostPreview from "@/components/organization/OrgHostPreview";
+import OrgHostPreview from "@/components/organizations/OrgHostPreview";
 import { shuffle } from "lodash";
 import EventPreview from "@/components/events/EventPreview";
 

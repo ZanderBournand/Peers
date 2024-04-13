@@ -169,7 +169,7 @@ export const eventRouter = createTRPCRouter({
             },
             {
               orgHost: {
-                university: input.university,
+                universityName: input.university,
               },
             },
           ],
@@ -332,7 +332,7 @@ export const eventRouter = createTRPCRouter({
             {
               OR: [
                 { hostEvents: { some: { id: { in: attendedEventIds } } } },
-                { university: user.universityName ?? "" },
+                { universityName: user.universityName ?? "" },
                 {
                   hostEvents: {
                     some: { tags: { some: { id: { in: interestIds } } } },
@@ -341,6 +341,9 @@ export const eventRouter = createTRPCRouter({
               ],
             },
           ],
+        },
+        include: {
+          university: true,
         },
       });
 

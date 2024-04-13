@@ -4,7 +4,7 @@ import { shuffle } from "lodash";
 import Link from "next/link";
 import React from "react";
 import UserHostPreview from "../user/UserHostPreview";
-import OrgHostPreview from "../organization/OrgHostPreview";
+import OrgHostPreview from "../organizations/OrgHostPreview";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 interface HostSectionProps {

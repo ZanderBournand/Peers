@@ -12,28 +12,15 @@ import { Button } from "@/components/ui/button";
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
-<<<<<<< HEAD
 import UserPageOrganizationCarousel from "@/components/organizations/UserPageOrgCarousel";
-import CreateEventIcon from "@/components/events/CreateEventIcon";
-import CreateOrganizationIcon from "@/components/organizations/CreateOrganizationIcon";
-=======
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-<<<<<<< HEAD
-<<<<<<< HEAD
-import VerifyIconContainer from "@/components/user/VerifyIconContainer";
->>>>>>> 455bd81 (reduced code redundancy)
-=======
 import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
->>>>>>> edf2388 (small changes to navigation container)
-=======
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
 import { getDisplayName } from "@/lib/utils";
->>>>>>> 9840d1a (Revamped user skills/interests)
 
 const cardStyle = {
   width: "580px",

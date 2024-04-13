@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { TagCategory } from "@prisma/client";
-import { formatTagName } from "@/lib/utils";
+import { formatEnumName } from "@/lib/utils";
 
 export default function EventCategories() {
   const categories = Object.values(TagCategory as Record<string, string>).map(
@@ -31,7 +31,7 @@ export default function EventCategories() {
                 height="48"
               />
               <p className="mt-2 text-center text-base font-semibold">
-                {formatTagName(category.name)}
+                {formatEnumName(category.name)}
               </p>
             </div>
           </Link>

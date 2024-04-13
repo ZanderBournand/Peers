@@ -9,7 +9,7 @@ import {
 import { type Tag as TagType } from "./tag-input";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { groupBy } from "lodash";
-import { formatTagName } from "@/lib/utils";
+import { formatEnumName } from "@/lib/utils";
 
 type AutocompleteProps = {
   tags: TagType[];
@@ -87,7 +87,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
               const options = groupedOptions[category] ?? [];
               const categoryDisplay =
                 category !== "undefined"
-                  ? formatTagName(category)
+                  ? formatEnumName(category)
                   : Object.keys(groupedOptions).length > 1
                     ? "Other"
                     : undefined;

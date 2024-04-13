@@ -2,7 +2,7 @@
 
 import EventPreview from "@/components/events/EventPreview";
 import { Separator } from "@/components/ui/separator";
-import { formatTagName } from "@/lib/utils";
+import { formatEnumName } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { TagCategory } from "@prisma/client";
@@ -87,7 +87,7 @@ export default function EventCategories({
                 height="48"
               />
               <p className="ml-4 text-base font-semibold">
-                {formatTagName(category.name)}
+                {formatEnumName(category.name)}
               </p>
               {selectedCategories.includes(category.name) && (
                 <div className="absolute -right-2 -top-2 rounded-full bg-purple-500 p-1">
