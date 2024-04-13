@@ -13,7 +13,7 @@ import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
 import UserPageOrganizationCarousel from "@/components/organizations/UserPageOrgCarousel";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
 import {
   HoverCard,
@@ -53,7 +53,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
       <div className="flex items-start justify-center">
         <div className="flex-col">
           <div
-            className="mt-4 flex h-56 w-80 flex-col items-center justify-center border-2"
+            className="mt-4 flex h-64 w-80 flex-col items-center justify-center border-2"
             style={{
               border: "1px solid grey",
               borderTopLeftRadius: 10,
@@ -66,15 +66,19 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               <AvatarImage src={user.image ?? ""} />
               <AvatarFallback>Peer</AvatarFallback>
             </Avatar>
-            <p
-              className="mt-2"
+            <div
+              className="mt-2 flex flex-row items-center"
               style={{
                 fontSize: "1.75rem",
                 fontWeight: "bold",
               }}
             >
               {user.firstName} {user.lastName}
-            </p>
+              <CheckBadgeIcon
+                className="blue blue-500 ml-1 h-6 w-6"
+                color="#6e13c8"
+              />
+            </div>
             <p
               style={{
                 fontSize: "1rem",
@@ -83,44 +87,44 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             >
               {user.username}
             </p>
-            {user.isVerifiedStudent && (
-              <div>
+            <div className="mt-4 flex flex-col items-center">
+              {user.isVerifiedStudent && (
+                <div>
+                  <p
+                    className="flex items-center"
+                    style={{
+                      fontSize: "1.01rem",
+                    }}
+                  >
+                    {user?.university?.isLogoUploaded ? (
+                      <Image
+                        src={user?.university?.logo ?? ""}
+                        alt="selected image"
+                        width={20}
+                        height={20}
+                        style={{
+                          objectFit: "cover",
+                        }}
+                        className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
+                      />
+                    ) : (
+                      <PiStudentFill className="mr-2" />
+                    )}
+                    {user?.university?.name}
+                  </p>
+                </div>
+              )}
+              <div className="mr-2 mt-1 flex w-max flex-row items-center justify-center rounded-lg bg-purple-100/30 px-2 py-1 text-purple-900">
+                <BoltIcon className="mr-1 h-5 w-5" />
                 <p
-                  className="mr-2 flex"
                   style={{
                     fontSize: "1.01rem",
                   }}
                 >
-                  <CheckBadgeIcon
-                    className="blue blue-500 mr-1 h-6 w-6"
-                    color="#6e13c8"
-                  />
-                  Verified Student
-                </p>
-                <p
-                  className="flex items-center"
-                  style={{
-                    fontSize: "1.01rem",
-                  }}
-                >
-                  {user?.university?.isLogoUploaded ? (
-                    <Image
-                      src={user?.university?.logo ?? ""}
-                      alt="selected image"
-                      width={20}
-                      height={20}
-                      style={{
-                        objectFit: "cover",
-                      }}
-                      className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
-                    />
-                  ) : (
-                    <PiStudentFill className="mr-2" />
-                  )}
-                  {user?.university?.name}
+                  {user.points} PeerPoints
                 </p>
               </div>
-            )}
+            </div>
           </div>
           <div
             className="w-80 border-2 px-2 py-3"
@@ -321,25 +325,25 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
               </CardHeader>
-              {eventsAttending.length == 0 ? (
-                <CardContent className="mb-1 text-center">
-                  This user is not registered for any events.
-                </CardContent>
-              ) : (
-                <CardContent>
-                  <div className="font-bold">Upcoming Events:</div>
-                  <UserPageEventCarousel events={eventsAttending} />
-                </CardContent>
-              )}
-              <Separator className="mx-auto -mt-6 mb-2 w-5/6 bg-gray-400" />
               {eventsHosting.length == 0 ? (
                 <CardContent className="text-center">
                   This user is not hosting any events.
                 </CardContent>
               ) : (
                 <CardContent>
-                  <div className="font-bold">Hosting Events:</div>
+                  <div className="mb-4 font-bold">Hosting Events:</div>
                   <UserPageEventCarousel events={eventsHosting} />
+                </CardContent>
+              )}
+              <Separator className="mx-auto -mt-6 mb-6 w-5/6 bg-gray-400" />
+              {eventsAttending.length == 0 ? (
+                <CardContent className="mb-1 text-center">
+                  This user is not registered for any events.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="mb-4 font-bold">Attending Events:</div>
+                  <UserPageEventCarousel events={eventsAttending} />
                 </CardContent>
               )}
             </Card>

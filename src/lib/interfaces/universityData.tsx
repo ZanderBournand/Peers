@@ -1,3 +1,5 @@
+import { type UserData } from "./userData";
+
 export interface UniversityData {
   name: string;
   webPages: string[];
@@ -7,4 +9,5 @@ export interface UniversityData {
   country?: string | null;
   logo?: string | null;
   isLogoUploaded: boolean;
+  students?: UserData[];
 }

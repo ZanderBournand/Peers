@@ -8,6 +8,7 @@ import { api } from "@/trpc/react";
 const routes: { title: string; href: string }[] = [
   { title: "Discover", href: "/discover" },
   { title: "My Events", href: "/myevents" },
+  { title: "Leaderboard", href: "/leaderboard" },
 ];
 
 const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {

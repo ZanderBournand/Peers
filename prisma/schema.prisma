@@ -15,6 +15,7 @@ model User {
   firstName String?
   lastName  String?
   image     String
+  points    Int
 
   interests Tag[]   @relation("Interests")
   bio       String?
