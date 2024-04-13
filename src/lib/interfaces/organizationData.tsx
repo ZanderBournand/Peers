@@ -1,5 +1,6 @@
 import { type UniversityData } from "./universityData";
 import { type OrganizationType } from "@prisma/client";
+import { type UserData } from "./userData";
 
 export interface OrganizationData {
   id: string;
@@ -13,4 +14,5 @@ export interface OrganizationData {
   discord?: string | null;
   universityName?: string | null;
   university?: UniversityData | null;
+  admins?: UserData[];
 }

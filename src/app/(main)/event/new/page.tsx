@@ -53,16 +53,19 @@ export type NewEventInput = z.infer<typeof newEventSchema>;
 
 export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
+  const [orgSelected, setOrgSelected] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [tags, setTags] = useState<TagData[]>([]);
 
-  const { control } = useForm();
   const supabase = createClient();
 
   const { data: user } = api.users.getUser.useQuery({});
   const { data: allTags } = api.tags.getAll.useQuery();
+  const { data: userOrganizations } = api.organizations.getAdminOrgs.useQuery({
+    userId: user?.id ?? "",
+  });
 
   const form = useForm<NewEventInput>({
     resolver: zodResolver(newEventSchema),
@@ -124,7 +127,7 @@ export default function CreateEvent() {
     }
 
     if (isOrgEvent) {
-      // TODO: handle creation via organization
+      newEventData.orgHostId = orgSelected;
     } else {
       newEventData.userHostId = user?.id;
     }
@@ -276,56 +279,6 @@ export default function CreateEvent() {
                   </FormItem>
                 )}
               />
-              <div className="mt-6 flex flex-col gap-4">
-                <div className="ml-1 flex w-full flex-row items-center">
-                  <Checkbox
-                    checked={isOrgEvent}
-                    onCheckedChange={(checked: boolean) =>
-                      setIsOrgEvent(checked)
-                    }
-                    className="h-5 w-5"
-                    disabled
-                  />
-                  <FormLabel className="ml-3">
-                    Is this event hosted by an organization?
-                  </FormLabel>
-                </div>
-                {isOrgEvent && (
-                  <FormField
-                    control={control}
-                    // NOTE: "organization" field value is not handled ATM
-                    // -> waiting on implementation of organization creation
-                    name="organization"
-                    render={({ field }) => (
-                      <FormItem className="ml-1 w-1/2">
-                        <FormLabel>Host Organization</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value as string}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select the host organization" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="ORG 1">
-                              ORGANIZATION 1
-                            </SelectItem>
-                            <SelectItem value="ORG 2">
-                              ORGANIZATION 2
-                            </SelectItem>
-                            <SelectItem value="ORG 3">
-                              ORGANIZATION 3
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-              </div>
               {typeValue === "IN_PERSON" && (
                 <div className="flex-start mt-12 flex flex-col rounded-lg bg-gray-50/50 px-2 py-3">
                   <div className="flex flex-row items-center">
@@ -596,8 +549,51 @@ export default function CreateEvent() {
                   </FormItem>
                 )}
               />
-              <div className="flex items-center self-center">
+              <div className="flex w-3/4 flex-col items-center self-center pl-2">
                 <DefaultImagesButton onImageChange={handleDefaultImageChange} />
+                <div className="mt-8 flex w-full flex-col justify-start">
+                  <div className="ml-1 flex flex-row items-center">
+                    <Checkbox
+                      checked={isOrgEvent}
+                      onCheckedChange={(checked: boolean) =>
+                        setIsOrgEvent(checked)
+                      }
+                      className="h-5 w-5"
+                    />
+                    <FormLabel className="ml-3">
+                      Is this event hosted by an organization?
+                    </FormLabel>
+                  </div>
+                  {isOrgEvent && (
+                    <FormItem className="mt-4 w-1/2">
+                      <FormLabel>Host Organization</FormLabel>
+                      <Select onValueChange={(value) => setOrgSelected(value)}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select the host organization" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {userOrganizations?.map((org) => (
+                            <SelectItem key={org.id} value={org.id}>
+                              <div className="flex flex-row items-center">
+                                <Image
+                                  src={org.image}
+                                  alt="admin image"
+                                  width={30}
+                                  height={30}
+                                  className="mr-1 rounded-sm transition-opacity duration-500 group-hover:opacity-70"
+                                />
+                                <p className="ml-2">{org.name}</p>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                </div>
               </div>
               <div className="mt-6 flex flex-row justify-center">
                 <Button

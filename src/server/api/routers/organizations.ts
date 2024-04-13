@@ -91,7 +91,11 @@ export const organizationRouter = createTRPCRouter({
         where: { id: input.id },
         include: {
           university: true,
-          admins: true,
+          admins: {
+            include: {
+              university: true,
+            },
+          },
         },
       });
 
@@ -100,5 +104,102 @@ export const organizationRouter = createTRPCRouter({
       }
 
       return org;
+    }),
+  addAdmin: privateProcedure
+    .input(
+      z.object({
+        orgId: z.string(),
+        adminEmail: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const requestingUser = await ctx.db.user.findUnique({
+        where: { id: ctx.user.id },
+        include: { adminOf: true },
+      });
+      if (
+        !requestingUser ||
+        !requestingUser.adminOf.some((org) => org.id === input.orgId)
+      ) {
+        throw new Error("Only admins can add admins");
+      }
+
+      const admin = await ctx.db.user.findUnique({
+        where: { email: input.adminEmail },
+      });
+      if (!admin) {
+        throw new Error("Admin not found");
+      }
+
+      const org = await ctx.db.organization.update({
+        where: { id: input.orgId },
+        data: {
+          admins: {
+            connect: {
+              id: admin.id,
+            },
+          },
+        },
+      });
+      return org;
+    }),
+
+  removeAdmin: privateProcedure
+    .input(
+      z.object({
+        orgId: z.string(),
+        adminEmail: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const requestingUser = await ctx.db.user.findUnique({
+        where: { id: ctx.user.id },
+        include: { adminOf: true },
+      });
+      if (
+        !requestingUser ||
+        !requestingUser.adminOf.some((org) => org.id === input.orgId)
+      ) {
+        throw new Error("Only admins can remove admins");
+      }
+
+      const admin = await ctx.db.user.findUnique({
+        where: { email: input.adminEmail },
+      });
+      if (!admin) {
+        throw new Error("Admin not found");
+      }
+
+      const org = await ctx.db.organization.update({
+        where: { id: input.orgId },
+        data: {
+          admins: {
+            disconnect: {
+              id: admin.id,
+            },
+          },
+        },
+      });
+      return org;
+    }),
+  getAdminOrgs: privateProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { id: input.userId },
+        include: {
+          adminOf: {
+            include: {
+              university: true,
+            },
+          },
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user.adminOf;
     }),
 });

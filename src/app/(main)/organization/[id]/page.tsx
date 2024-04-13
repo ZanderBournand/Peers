@@ -1,112 +1,163 @@
 import { Button } from "@/components/ui/button";
-import { CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import ShareButton from "@/components/organizations/ShareButton";
 import Link from "next/link";
 import { type z } from "zod";
 import { type newOrgSchema } from "@/lib/validators/Organization";
 import { api } from "@/trpc/server";
 import { type OrganizationData } from "@/lib/interfaces/organizationData";
+import { Separator } from "@/components/ui/separator";
+import { PiStudentFill } from "react-icons/pi";
+import { FaDiscord, FaEnvelope, FaFacebook, FaInstagram } from "react-icons/fa";
+import AdminsDialog from "@/components/organizations/AdminsDialog";
+import { MdEdit } from "react-icons/md";
+import { headers } from "next/headers";
+import ShareButton from "@/components/organizations/ShareButton";
+import { formatEnumName } from "@/lib/utils";
+import EventPreview from "@/components/events/EventPreview";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
 export default async function OrgPage({ params }: { params: { id: string } }) {
+  const user = await api.users.getUser.query({});
   const organization: OrganizationData =
     await api.organizations.getOrganization.query({
       id: params.id,
     });
+  const events = await api.events.getOrgEvents.query({
+    orgId: organization.id,
+  });
+
+  const organizationLink = headers().get("x-url");
+  const isAdmin = organization?.admins?.some((admin) => admin.id === user.id);
 
   return (
     <div className="flex items-center justify-center pb-32">
-      <div className="my-16 flex w-full max-w-screen-xl flex-row justify-center self-center pb-7">
-        <div className="flex w-8/12 flex-col items-start px-20 pb-7">
-          <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50">
-            {organization.image ? (
-              <Image
-                src={organization.image}
-                alt="selected image"
-                fill
-                style={{
-                  objectFit: "cover",
-                }}
-                className="rounded-lg transition-opacity duration-500 group-hover:opacity-70"
-              />
-            ) : (
-              <div className="flex items-center justify-center text-gray-500">
-                No image available
+      <div className="mt-12 flex w-full max-w-screen-2xl flex-col px-12">
+        <div className="flex flex-row">
+          <div className="flex items-center" style={{ minWidth: "200px" }}>
+            <Image
+              src={organization.image}
+              alt="selected image"
+              width={200}
+              height={200}
+              style={{
+                objectFit: "cover",
+              }}
+              className="mr-3 rounded-lg transition-opacity duration-500 group-hover:opacity-70"
+            />
+          </div>
+          <div className="ml-8 flex w-9/12 flex-col">
+            <div className="flex flex-row items-center justify-between">
+              <div className="flex flex-row items-center">
+                <p className="text-2xl font-bold">{organization.name}</p>
+                <div className="ml-4 rounded-lg bg-purple-100/50 px-4 py-1 text-sm text-slate-800">
+                  {formatEnumName(organization.type)}
+                </div>
               </div>
-            )}
-          </div>
-          <div className="flex items-center justify-center pb-2">
-            <CardTitle style={{ fontSize: "34px", paddingTop: "30px" }}>
-              {organization.name} @ {organization?.university?.name}
-            </CardTitle>
-          </div>
-          <div className="inline-block">
-            <div
-              style={{ fontSize: "22px" }}
-              className="block inline flex items-center justify-center rounded-lg bg-orange-100/50 px-2 py-1 text-sm text-slate-800"
+              <div className="flex flex-row items-center">
+                {organization.email && (
+                  <a href={`mailto:${organization.email}`} className="mx-2">
+                    <FaEnvelope className="h-7 w-7" color="darkgrey" />
+                  </a>
+                )}
+                {organization.instagram && (
+                  <a
+                    href={organization.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mx-2"
+                  >
+                    <FaInstagram className="h-7 w-7" color="darkgrey" />
+                  </a>
+                )}
+                {organization.facebook && (
+                  <a
+                    href={organization.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mx-2"
+                  >
+                    <FaFacebook className="h-7 w-7" color="darkgrey" />
+                  </a>
+                )}
+                {organization.discord && (
+                  <a
+                    href={organization.discord}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mx-2"
+                  >
+                    <FaDiscord className="h-7 w-7" color="darkgrey" />
+                  </a>
+                )}
+              </div>
+            </div>
+            <p
+              className="ml-1 mt-2 flex items-center"
+              style={{
+                fontSize: "1.01rem",
+              }}
             >
-              {organization.email}
-            </div>
-          </div>
-
-          <div
-            style={{ paddingTop: "30px" }}
-            className="flex items-center justify-center"
-          >
-            <CardTitle>Club Description:</CardTitle>
-          </div>
-          <div className="flex items-center justify-center pb-7">
-            {organization.description}
-          </div>
-          <CardTitle>Club Leader(s):</CardTitle>
-          <div className="flex items-center justify-center pb-7">
-            ADD ADMIN NAME(S) HERE
-          </div>
-
-          <CardTitle className="pb-2">Type of Organization:</CardTitle>
-          <div className="rounded-lg bg-purple-100/50 px-4 py-1 text-sm text-slate-800">
-            {organization.type}
-          </div>
-
-          <div style={{ paddingTop: "30px" }} className="flex flex-row gap-8">
-            <div className="flex flex-col">
-              <CardTitle>Instagram:</CardTitle>
-              <div className="flex items-center justify-center rounded-lg bg-blue-100/50 px-4 py-1 text-sm text-slate-800">
-                {organization.instagram}
+              {organization?.university?.isLogoUploaded ? (
+                <Image
+                  src={organization?.university?.logo ?? ""}
+                  alt="selected image"
+                  width={25}
+                  height={25}
+                  style={{
+                    objectFit: "cover",
+                  }}
+                  className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
+                />
+              ) : (
+                <PiStudentFill className="mr-2" />
+              )}
+              {organization?.university?.name}
+            </p>
+            <p className="mt-6">{organization.description} </p>
+            <div className="mt-8 flex flex-row items-center justify-between">
+              <div className="flex flex-row items-center">
+                <AdminsDialog user={user} organization={organization} />
+                <div className="mx-2">
+                  <ShareButton textToCopy={organizationLink} />
+                </div>
               </div>
+              {isAdmin && (
+                <div className="flex flex-row items-center">
+                  <Link href={`/event/new`} className="mx-2">
+                    <Button>
+                      <PlusIcon color="white" className="mr-2 h-5 w-5" />
+                      Create Event
+                    </Button>
+                  </Link>
+                  <Link href={`/organization/${organization.id}/edit`}>
+                    <Button>
+                      <MdEdit color="white" className="mr-2 h-5 w-5" />
+                      Edit
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
-
-            <div className="flex flex-col">
-              <CardTitle>Facebook:</CardTitle>
-              <div className="flex items-center justify-center rounded-lg bg-green-100/50 px-4 py-1 text-sm text-slate-800">
-                {organization.facebook}
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              <CardTitle>Discord:</CardTitle>
-              <div className="flex items-center justify-center rounded-lg bg-red-100/50 px-4 py-1 text-sm text-slate-800">
-                {organization.discord}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ paddingTop: "30px", textAlign: "center" }}>
-            <Link href={`/organization/${organization.id}/edit`}>
-              <Button
-                className="items-center justify-center"
-                style={{ padding: "20px 40px", fontSize: "24px" }}
-              >
-                Edit
-              </Button>
-            </Link>
           </div>
         </div>
-        <ShareButton
-          textToCopy={"http://localhost:3000/organization/" + organization.id}
-        />
+        <Separator className="mt-12" />
+        {events?.length > 0 ? (
+          <>
+            <h2 className="mt-8 text-2xl font-bold">Upcoming Events</h2>
+            <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              {events.map((event) => (
+                <EventPreview key={event.id} event={event} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="mt-48 flex flex-col items-center justify-center">
+            <p className="mb-2">:(</p>
+            No events planned for the moment!
+          </div>
+        )}
       </div>
     </div>
   );

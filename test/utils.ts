@@ -46,6 +46,7 @@ export const createTestDBUser = async (
     image: user?.image,
     username: user?.username,
     isVerifiedStudent: false,
+    points: 0,
   });
 
   return newDBUser;

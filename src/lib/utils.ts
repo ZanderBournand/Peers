@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { UserData } from "@/lib/interfaces/userData";
 import moment from "moment";
+import { type EventData } from "./interfaces/eventData";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -78,4 +79,13 @@ export function formatEnumName(tagName: string) {
   formatted = formatted.replace("And", "&");
 
   return formatted;
+}
+
+export function sortUpcomingEvents(events: EventData[]): EventData[] {
+  return events
+    .filter((event) => {
+      const endDate = moment(event.date).add(event.duration, "minutes");
+      return moment().isBefore(endDate);
+    })
+    .sort((a, b) => moment(a.date).diff(moment(b.date)));
 }

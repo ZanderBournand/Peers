@@ -245,7 +245,6 @@ export default function CreateOrganization({
                     </FormItem>
                   )}
                 />
-                \
               </div>
               <FormField
                 control={form.control}

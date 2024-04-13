@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
+import UserPageOrganizationCarousel from "@/components/organizations/UserPageOrgCarousel";
 
 const cardStyle = {
   width: "580px",
@@ -28,6 +29,9 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
 
   const isCurrentUser = actualUser?.id === user?.id;
 
+  const userOrganizations = await api.organizations.getAdminOrgs.query({
+    userId: user?.id ?? "",
+  });
   const eventsAttending = await api.events.getEventsAttending.query({
     id: params.id,
   });
@@ -239,14 +243,23 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="text-center">
-                This user is not part of any organizations.
-              </CardContent>
+              {userOrganizations.length == 0 ? (
+                <CardContent className="text-center">
+                  This user is not part of any organizations.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="-ml-4 font-bold">Their orgs:</div>
+                  <UserPageOrganizationCarousel
+                    organizations={userOrganizations}
+                  />
+                </CardContent>
+              )}
             </Card>
           </div>
 
           <div className="flex items-center justify-center">
-            <Card className="mt-3" style={cardStyle}>
+            <Card className="mt-6" style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
                 <div className="flex">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
