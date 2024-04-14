@@ -6,7 +6,7 @@ import { api } from '@/trpc/react';
 import { s } from 'vitest/dist/reporters-MmQN-57K.js';
 
 
-export default async function SearchPage() {
+export default function SearchPage() {
     const [searchResults, setSearchResults] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [showOrganizations, setShowOrganizations] = useState<boolean>(true);
