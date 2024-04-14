@@ -16,6 +16,7 @@ model User {
   lastName  String?
   image     String
   points    Int
+  prevThresh Int
 
   skills String[]
   bio    String?

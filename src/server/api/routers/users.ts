@@ -141,4 +141,48 @@ export const userRouter = createTRPCRouter({
 
       return { points: user.points };
     }),
+  getPrevThresh: privateProcedure
+    .input(z.object({ userName: z.string() })) // expects userName input
+    .query(async ({ ctx, input }) => {
+      const { userName } = input;
+
+      // split userName into firstName and lastName
+      const [firstName, lastName] = userName.split(" ");
+
+      // finding user based on firstName and lastName
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      return { prevThresh: user.prevThresh };
+    }),
+  updatePrevThresh: privateProcedure
+    .input(z.object({ userName: z.string(), prevThresh: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userName, prevThresh } = input;
+
+      // Split userName into firstName and lastName
+      const [firstName, lastName] = userName.split(" ");
+
+      // Find the user based on firstName and lastName
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      // Update the user's prevThresh value
+      const updatedUser = await ctx.db.user.update({
+        where: { id: user.id },
+        data: { prevThresh },
+      });
+
+      return updatedUser;
+    }),
 });
