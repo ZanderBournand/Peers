@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { api } from "@/trpc/server";
-import Link from "next/link";
+import CreateEventButton from "@/components/events/CreateEventButton";
 import EventPreview from "@/components/events/EventPreview";
 import moment from "moment";
 import { getDisplayName } from "@/lib/utils";

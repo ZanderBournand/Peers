@@ -24,13 +24,27 @@ model User {
   website  String?
 
   isVerifiedStudent Boolean
-  university        String?
+
+  universityName  String?
+  university      University? @relation("Students", fields: [universityName], references: [name])
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
 
-  hostEvents Event[] @relation("UserHost")
-  attends    Event[] @relation("Attendees")
+  hostEvents     Event[] @relation("UserHost")
+  attends        Event[] @relation("Attendees")
+}
+
+model University {
+  name             String   @id
+  webPages         String[]
+  alphaTwoCode     String?
+  stateProvince    String?
+  domains          String[]
+  country          String?
+  logo             String?
+  isLogoUploaded   Boolean
+  students         User[] @relation("Students")
 }
 
 model Organization {
