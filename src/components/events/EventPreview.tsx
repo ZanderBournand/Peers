@@ -31,7 +31,7 @@ export default function EventPreview({ event }: { event: EventData }) {
 
   return (
     <Link href={`/event/${event.id}`}>
-      <div className="group mx-4 my-4 flex w-72 flex-col overflow-hidden rounded-2xl border border-transparent transition-all duration-300 hover:border-gray-100 hover:shadow-sm">
+      <div className="group my-4 mr-4 flex w-64 flex-col overflow-hidden rounded-2xl border border-transparent transition-all duration-300 hover:border-gray-100 hover:shadow-sm">
         <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50">
           {event.image ? (
             <>
@@ -61,18 +61,18 @@ export default function EventPreview({ event }: { event: EventData }) {
             <CalendarIcon className="mr-2 h-5 w-5" />
             {formattedDate} • {formattedTime}
           </p>
-          <div className="text-md flex flex-row items-center text-slate-600">
-            Hosted by:
-            <div className="ml-2 inline-flex items-center rounded-full border border-gray-100 bg-white px-1 text-sm hover:shadow-sm">
+          <div className="text-md flex flex-row items-center text-sm text-slate-600">
+            <div className="flex-none">Hosted by:</div>
+            <div className="ml-2 inline-flex items-center truncate rounded-full border border-gray-100 bg-white px-1 text-sm hover:shadow-sm">
               {event.userHost ? (
                 <div className="flex flex-row items-center">
                   <UserIcon className="mr-1 h-4 w-4" />
-                  {getDisplayName(event.userHost)}
+                  <p className="truncate">{getDisplayName(event.userHost)}</p>
                 </div>
               ) : (
                 <div className="flex flex-row items-center">
                   <UserGroupIcon className="mr-1 h-4 w-4" />
-                  {event.orgHost?.name}
+                  <p className="truncate">{event.orgHost?.name}</p>
                 </div>
               )}
             </div>

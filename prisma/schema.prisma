@@ -18,8 +18,8 @@ model User {
   points    Int
   prevThresh Int
 
-  skills String[]
-  bio    String?
+  interests Tag[]   @relation("Interests")
+  bio       String?
 
   github   String?
   linkedin String?
@@ -27,31 +27,43 @@ model User {
 
   isVerifiedStudent Boolean
 
-  universityName  String?
-  university      University? @relation("Students", fields: [universityName], references: [name])
+  universityName String?
+  university     University? @relation("Students", fields: [universityName], references: [name])
 
   adminOf  Organization[] @relation("Admins")
   memberOf Organization[] @relation("Members")
 
-  hostEvents     Event[] @relation("UserHost")
-  attends        Event[] @relation("Attendees")
+  hostEvents Event[] @relation("UserHost")
+  attends    Event[] @relation("Attendees")
 }
 
 model University {
-  name             String   @id
-  webPages         String[]
-  alphaTwoCode     String?
-  stateProvince    String?
-  domains          String[]
-  country          String?
-  logo             String?
-  isLogoUploaded   Boolean
-  students         User[] @relation("Students")
+  name           String         @id
+  webPages       String[]
+  alphaTwoCode   String?
+  stateProvince  String?
+  domains        String[]
+  country        String?
+  logo           String?
+  isLogoUploaded Boolean
+  students       User[]         @relation("Students")
+  organizations  Organization[] @relation("Organizations")
 }
 
 model Organization {
-  id   String @id
-  name String
+  id          String           @id
+  name        String
+  description String
+  email       String
+  type        OrganizationType
+  image       String
+
+  universityName String?
+  university     University? @relation("Organizations", fields: [universityName], references: [name])
+
+  instagram String?
+  facebook  String?
+  discord   String?
 
   admins  User[] @relation("Admins")
   members User[] @relation("Members")
@@ -81,10 +93,11 @@ model Event {
 }
 
 model Tag {
-  id       String  @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
-  category String
+  id       String      @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  category TagCategory
   name     String
   events   Event[]
+  users    User[]      @relation("Interests")
 }
 
 model Verification_Code {
@@ -97,4 +110,41 @@ enum EventType {
   ONLINE_VIDEO
   ONLINE_AUDIO
   IN_PERSON
+}
+
+enum OrganizationType {
+  BUSINESS
+  ENGINEERING
+  JOURNALISM
+  AGRICULTURE
+  ART
+  DENTRISTRY
+  DESIGN
+  CONSTRUCTION
+  EDUCATION
+  LAW
+  SCIENCE
+  MEDICINE
+  NURSING
+  PHARMACY
+  VETERINARY
+  PUBLIC_HEALTH
+  FARMING
+  VOLUNTEERING
+  SPORTS
+  E_SPORTS
+  OTHER
+}
+
+enum TagCategory {
+  TECH
+  ART
+  SPORTS
+  LANGUAGE
+  BUSINESS
+  EDUCATION
+  SOCIAL_IMPACT
+  SCIENCE_AND_ENGINEERING
+  CULTURE_AND_HISTORY
+  PERSONAL_DEVELOPMENT
 }

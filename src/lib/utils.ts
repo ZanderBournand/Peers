@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { UserData } from "@/lib/interfaces/userData";
+import { type EventData } from "./interfaces/eventData";
 import moment from "moment";
 
 export function cn(...inputs: ClassValue[]) {
@@ -66,3 +67,48 @@ export function shouldDisplayJoinButton(
       ? "upcoming"
       : "ended";
 }
+
+export function formatEnumName(tagName: string) {
+  // Replace underscores with spaces and convert to title case
+  let formatted = tagName
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+
+  // Replace "And" with "&"
+  formatted = formatted.replace("And", "&");
+
+  return formatted;
+}
+
+export function sortUpcomingEvents(events: EventData[]): EventData[] {
+  return events
+    .filter((event) => {
+      const endDate = moment(event.date).add(event.duration, "minutes");
+      return moment().isBefore(endDate);
+    })
+    .sort((a, b) => moment(a.date).diff(moment(b.date)));
+}
+
+export const eventCountdownTime = (
+  eventDate: Date,
+  durationInMinutes: number,
+) => {
+  const diffMs = eventDate.getTime() - new Date().getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+  const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+  return diffMs <= 0
+    ? new Date() <= new Date(eventDate.getTime() + durationInMinutes * 60000)
+      ? "live now!"
+      : "this event has ended"
+    : diffDays === 0
+      ? diffHours === 0
+        ? `in ${pluralize(diffMinutes, "minute")}`
+        : `in ${pluralize(diffHours, "hour")}`
+      : `in ${pluralize(
+          diffDays < 7 ? diffDays : Math.floor(diffDays / 7),
+          diffDays < 7 ? "day" : "week",
+        )}`;
+};

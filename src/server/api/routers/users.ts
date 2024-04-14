@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
+import { TagSchema } from "@/lib/validators/Tag";
 
 export const userRouter = createTRPCRouter({
   create: privateProcedure
@@ -17,6 +18,7 @@ export const userRouter = createTRPCRouter({
           email: input.email,
           username: input.username,
           isVerifiedStudent: false,
+          points: 0,
           image:
             "https://erwggivaefiaiqdqgtqb.supabase.co/storage/v1/object/public/images/users/base_profile_pic.jpg",
         },
@@ -29,7 +31,7 @@ export const userRouter = createTRPCRouter({
         image: z.string().url(),
         firstName: z.string(),
         lastName: z.string(),
-        skills: z.array(z.string()),
+        interests: TagSchema.array(),
         bio: z.string(),
         github: z.string(),
         linkedin: z.string(),
@@ -43,7 +45,9 @@ export const userRouter = createTRPCRouter({
           image: input.image,
           firstName: input.firstName,
           lastName: input.lastName,
-          skills: input.skills,
+          interests: {
+            set: input.interests?.map((tag) => ({ id: tag.id })),
+          },
           bio: input.bio,
           github: input.github,
           linkedin: input.linkedin,
@@ -61,6 +65,7 @@ export const userRouter = createTRPCRouter({
         where: { id: userId },
         include: {
           university: true,
+          interests: true,
         },
       });
 
@@ -87,7 +92,11 @@ export const userRouter = createTRPCRouter({
       return Boolean(user);
     }),
   getAllUsers: privateProcedure.query(async ({ ctx }) => {
-    const users = await ctx.db.user.findMany({});
+    const users = await ctx.db.user.findMany({
+      include: {
+        university: true,
+      },
+    });
     return users;
   }),
   updatePoints: privateProcedure

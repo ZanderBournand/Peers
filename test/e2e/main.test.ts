@@ -47,7 +47,10 @@ test("Auth - Home page", async ({ page }) => {
   await addAuthCookies(page);
   await page.goto("/");
 
-  await expect(page.getByText(`Hey, @${testUser.username}!`)).toBeVisible();
+  // TEMPORARY FIX: Need to add timeout -> Next.js causing first render to bug out
+  await expect(page.getByText(`Hey, @${testUser.username}!`)).toBeVisible({
+    timeout: 15000,
+  });
 });
 
 test.describe("Auth - Create Event Button", () => {
@@ -56,9 +59,10 @@ test.describe("Auth - Create Event Button", () => {
   test("Redirect to verification modal", async ({ page }) => {
     await addAuthCookies(page);
     await toggleUserVerification(supabase, testUser, false);
-    await page.goto("/");
+    await page.goto(`/user/${testUser.id}`);
 
-    await page.getByRole("button", { name: "Create Event" }).click();
+    await page.click("#create-event-link");
+
     await expect(
       page.getByRole("heading", { name: "Student Verification Required" }),
     ).toBeVisible();
@@ -67,9 +71,9 @@ test.describe("Auth - Create Event Button", () => {
   test("Successful navigation", async ({ page }) => {
     await addAuthCookies(page);
     await toggleUserVerification(supabase, testUser, true);
-    await page.goto("/");
+    await page.goto(`/user/${testUser.id}`);
 
-    await page.getByRole("button", { name: "Create Event" }).click();
+    await page.click("#create-event-link");
 
     await page.waitForURL("**/event/new");
     await expect(

@@ -31,11 +31,11 @@ export default function UserPageEventCarousel({ events }: EventCarouselProps) {
 
   return (
     <Carousel className="my-2 ml-6 w-11/12 items-center justify-center">
-      <CarouselContent className="mx-2">
+      <CarouselContent className="mx-2 py-2">
         {events.map((event) => (
           <CarouselItem key={event.id} className="mx-1 basis-2/5 pl-4">
             <Link href={`/event/${event.id}`}>
-              <div className="items-center justify-center">
+              <div className="items-center justify-center transition-all duration-200 hover:scale-105">
                 <div className="flex">
                   <div className="group flex w-48 flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:border-gray-100 hover:shadow-sm">
                     <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50">

@@ -5,7 +5,6 @@ import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { FaGraduationCap, FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -13,6 +12,15 @@ import { Button } from "@/components/ui/button";
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
+import UserPageOrganizationCarousel from "@/components/organizations/UserPageOrgCarousel";
+import { BoltIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { getDisplayName } from "@/lib/utils";
 
 const cardStyle = {
   width: "580px",
@@ -28,6 +36,9 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
 
   const isCurrentUser = actualUser?.id === user?.id;
 
+  const userOrganizations = await api.organizations.getAdminOrgs.query({
+    userId: user?.id ?? "",
+  });
   const eventsAttending = await api.events.getEventsAttending.query({
     id: params.id,
   });
@@ -55,15 +66,19 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               <AvatarImage src={user.image ?? ""} />
               <AvatarFallback>Peer</AvatarFallback>
             </Avatar>
-            <p
-              className="mt-2"
+            <div
+              className="mt-2 flex flex-row items-center"
               style={{
                 fontSize: "1.75rem",
                 fontWeight: "bold",
               }}
             >
               {user.firstName} {user.lastName}
-            </p>
+              <CheckBadgeIcon
+                className="blue blue-500 ml-1 h-6 w-6"
+                color="#6e13c8"
+              />
+            </div>
             <p
               style={{
                 fontSize: "1rem",
@@ -72,67 +87,96 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             >
               {user.username}
             </p>
-            <p
-              className="mr-5 flex"
-              style={{
-                fontSize: "1.01rem",
-              }}
-            >
-              <FaGraduationCap className="mr-1 h-6 w-6" /> PeerPoints:{" "}
-              {user.points}
-            </p>
-            {user.isVerifiedStudent && (
-              <div>
+            <div className="mt-4 flex flex-col items-center">
+              {user.isVerifiedStudent && (
+                <div>
+                  <p
+                    className="flex items-center"
+                    style={{
+                      fontSize: "1.01rem",
+                    }}
+                  >
+                    {user?.university?.isLogoUploaded ? (
+                      <Image
+                        src={user?.university?.logo ?? ""}
+                        alt="selected image"
+                        width={20}
+                        height={20}
+                        style={{
+                          objectFit: "cover",
+                        }}
+                        className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
+                      />
+                    ) : (
+                      <PiStudentFill className="mr-2" />
+                    )}
+                    {user?.university?.name}
+                  </p>
+                </div>
+              )}
+              <div className="mr-2 mt-1 flex w-max flex-row items-center justify-center rounded-lg bg-purple-100/30 px-2 py-1 text-purple-900">
+                <BoltIcon className="mr-1 h-5 w-5" />
                 <p
-                  className="mr-2 flex"
                   style={{
                     fontSize: "1.01rem",
                   }}
                 >
-                  <CheckBadgeIcon
-                    className="blue blue-500 mr-1 h-6 w-6"
-                    color="#6e13c8"
-                  />
-                  Verified Student
-                </p>
-                <p
-                  className="flex items-center"
-                  style={{
-                    fontSize: "1.01rem",
-                  }}
-                >
-                  {user?.university?.isLogoUploaded ? (
-                    <Image
-                      src={user?.university?.logo ?? ""}
-                      alt="selected image"
-                      width={20}
-                      height={20}
-                      style={{
-                        objectFit: "cover",
-                      }}
-                      className="mr-2 rounded transition-opacity duration-500 group-hover:opacity-70"
-                    />
-                  ) : (
-                    <PiStudentFill className="mr-2" />
-                  )}
-                  {user?.university?.name}
+                  {user.points} PeerPoints
                 </p>
               </div>
-            )}
+            </div>
           </div>
           <div
-            className="w-80 border-2 px-5 py-2"
+            className="w-80 border-2 px-2 py-3"
             style={{
               marginTop: "-1px",
               border: "1px solid grey",
               borderTop: "0px",
             }}
           >
-            {user.bio ? (
-              <p>{user.bio}</p>
-            ) : (
-              <p>This user has not provided a bio.</p>
-            )}
+            <div className="px-3">
+              {user.bio ? (
+                <p>{user.bio}</p>
+              ) : (
+                <p>This user has not provided a bio.</p>
+              )}
+            </div>
+            <div className="mt-4 flex flex-row flex-wrap gap-y-2">
+              {user?.interests?.slice(0, 3).map((interest) => (
+                <div
+                  key={interest.id}
+                  className="mr-2 rounded-lg bg-purple-100/30 px-4 py-1 text-xs text-slate-600"
+                >
+                  {interest.name}
+                </div>
+              ))}
+              {user.interests?.length > 3 && (
+                <HoverCard>
+                  <HoverCardTrigger>
+                    <p className="cursor-pointer px-4 py-1 text-xs text-slate-800 hover:underline">
+                      +{user.interests.length - 3}
+                    </p>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-[350px]">
+                    <div className="flex flex-col">
+                      <p className="ml-2 font-semibold">
+                        {getDisplayName(user, false)}&rsquo;s interests
+                      </p>
+                      <div className="mt-3 flex flex-row flex-wrap gap-y-2">
+                        {user?.interests.map((interest) => (
+                          <div
+                            key={interest.id}
+                            className="mr-2 rounded-lg bg-purple-100/30 px-4 py-1 text-xs text-slate-600"
+                          >
+                            {interest.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              )}
+            </div>
           </div>
           <div
             className="flex w-80 flex-col items-center justify-center border-2 py-2"
@@ -233,64 +277,73 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
           <div className="flex items-center justify-center">
             <Card style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
-                <div className="flex">
+                <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Organizations
                   </span>
                   {isCurrentUser && (
-                    <Link
-                      className="color-grey ml-1.5 mt-1.5"
-                      href="/organization/new"
-                      title="Create Organization"
+                    <VerifyOrNavigateContainer
+                      user={user}
+                      elementId="create-organization-link"
+                      navigationLink="/organization/new"
                     >
-                      <AiOutlinePlusCircle className="color-grey" />
-                    </Link>
+                      <PlusCircleIcon className="h-6 w-6" />
+                    </VerifyOrNavigateContainer>
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="text-center">
-                This user is not part of any organizations.
-              </CardContent>
+              {userOrganizations.length == 0 ? (
+                <CardContent className="text-center">
+                  This user is not part of any organizations.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="-ml-4 font-bold">Their orgs:</div>
+                  <UserPageOrganizationCarousel
+                    organizations={userOrganizations}
+                  />
+                </CardContent>
+              )}
             </Card>
           </div>
 
           <div className="flex items-center justify-center">
-            <Card className="mt-3" style={cardStyle}>
+            <Card className="mt-6" style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
-                <div className="flex">
+                <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
                     Events
                   </span>
                   {isCurrentUser && (
-                    <Link
-                      className="color-grey ml-1.5 mt-1.5"
-                      href="/event/new"
-                      title="Create Event"
+                    <VerifyOrNavigateContainer
+                      user={user}
+                      elementId="create-event-link"
+                      navigationLink="/event/new"
                     >
-                      <AiOutlinePlusCircle className="color-grey" />
-                    </Link>
+                      <PlusCircleIcon className="h-6 w-6" />
+                    </VerifyOrNavigateContainer>
                   )}
                 </div>
               </CardHeader>
-              {eventsAttending.length == 0 ? (
-                <CardContent className="mb-1 text-center">
-                  This user is not registered for any events.
-                </CardContent>
-              ) : (
-                <CardContent>
-                  <div className="font-bold">Upcoming Events:</div>
-                  <UserPageEventCarousel events={eventsAttending} />
-                </CardContent>
-              )}
-              <Separator className="mx-auto -mt-6 mb-2 w-5/6 bg-gray-400" />
               {eventsHosting.length == 0 ? (
                 <CardContent className="text-center">
                   This user is not hosting any events.
                 </CardContent>
               ) : (
                 <CardContent>
-                  <div className="font-bold">Hosting Events:</div>
+                  <div className="mb-4 font-bold">Hosting Events:</div>
                   <UserPageEventCarousel events={eventsHosting} />
+                </CardContent>
+              )}
+              <Separator className="mx-auto -mt-6 mb-6 w-5/6 bg-gray-400" />
+              {eventsAttending.length == 0 ? (
+                <CardContent className="mb-1 text-center">
+                  This user is not registered for any events.
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <div className="mb-4 font-bold">Attending Events:</div>
+                  <UserPageEventCarousel events={eventsAttending} />
                 </CardContent>
               )}
             </Card>
