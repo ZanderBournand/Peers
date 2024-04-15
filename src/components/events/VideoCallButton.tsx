@@ -18,7 +18,6 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
   name,
 }) => {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
-
   const [prevThreshold, setPrevThreshold] = useState<number | null>(null);
 
   const incrementPointsMutation = api.users.updatePoints.useMutation();
@@ -37,7 +36,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
   // Set initial previous threshold when data is available
   useEffect(() => {
     if (prevThresholdResult) {
-      const initialPrevThreshold = prevThresholdResult.prevThresh || 0;
+      const initialPrevThreshold = prevThresholdResult.prevThresh ?? 0;
       setPrevThreshold(initialPrevThreshold);
     }
   }, [prevThresholdResult]);
@@ -45,19 +44,21 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
   const handleJoinCall = async () => {
     try {
       // Create a room for the event (or use existing)
-      const res = await createRoomMutation.mutateAsync({ eventId });
+      const res: { roomUrl?: string } = await createRoomMutation.mutateAsync({
+        eventId,
+      });
 
       // If room URL is present in the response, update roomUrl state
-      if (res && res.roomUrl) {
-        const roomUrlFromMutation = res.roomUrl;
+      if (res?.roomUrl) {
+        const roomUrlFromMutation: string = res.roomUrl;
         setRoomUrl(roomUrlFromMutation);
 
         // Retrieve user meeting duration
-        const userDuration = userMeetingDurations.data?.[name] || 0;
+        const userDuration = userMeetingDurations.data?.[name] ?? 0;
 
         // Point system thresholds and points
-        const durationThresholds = [30, 120, 300, 600, 1200]; // in minutes
-        const pointsPerThreshold = [1, 2, 3, 4, 5]; // points for each threshold
+        const durationThresholds = [30, 120, 300, 600, 1200];
+        const pointsPerThreshold = [1, 2, 3, 4, 5];
 
         let newThresholdReached = false;
         let totalPointsToAdd = 0;
@@ -66,7 +67,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
         for (let i = 0; i < durationThresholds.length; i++) {
           if (
             userDuration >= durationThresholds[i] &&
-            durationThresholds[i] > (prevThreshold || 0) // Use prevThreshold or default to 0 if null
+            (prevThreshold ?? 0) < durationThresholds[i]
           ) {
             newThresholdReached = true;
             totalPointsToAdd = pointsPerThreshold[i];
@@ -77,7 +78,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
 
         // If a new threshold is reached, update the previous threshold
         if (newThresholdReached) {
-          await incrementPrevThreshMutation.mutate({
+          await incrementPrevThreshMutation.mutateAsync({
             userName: name,
             prevThresh: userDuration,
           });
@@ -87,7 +88,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
         const totalPoints = 1 + totalPointsToAdd;
 
         // Update user points with the calculated total points
-        await incrementPointsMutation.mutate({
+        await incrementPointsMutation.mutateAsync({
           userName: name,
           pointsToAdd: totalPoints,
         });

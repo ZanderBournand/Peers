@@ -2,7 +2,7 @@ import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { FaGraduationCap, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
