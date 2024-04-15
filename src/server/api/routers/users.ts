@@ -99,4 +99,21 @@ export const userRouter = createTRPCRouter({
     });
     return users;
   }),
+  searchUsers: privateProcedure
+    .input(z.object({ searchTerm: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const users = await ctx.db.user.findMany({
+        where: {
+          OR: [
+            { firstName: { contains: input.searchTerm } },
+            { lastName: { contains: input.searchTerm } },
+            { username: { contains: input.searchTerm } },
+          ],
+        },
+        include: {
+          university: true,
+        },
+      });
+      return users;
+    }),
 });

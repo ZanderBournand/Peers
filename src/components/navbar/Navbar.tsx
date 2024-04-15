@@ -9,7 +9,6 @@ import { api } from "@/trpc/react";
 import { createClient } from "@/utils/supabase/client";
 
 const routes: { title: string; href: string }[] = [
-  { title: "Discover", href: "/discover" },
   { title: "My Events", href: "/myevents" },
   { title: "Leaderboard", href: "/leaderboard" },
 ];
