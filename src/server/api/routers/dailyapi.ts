@@ -25,7 +25,7 @@ interface MeetingResponse {
 
 export const dailyApiRouter = createTRPCRouter({
   createRoomForEvent: privateProcedure
-    .input(z.object({ eventId: z.string() }))
+    .input(z.object({ eventId: z.string() })) // Input validation for eventId
     .mutation(async ({ input }) => {
       try {
         if (!apiKey) {
@@ -34,7 +34,7 @@ export const dailyApiRouter = createTRPCRouter({
           );
         }
 
-        const roomName = input.eventId.substring(0, 40);
+        const roomName = input.eventId.substring(0, 40); // Limit room name to 40 characters
 
         let existingRoom: RoomData | null = null;
         try {
@@ -56,10 +56,10 @@ export const dailyApiRouter = createTRPCRouter({
         }
         if (existingRoom) {
           console.log("Room already exists:", existingRoom);
-          return { roomUrl: existingRoom.url };
+          return { roomUrl: existingRoom.url }; // Return existing room URL
         }
 
-        const expirationTime = Math.floor(Date.now() / 1000) + 18000;
+        const expirationTime = Math.floor(Date.now() / 1000) + 18000; // Set expiration time to 5 hours
         const createRoomResponse: AxiosResponse<RoomData> =
           await axios.post<RoomData>(
             `${DAILY_API_BASE_URL}/rooms`,
@@ -78,7 +78,7 @@ export const dailyApiRouter = createTRPCRouter({
             },
           );
         console.log("New room created:", createRoomResponse.data);
-        return { roomUrl: createRoomResponse.data.url };
+        return { roomUrl: createRoomResponse.data.url }; // Return new room URL
       } catch (error) {
         console.error("Error creating or retrieving room:", error);
         throw new Error("Failed to create or retrieve room");
@@ -86,7 +86,7 @@ export const dailyApiRouter = createTRPCRouter({
     }),
 
   getUserMeetingDurations: privateProcedure
-    .input(z.object({ userName: z.string() }))
+    .input(z.object({ userName: z.string() })) // Input validation for userName
     .query(async () => {
       try {
         const response: AxiosResponse<MeetingResponse> =
@@ -104,7 +104,7 @@ export const dailyApiRouter = createTRPCRouter({
             if (!userDurations[user_name]) {
               userDurations[user_name] = 0;
             }
-            userDurations[user_name] += duration;
+            userDurations[user_name] += duration; // Accumulate duration for each user
           });
         });
 
