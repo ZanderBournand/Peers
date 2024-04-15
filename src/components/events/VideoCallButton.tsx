@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { VideoCameraIcon, MicrophoneIcon } from "@heroicons/react/24/outline";
-import DailyAPI from "../../server/api/routers/dailyapi";
 import VideoCall from "./VideoCall";
 import { api } from "@/trpc/react";
 
@@ -20,71 +19,79 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
 }) => {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
 
-  const incrementPointsMutation = api.users.updatePoints.useMutation();
-  const incrementPrevThreshMutation = api.users.updatePrevThresh.useMutation();
   const [prevThreshold, setPrevThreshold] = useState<number | null>(null);
 
-  const {
-    data: prevThresholdResult,
-    error,
-    isLoading,
-  } = api.users.getPrevThresh.useQuery({
+  const incrementPointsMutation = api.users.updatePoints.useMutation();
+  const incrementPrevThreshMutation = api.users.updatePrevThresh.useMutation();
+  const createRoomMutation = api.dailyapi.createRoomForEvent.useMutation();
+
+  const userMeetingDurations = api.dailyapi.getUserMeetingDurations.useQuery({
     userName: name,
   });
 
+  // Fetch previous threshold data
+  const { data: prevThresholdResult } = api.users.getPrevThresh.useQuery({
+    userName: name,
+  });
+
+  // Set initial previous threshold when data is available
   useEffect(() => {
     if (prevThresholdResult) {
-      setPrevThreshold(prevThresholdResult.prevThresh || 0);
+      const initialPrevThreshold = prevThresholdResult.prevThresh || 0;
+      setPrevThreshold(initialPrevThreshold);
     }
   }, [prevThresholdResult]);
 
   const handleJoinCall = async () => {
     try {
-      const dailyAPI = new DailyAPI();
-      const roomUrl = await dailyAPI.createRoomForEvent(eventId);
+      // Create a room for the event (or use existing)
+      const res = await createRoomMutation.mutateAsync({ eventId });
 
-      // Getting the meeting durations for the current user
-      const userMeetingDurations = await dailyAPI.getUserMeetingDurations();
-      const userDuration = userMeetingDurations[name] || 0;
+      // If room URL is present in the response, update roomUrl state
+      if (res && res.roomUrl) {
+        const roomUrlFromMutation = res.roomUrl;
+        setRoomUrl(roomUrlFromMutation);
 
-      // Point system
-      const durationThresholds = [30, 120, 300, 600, 1200]; // in minutes (e.g., 30 mins, 2 hours, 5 hours, 10 hours, 20 hours)
-      const pointsPerThreshold = [1, 2, 3, 4, 5]; // points for each threshold
+        // Retrieve user meeting duration
+        const userDuration = userMeetingDurations.data?.[name] || 0;
 
-      let newThresholdReached = false;
-      let totalPointsToAdd = 0;
+        // Point system thresholds and points
+        const durationThresholds = [30, 120, 300, 600, 1200]; // in minutes
+        const pointsPerThreshold = [1, 2, 3, 4, 5]; // points for each threshold
 
-      // Iterate through duration thresholds to find the highest threshold reached by userDuration
-      for (let i = 0; i < durationThresholds.length; i++) {
-        if (
-          // If userDuration exceeds a threshold and it's greater than the previous threshold
-          userDuration >= durationThresholds[i] &&
-          durationThresholds[i] > prevThreshold
-        ) {
-          newThresholdReached = true;
-          totalPointsToAdd = pointsPerThreshold[i];
-        } else {
-          break;
+        let newThresholdReached = false;
+        let totalPointsToAdd = 0;
+
+        // Iterate through thresholds to determine points to add
+        for (let i = 0; i < durationThresholds.length; i++) {
+          if (
+            userDuration >= durationThresholds[i] &&
+            durationThresholds[i] > (prevThreshold || 0) // Use prevThreshold or default to 0 if null
+          ) {
+            newThresholdReached = true;
+            totalPointsToAdd = pointsPerThreshold[i];
+          } else {
+            break;
+          }
         }
-      }
 
-      // Update db threshold
-      if (newThresholdReached) {
-        incrementPrevThreshMutation.mutate({
+        // If a new threshold is reached, update the previous threshold
+        if (newThresholdReached) {
+          await incrementPrevThreshMutation.mutate({
+            userName: name,
+            prevThresh: userDuration,
+          });
+        }
+
+        // Calculate total points to add
+        const totalPoints = 1 + totalPointsToAdd;
+
+        // Update user points with the calculated total points
+        await incrementPointsMutation.mutate({
           userName: name,
-          prevThresh: userDuration,
+          pointsToAdd: totalPoints,
         });
       }
-
-      const totalPoints = 1 + totalPointsToAdd;
-
-      // Update db userPoints
-      incrementPointsMutation.mutate({
-        userName: name,
-        pointsToAdd: totalPoints,
-      });
-
-      setRoomUrl(roomUrl);
     } catch (error) {
       console.error("Error creating room:", error);
       // Handle error
@@ -93,6 +100,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
 
   return (
     <div className="flex items-center justify-center">
+      {/* Button to join the call */}
       <Button
         variant="default"
         className="text-md h-auto w-auto flex-row"
@@ -105,7 +113,11 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
         )}
         Join Call
       </Button>
+
+      {/* Render VideoCall component if roomUrl is valid */}
       {roomUrl && <VideoCall roomUrl={roomUrl} userName={name} />}
     </div>
   );
 };
+
+export default VideoCallButton;
