@@ -5,6 +5,7 @@ import { universityRouter } from "./routers/university";
 import { tagRouter } from "@/server/api/routers/tags";
 import { createTRPCRouter } from "@/server/api/trpc";
 import { organizationRouter } from "./routers/organizations";
+import { dailyApiRouter } from "./routers/dailyapi";
 
 export const appRouter = createTRPCRouter({
   users: userRouter,
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   verifyStudent: verifyStudentRouter,
   universities: universityRouter,
   tags: tagRouter,
+  dailyapi: dailyApiRouter,
 });
 
 export type AppRouter = typeof appRouter;

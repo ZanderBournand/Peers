@@ -19,6 +19,7 @@ export const userRouter = createTRPCRouter({
           username: input.username,
           isVerifiedStudent: false,
           points: 0,
+          prevThresh: 0,
           image:
             "https://erwggivaefiaiqdqgtqb.supabase.co/storage/v1/object/public/images/users/base_profile_pic.jpg",
         },
@@ -99,4 +100,99 @@ export const userRouter = createTRPCRouter({
     });
     return users;
   }),
+  updatePoints: privateProcedure
+    .input(
+      z.object({
+        userName: z.string(), // concatenated "firstName lastName"
+        pointsToAdd: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userName, pointsToAdd } = input;
+
+      // split userName and find
+      const [firstName, lastName] = userName.split(" ");
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      // updating user points
+      const updatedUser = await ctx.db.user.update({
+        where: { id: user.id },
+        data: {
+          points: {
+            increment: pointsToAdd,
+          },
+        },
+      });
+
+      return updatedUser;
+    }),
+  getPoints: privateProcedure
+    .input(z.object({ userName: z.string() })) // expects userName input
+    .query(async ({ ctx, input }) => {
+      const { userName } = input;
+
+      // split userName into firstName and lastName
+      const [firstName, lastName] = userName.split(" ");
+
+      // finding user based on firstName and lastName
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      return { points: user.points };
+    }),
+  getPrevThresh: privateProcedure
+    .input(z.object({ userName: z.string() })) // expects userName input
+    .query(async ({ ctx, input }) => {
+      const { userName } = input;
+
+      // split userName into firstName and lastName
+      const [firstName, lastName] = userName.split(" ");
+
+      // finding user based on firstName and lastName
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      return { prevThresh: user.prevThresh };
+    }),
+  updatePrevThresh: privateProcedure
+    .input(z.object({ userName: z.string(), prevThresh: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userName, prevThresh } = input;
+
+      // Split userName into firstName and lastName
+      const [firstName, lastName] = userName.split(" ");
+
+      // Find the user based on firstName and lastName
+      const user = await ctx.db.user.findFirst({
+        where: { firstName, lastName },
+      });
+
+      if (!user) {
+        throw new Error(`User '${userName}' not found`);
+      }
+
+      // Update the user's prevThresh value
+      const updatedUser = await ctx.db.user.update({
+        where: { id: user.id },
+        data: { prevThresh },
+      });
+
+      return updatedUser;
+    }),
 });
