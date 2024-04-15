@@ -238,7 +238,7 @@ export default async function EventPage({
                       <VideoCallButton
                         type={event.type}
                         eventId={event.id}
-                        name={user.firstName + " " + user.lastName}
+                        name={getDisplayName(user, true)}
                       />
                     </>
                   ) : eventJoinStatus === "upcoming" ? (

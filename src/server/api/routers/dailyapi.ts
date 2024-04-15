@@ -17,10 +17,8 @@ interface Participant {
 
 interface MeetingResponse {
   data: {
-    meetings: {
-      participants: Participant[];
-    }[];
-  };
+    participants: Participant[];
+  }[];
 }
 
 export const dailyApiRouter = createTRPCRouter({
@@ -55,7 +53,6 @@ export const dailyApiRouter = createTRPCRouter({
           }
         }
         if (existingRoom) {
-          console.log("Room already exists:", existingRoom);
           return { roomUrl: existingRoom.url }; // Return existing room URL
         }
 
@@ -77,7 +74,6 @@ export const dailyApiRouter = createTRPCRouter({
               },
             },
           );
-        console.log("New room created:", createRoomResponse.data);
         return { roomUrl: createRoomResponse.data.url }; // Return new room URL
       } catch (error) {
         console.error("Error creating or retrieving room:", error);
@@ -89,6 +85,12 @@ export const dailyApiRouter = createTRPCRouter({
     .input(z.object({ userName: z.string() })) // Input validation for userName
     .query(async () => {
       try {
+        if (!apiKey) {
+          throw new Error(
+            "DAILY_API_KEY is not defined in the environment variables.",
+          );
+        }
+
         const response: AxiosResponse<MeetingResponse> =
           await axios.get<MeetingResponse>(`${DAILY_API_BASE_URL}/meetings`, {
             headers: {
@@ -98,7 +100,7 @@ export const dailyApiRouter = createTRPCRouter({
 
         const userDurations: Record<string, number> = {};
 
-        response.data.data.meetings.forEach((meeting) => {
+        response.data.data.forEach((meeting) => {
           meeting.participants.forEach((participant) => {
             const { user_name, duration } = participant;
             if (!userDurations[user_name]) {
@@ -108,7 +110,6 @@ export const dailyApiRouter = createTRPCRouter({
           });
         });
 
-        console.log("Meeting Info Response:", userDurations);
         return userDurations;
       } catch (error) {
         console.error("Error fetching meeting durations:", error);

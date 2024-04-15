@@ -19,6 +19,7 @@ export const userRouter = createTRPCRouter({
           username: input.username,
           isVerifiedStudent: false,
           points: 0,
+          prevThresh: 0,
           image:
             "https://erwggivaefiaiqdqgtqb.supabase.co/storage/v1/object/public/images/users/base_profile_pic.jpg",
         },

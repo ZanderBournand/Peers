@@ -65,12 +65,15 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
 
         // Iterate through thresholds to determine points to add
         for (let i = 0; i < durationThresholds.length; i++) {
+          const durationThreshold = durationThresholds[i] ?? 0;
+          const pointsForThreshold = pointsPerThreshold[i] ?? 0;
+
           if (
-            userDuration >= durationThresholds[i] &&
-            (prevThreshold ?? 0) < durationThresholds[i]
+            userDuration >= durationThreshold &&
+            (prevThreshold ?? 0) < durationThreshold
           ) {
             newThresholdReached = true;
-            totalPointsToAdd = pointsPerThreshold[i];
+            totalPointsToAdd = pointsForThreshold;
           } else {
             break;
           }
