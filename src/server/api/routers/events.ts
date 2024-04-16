@@ -433,6 +433,8 @@ export const eventRouter = createTRPCRouter({
             },
             include: {
                 tags: true,
+                userHost: true,
+                orgHost: true,
             },
         });
 

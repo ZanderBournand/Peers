@@ -68,11 +68,11 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 Complete your profile!
               </Link>
             )}
-          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+          <form onSubmit={handleSearchSubmit} className="flex items-center pl-4 gap-2">
             <Input
               type="text"
               placeholder="Search"
-              className="px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-primary"
+              className="w-80 px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-primary"
               value={searchValue}
               onChange={handleSearchChange}
             />
