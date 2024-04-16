@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import { BellAlertIcon } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
-import { createClient } from "@/utils/supabase/client";
 
 const routes: { title: string; href: string }[] = [
   { title: "My Events", href: "/myevents" },

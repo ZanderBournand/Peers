@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { type Organization, type Event, User } from "@prisma/client";
+import type { Organization, Event, User } from "@prisma/client";
 import EventPreview from "@/components/events/EventPreview";
 import OrgHostPreview from "@/components/organizations/OrgHostPreview";
 import UserHostPreview from "@/components/user/UserHostPreview";
