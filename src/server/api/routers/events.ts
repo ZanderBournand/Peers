@@ -416,4 +416,43 @@ export const eventRouter = createTRPCRouter({
 
       return sortedEvents;
     }),
+  searchEvents: privateProcedure
+    .input(
+      z.object({
+        searchInput: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const searchWords = input.searchInput.split(" ");
+
+      const events = await ctx.db.event.findMany({
+        where: {
+          OR: searchWords.map((word) => ({
+            OR: [
+              { title: { contains: word, mode: "insensitive" } },
+              {
+                description: {
+                  contains: word,
+                  mode: "insensitive",
+                },
+              },
+              {
+                tags: {
+                  some: {
+                    name: { contains: word, mode: "insensitive" },
+                  },
+                },
+              },
+            ],
+          })),
+        },
+        include: {
+          tags: true,
+          userHost: true,
+          orgHost: true,
+        },
+      });
+
+      return events;
+    }),
 });
