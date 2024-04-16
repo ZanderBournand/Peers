@@ -35,7 +35,6 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   };
 
-
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border">
       <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-6 lg:px-14">
@@ -68,22 +67,25 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 Complete your profile!
               </Link>
             )}
-          <form onSubmit={handleSearchSubmit} className="flex items-center pl-4 gap-2">
-            <Input
-              type="text"
-              placeholder="Search"
-              className="w-80 px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-primary"
-              value={searchValue}
-              onChange={handleSearchChange}
-            />
-            <Button 
-              type="submit"
-              className="bg-accent-primary text-white px-4 py-1 rounded-md"
-              onClick={() => console.log("Button clicked")}
+            <form
+              onSubmit={handleSearchSubmit}
+              className="flex items-center gap-2 pl-4"
             >
-              Search
-            </Button>
-          </form>
+              <Input
+                type="text"
+                placeholder="Search"
+                className="focus:ring-accent-primary w-80 rounded-md border border-gray-300 px-2 py-1 focus:outline-none focus:ring-2"
+                value={searchValue}
+                onChange={handleSearchChange}
+              />
+              <Button
+                type="submit"
+                className="bg-accent-primary rounded-md px-4 py-1 text-white"
+                onClick={() => console.log("Button clicked")}
+              >
+                Search
+              </Button>
+            </form>
           </div>
         </div>
 

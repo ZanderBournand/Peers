@@ -202,22 +202,19 @@ export const organizationRouter = createTRPCRouter({
 
       return user.adminOf;
     }),
-    searchOrganizations: privateProcedure
+  searchOrganizations: privateProcedure
     .input(
-        z.object({
-            searchTerm: z.string(),
-        }),
+      z.object({
+        searchTerm: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
-        const organizations = await ctx.db.organization.findMany({
-            where: {
-                OR: [
-                    { name: { contains: input.searchTerm } },
-                
-                ],
-            },
-        });
+      const organizations = await ctx.db.organization.findMany({
+        where: {
+          OR: [{ name: { contains: input.searchTerm } }],
+        },
+      });
 
-        return organizations;
+      return organizations;
     }),
 });
