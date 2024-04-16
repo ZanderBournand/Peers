@@ -2,9 +2,11 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
-import { BellAlertIcon } from "@heroicons/react/24/outline";
+import {
+  BellAlertIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
 
 const routes: { title: string; href: string }[] = [
@@ -28,7 +30,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (searchValue) {
-      window.location.href = `/search?term=${searchValue}`;
+      window.location.href = `/search?input=${searchValue}`;
     }
   };
 
@@ -39,7 +41,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Link href={"/"} className="shrink-0">
             <h1 className="text-2xl font-bold text-accent-foreground">Peers</h1>
           </Link>
-          <div className="hidden w-full justify-end gap-1 bg-background px-4 py-2 sm:flex">
+          <div className="hidden w-full flex-row items-center justify-end gap-1 bg-background px-4 py-2 sm:flex">
             {routes.map((route, index) => (
               <Link
                 key={index}
@@ -66,22 +68,18 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             )}
             <form
               onSubmit={handleSearchSubmit}
-              className="flex items-center gap-2 pl-4"
+              className="ml-8 flex w-36 items-center md:w-72 lg:w-96"
             >
-              <Input
-                type="text"
-                placeholder="Search"
-                className="focus:ring-accent-primary w-80 rounded-md border border-gray-300 px-2 py-1 focus:outline-none focus:ring-2"
-                value={searchValue}
-                onChange={handleSearchChange}
-              />
-              <Button
-                type="submit"
-                className="bg-accent-primary rounded-md px-4 py-1 text-white"
-                onClick={() => console.log("Button clicked")}
-              >
-                Search
-              </Button>
+              <div className="flex w-full items-center space-x-2 rounded-lg border border-gray-300">
+                <MagnifyingGlassIcon className="ml-3 mr-1 h-5 w-5" />
+                <Input
+                  className="w-full border-0 p-0 focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0"
+                  placeholder="Search..."
+                  type="text"
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                />
+              </div>
             </form>
           </div>
         </div>

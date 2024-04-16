@@ -196,18 +196,24 @@ export const userRouter = createTRPCRouter({
       return updatedUser;
     }),
   searchUsers: privateProcedure
-    .input(z.object({ searchTerm: z.string() }))
+    .input(z.object({ searchInput: z.string() }))
     .query(async ({ ctx, input }) => {
+      const searchWords = input.searchInput.split(" ");
+
       const users = await ctx.db.user.findMany({
         where: {
-          OR: [
-            { firstName: { contains: input.searchTerm } },
-            { lastName: { contains: input.searchTerm } },
-            { username: { contains: input.searchTerm } },
-          ],
+          OR: searchWords.map((word) => ({
+            OR: [
+              { firstName: { contains: word, mode: "insensitive" } },
+              { lastName: { contains: word, mode: "insensitive" } },
+              { username: { contains: word, mode: "insensitive" } },
+              { bio: { contains: word, mode: "insensitive" } },
+            ],
+          })),
         },
         include: {
           university: true,
+          interests: true,
         },
       });
       return users;
