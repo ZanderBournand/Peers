@@ -54,6 +54,7 @@ export default function SearchPage() {
                 lastName: user.lastName,
                 image: user.image,
                 points: user.points,
+                prevThresh: user.prevThresh,
                 bio: user.bio,
                 github: user.github,
                 linkedin: user.linkedin,
