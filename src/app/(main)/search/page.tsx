@@ -1,11 +1,14 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Button } from '@/components/ui/button';
 import  { Card } from '@/components/ui/card'
 import { type Organization, type Event, User } from '@prisma/client';
 import EventPreview from "@/components/events/EventPreview";
+import OrgHostPreview from '@/components/organizations/OrgHostPreview';
+import UserHostPreview from '@/components/user/UserHostPreview';
 import  Link  from "next/link";
 import { api } from '@/trpc/react';
+import { Separator } from '@/components/ui/separator';
 
 export default function SearchPage() {
     const [searchOrganizationResults, setOrganizationSearchResults] = useState<Organization[]>([]);
@@ -15,6 +18,7 @@ export default function SearchPage() {
     const [showOrganizations, setShowOrganizations] = useState<boolean>(false);
     const [showUsers, setShowUsers] = useState<boolean>(false);
     const [showEvents, setShowEvents] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -74,40 +78,48 @@ export default function SearchPage() {
         }
     }, [eventSearch.data, orgSearch.data, showOrganizations, showUsers]);
 
+    useEffect(() => {
+        if (eventSearch.status == 'success' && orgSearch.status == 'success' && userSearch.status == 'success') {
+            setIsLoading(false);
+        }
+    });
+
     return (
-        <div className="mt-12 flex w-full max-w-screen-2xl flex-col px-12">
-            <p className="mb-4 text-2xl font-bold">Search Results</p>
+        <div className="flex items-center justify-center pb-32">
+            <div className="mt-12 flex w-full max-w-screen-2xl flex-col px-12">
+                <p className="mb-4 text-2xl font-bold">Search Results for "{searchTerm}"</p>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', backgroundColor: 'lightgray', padding: '10px', borderRadius: '10px' }}>
+                    <Button onClick={() => { setShowEvents(true); setShowOrganizations(false); setShowUsers(false); }} style={{ marginRight: '10px', backgroundColor: showEvents ? 'purple' : 'white', color: showEvents ? 'white' : 'black', outline: 'none' }}>
+                        Events
+                    </Button>
+                    <Button onClick={() => { setShowEvents(false); setShowOrganizations(true); setShowUsers(false); }} style={{ marginRight: '10px', backgroundColor: showOrganizations ? 'purple' : 'white', color: showOrganizations ? 'white' : 'black', outline: 'none' }}>
+                        Organizations
+                    </Button>
+                    <Button onClick={() => { setShowEvents(false); setShowOrganizations(false); setShowUsers(true); }} style={{ marginRight: '10px', backgroundColor: showUsers ? 'purple' : 'white', color: showUsers ? 'white' : 'black', outline: 'none' }}>
+                        Users
+                    </Button>
+                </div>
+                <Separator className="mt-6" style={{margin: '15px 15px'}}/>
+                {isLoading ? (
+                    <p className="text-lg font-semibold">Loading...</p>
+                ) : (
+                    searchTerm && searchOrganizationResults.length === 0 && searchEventResults.length === 0 && searchUserResults.length === 0 ? (
+                        <p className="text-lg font-semibold">No results found.</p>
+                    ) : (
+                        <div className="grid grid-cols-4 gap-x-4 gap-y-2">
+                            {showUsers && searchUserResults.map((result, index) => (
+                                <UserHostPreview key={index} user={result} />
+                            ))}
+                            {showOrganizations && searchOrganizationResults.map((result, index) => (
+                                <OrgHostPreview key={index} organization={result} />
+                            ))}
 
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}>
-                <Button onClick={() => { setShowEvents(true); setShowOrganizations(false); setShowUsers(false); }} style={{ marginRight: '10px' }}>
-                    Events
-                </Button>
-                <Button onClick={() => { setShowEvents(false); setShowOrganizations(true); setShowUsers(false); }} style={{ marginRight: '10px' }}>
-                    Organizations
-                </Button>
-                <Button onClick={() => { setShowEvents(false); setShowOrganizations(false); setShowUsers(true); }} style={{ marginRight: '10px' }}>
-                    Users
-                </Button>
-            </div>
-            <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                <ul style={{ listStyle: 'none', padding: 0, textAlign: 'left', width: '100%' }}>
-                    {showUsers && searchUserResults.map((result, index) => (
-                        <Link key={index}
-                            href={`/user/${result.id}`}>
-                            <Card>{result.username}</Card>
-                        </Link>
-                    ))}
-                    {showOrganizations && searchOrganizationResults.map((result, index) => (
-                        <Link key={index}
-                            href={`/org/${result.id}`}>
-                            <Card>{result.name}</Card>
-                        </Link>
-                    ))}
-
-                    {showEvents && searchEventResults.map((result, index) => (
-                        <EventPreview key={index} event={result} />
-                    ))}
-                </ul>
+                            {showEvents && searchEventResults.map((result, index) => (
+                                <EventPreview key={index} event={result} />
+                            ))}
+                        </div>
+                    )
+                )}
             </div>
         </div>
     );
