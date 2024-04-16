@@ -88,7 +88,7 @@ export default function SearchPage() {
         <div className="flex items-center justify-center pb-32">
             <div className="mt-12 flex w-full max-w-screen-2xl flex-col px-12">
                 <p className="mb-4 text-2xl font-bold">Search Results for "{searchTerm}"</p>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', backgroundColor: 'lightgray', padding: '10px', borderRadius: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', backgroundColor: 'rgb(226 232 240)', padding: '10px', borderRadius: '10px' }}>
                     <Button onClick={() => { setShowEvents(true); setShowOrganizations(false); setShowUsers(false); }} style={{ marginRight: '10px', backgroundColor: showEvents ? 'purple' : 'white', color: showEvents ? 'white' : 'black', outline: 'none' }}>
                         Events
                     </Button>
