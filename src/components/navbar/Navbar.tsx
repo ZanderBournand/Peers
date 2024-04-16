@@ -17,8 +17,6 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
-  const supabase = createClient();
-
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };

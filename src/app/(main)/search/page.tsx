@@ -1,12 +1,10 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { type Organization, type Event, User } from "@prisma/client";
 import EventPreview from "@/components/events/EventPreview";
 import OrgHostPreview from "@/components/organizations/OrgHostPreview";
 import UserHostPreview from "@/components/user/UserHostPreview";
-import Link from "next/link";
 import { api } from "@/trpc/react";
 import { Separator } from "@/components/ui/separator";
 
@@ -50,7 +48,7 @@ export default function SearchPage() {
           instagram: org.instagram,
           facebook: org.facebook,
           discord: org.discord,
-        })) || [],
+        })) ?? [],
       );
     } else if (showUsers) {
       setUserSearchResults(
@@ -69,7 +67,7 @@ export default function SearchPage() {
           website: user.website,
           isVerifiedStudent: user.isVerifiedStudent,
           universityName: user.universityName,
-        })) || [],
+        })) ?? [],
       );
     } else if (showEvents) {
       setEventSearchResults(
@@ -85,10 +83,17 @@ export default function SearchPage() {
           duration: event.duration,
           userHostId: event.userHostId,
           orgHostId: event.orgHostId,
-        })) || [],
+        })) ?? [],
       );
     }
-  }, [eventSearch.data, orgSearch.data, showOrganizations, showUsers]);
+  }, [
+    eventSearch.data,
+    orgSearch.data,
+    userSearch.data,
+    showOrganizations,
+    showEvents,
+    showUsers,
+  ]);
 
   useEffect(() => {
     if (
@@ -98,13 +103,13 @@ export default function SearchPage() {
     ) {
       setIsLoading(false);
     }
-  });
+  }, [eventSearch.status, orgSearch.status, userSearch.status]);
 
   return (
     <div className="flex items-center justify-center pb-32">
       <div className="mt-12 flex w-full max-w-screen-2xl flex-col px-12">
         <p className="mb-4 text-2xl font-bold">
-          Search Results for "{searchTerm}"
+          Search Results for &lsquo;{searchTerm}&rsquo;
         </p>
         <div
           style={{
