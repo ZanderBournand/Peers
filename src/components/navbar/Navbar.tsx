@@ -8,6 +8,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { api } from "@/trpc/react";
+import { type UserData } from "@/lib/interfaces/userData";
 
 const routes: { title: string; href: string }[] = [
   { title: "My Events", href: "/myevents" },
@@ -87,7 +88,9 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {children}
 
         {menuOpen && (
-          <MobileMenu toggleMenu={toggleMenu}>{children}</MobileMenu>
+          <MobileMenu user={user ?? null} toggleMenu={toggleMenu}>
+            {children}
+          </MobileMenu>
         )}
 
         <button onClick={toggleMenu} className="sm:hidden">
@@ -104,8 +107,9 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const MobileMenu: React.FC<{
   toggleMenu: () => void;
+  user: UserData | null;
   children: React.ReactNode;
-}> = ({ toggleMenu, children }) => {
+}> = ({ toggleMenu, user, children }) => {
   return (
     <div className="absolute right-0 top-16 flex h-[calc(100vh-64px)] w-full flex-col">
       <div className="flex  w-full grow flex-col gap-1 bg-background px-4 pb-2 sm:hidden">
@@ -119,6 +123,23 @@ const MobileMenu: React.FC<{
             {route.title}
           </Link>
         ))}
+        {user && (
+          <Link
+            href={"/user/" + user?.id}
+            className={`inline-flex h-10 w-full items-center text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
+          >
+            {"Profile"}
+          </Link>
+        )}
+        {user && !user?.firstName && !user?.lastName && (
+          <Link
+            href="/user/edit"
+            className="py-flex-row mt-1 flex h-8 w-48 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
+          >
+            <BellAlertIcon className="mr-1 h-5 w-5" />
+            Complete your profile!
+          </Link>
+        )}
         {children}
       </div>
       <div className="h-screen w-full bg-background/60 sm:hidden" />
