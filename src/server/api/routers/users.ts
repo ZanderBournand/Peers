@@ -195,7 +195,6 @@ export const userRouter = createTRPCRouter({
 
       return updatedUser;
     }),
-  }),
   searchUsers: privateProcedure
     .input(z.object({ searchTerm: z.string() }))
     .query(async ({ ctx, input }) => {
