@@ -46,11 +46,7 @@ export const dailyApiRouter = createTRPCRouter({
           );
           existingRoom = response.data;
         } catch (error) {
-          if (axios.isAxiosError(error) && error.response?.status === 404) {
-            console.log(`Room "${roomName}" not found.`);
-          } else {
-            throw error;
-          }
+          throw error;
         }
         if (existingRoom) {
           return { roomUrl: existingRoom.url }; // Return existing room URL

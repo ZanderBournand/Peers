@@ -50,7 +50,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <div className="flex items-start justify-center">
+      <div className="flex flex-col items-center justify-center pb-32 pt-8 lg:flex-row lg:items-start">
         <div className="flex-col">
           <div
             className="mt-4 flex h-64 w-80 flex-col items-center justify-center border-2"
@@ -273,7 +273,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
           )}
         </div>
 
-        <div className="ml-20 mt-4 flex-col">
+        <div className="mt-8 flex-col lg:ml-20 lg:mt-4">
           <div className="flex items-center justify-center">
             <Card style={cardStyle}>
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">

@@ -8,7 +8,7 @@ export const newOrgSchema = z.object({
   description: z.string().min(50),
   image: z.string().url(),
   email: z.string().min(1),
-  instagram: z.string().min(1).optional().nullable(),
-  discord: z.string().min(1).optional().nullable(),
-  facebook: z.string().min(1).optional().nullable(),
+  instagram: z.string().url().optional().nullable(),
+  discord: z.string().url().optional().nullable(),
+  facebook: z.string().url().optional().nullable(),
 });
