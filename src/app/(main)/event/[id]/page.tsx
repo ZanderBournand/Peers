@@ -59,7 +59,7 @@ export default async function EventPage({
   return (
     <div className="flex items-center justify-center pb-32">
       <div className="my-16 flex w-full max-w-screen-xl flex-col items-center self-center lg:flex-row lg:items-start">
-        <div className="flex w-full flex-col items-start px-4 lg:w-8/12 lg:px-20">
+        <div className="flex w-full max-w-[875px] flex-col items-start px-4 lg:w-8/12 lg:px-20">
           <div className="relative flex aspect-video w-full items-center justify-center rounded-xl bg-gray-50">
             {event.image ? (
               <Image
@@ -89,7 +89,7 @@ export default async function EventPage({
                 {eventCountdownTime(event.date, event.duration)}
               </p>
             </div>
-            <div className="mb-5 mt-1 flex flex-col items-start justify-between lg:flex-row lg:items-center">
+            <div className="mb-5 mt-1 flex flex-col items-start justify-between sm:flex-row lg:items-center">
               <div className="flex flex-row items-center">
                 <p className="text-2xl font-bold">{event.title}</p>
                 {event.type === "ONLINE_VIDEO" && (
@@ -229,7 +229,7 @@ export default async function EventPage({
                   </div>
                 </div>
               </Link>
-              <div className="mt-6 flex flex-col rounded-xl border shadow-sm">
+              <div className="mt-6 flex w-full max-w-[500px] flex-col rounded-xl border shadow-sm">
                 <div className="my-4 flex w-full flex-row items-center px-4">
                   <ClockIcon className="mr-4 h-6 w-6" color="gray" />
                   <div>

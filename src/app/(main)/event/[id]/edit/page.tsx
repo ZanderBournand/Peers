@@ -116,7 +116,10 @@ export default function EditEvent({ params }: { params: { id: string } }) {
       });
       if (event.type === "IN_PERSON") {
         form.setValue("location", event.location ?? "");
-        form.setValue("locationDetails", event.locationDetails ?? "");
+        if (event.locationDetails !== null) {
+          setNeedLocationDetails(true);
+          form.setValue("locationDetails", event.locationDetails ?? "");
+        }
       }
       if (event.orgHostId !== null) {
         setIsOrgEvent(true);
@@ -654,7 +657,7 @@ export default function EditEvent({ params }: { params: { id: string } }) {
                   className="mx-4 my-4 w-1/3 justify-center"
                   type="button"
                   disabled={isSubmitting}
-                  onClick={() => router.push("/")}
+                  onClick={() => router.push(`/event/${params.id}`)}
                 >
                   Cancel
                 </Button>
