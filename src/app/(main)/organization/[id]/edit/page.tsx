@@ -59,12 +59,14 @@ export default function CreateOrganization({
   type NewOrgInputWithFile = Omit<NewOrgInput, "image"> & {
     image: File | undefined;
   };
-  const newOrgSchemaWithFile = newOrgSchema.omit({ image: true }).extend({
-    image: z.instanceof(File).optional(),
-  });
+  const orgSchemaInputFields = newOrgSchema
+    .omit({ image: true, university: true })
+    .extend({
+      image: z.instanceof(File).optional(),
+    });
 
   const form = useForm<NewOrgInputWithFile>({
-    resolver: zodResolver(newOrgSchemaWithFile),
+    resolver: zodResolver(orgSchemaInputFields),
     defaultValues: {
       name: undefined,
       email: undefined,

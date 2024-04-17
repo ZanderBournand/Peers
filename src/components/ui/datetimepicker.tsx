@@ -24,6 +24,10 @@ export function DateTimePicker({ date, setDate }: DateTimePickerProps) {
     DateTime.fromJSDate(date),
   );
 
+  React.useEffect(() => {
+    setSelectedDateTime(DateTime.fromJSDate(date));
+  }, [date])
+
   const handleSelect: SelectSingleEventHandler = (day, selected) => {
     const selectedDay = DateTime.fromJSDate(selected);
     const modifiedDay = selectedDateTime.isValid

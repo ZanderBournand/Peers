@@ -51,6 +51,11 @@ export default function Login() {
       <div className="h-screen w-full bg-background">
         <div className="flex h-full items-center justify-center">
           <div className="w-full max-w-md p-8">
+            <div className="mt-[-90px] flex w-full items-center justify-center">
+              <h1 className="mb-12 text-4xl font-bold text-accent-foreground">
+                Peers
+              </h1>
+            </div>
             <h1 className="mb-4 text-2xl font-semibold">Sign in</h1>
             <Form {...form}>
               <form

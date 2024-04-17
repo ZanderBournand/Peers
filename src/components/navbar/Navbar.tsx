@@ -37,7 +37,7 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="flex h-16 items-center justify-between border-b border-b-border">
-      <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-6 lg:px-14">
+      <div className="relative mx-auto flex w-full max-w-screen-2xl items-center justify-between px-6 lg:px-14">
         <div className="flex items-center ">
           <Link href={"/"} className="shrink-0">
             <h1 className="text-2xl font-bold text-accent-foreground">Peers</h1>

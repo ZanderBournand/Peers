@@ -67,6 +67,74 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
+  update: privateProcedure
+    .input(
+      z
+        .object({
+          id: z.string(),
+          title: z.string().optional(),
+          location: z.string().optional().nullable(),
+          locationDetails: z.string().optional().nullable(),
+          date: z.date().optional(),
+          description: z.string().optional(),
+          image: z.string().optional(),
+          type: z.nativeEnum(EventType).optional(),
+          duration: z.number().int().optional(),
+          tags: TagSchema.array().optional().nullable(),
+          userHostId: z.string().optional().nullable(),
+          orgHostId: z.string().optional().nullable(),
+        })
+        .refine(
+          (data) => {
+            // Either userHostId or orgHostId should be provided, but not both
+            return (
+              (data.userHostId == undefined) !== (data.orgHostId == undefined)
+            );
+          },
+          {
+            message:
+              "Either userHostId or orgHostId should be provided, but not both",
+            path: ["userHostId", "orgHostId"],
+          },
+        ),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (input.userHostId !== ctx.user.id) {
+        const org = await ctx.db.organization.findUnique({
+          where: { id: input.orgHostId ?? "" },
+          include: {
+            admins: true,
+          },
+        });
+
+        if (!org ?? !org?.admins?.some((admin) => admin.id === ctx.user.id)) {
+          throw new Error(
+            "User is not the host of the event or an admin of the host organization.",
+          );
+        }
+      }
+
+      const event = await ctx.db.event.update({
+        where: { id: input.id },
+        data: {
+          title: input.title,
+          location: input.location,
+          locationDetails: input.locationDetails,
+          date: input.date,
+          description: input.description,
+          image: input.image,
+          type: input.type,
+          duration: input.duration,
+          userHostId: input.userHostId,
+          orgHostId: input.orgHostId,
+          tags: {
+            set: input.tags?.map((tag) => ({ id: tag.id })),
+          },
+        },
+      });
+
+      return event;
+    }),
   getAll: privateProcedure
     .input(z.object({ filter: z.string().optional() }))
     .query(async ({ ctx, input }) => {
@@ -93,7 +161,11 @@ export const eventRouter = createTRPCRouter({
               university: true,
             },
           },
-          orgHost: true,
+          orgHost: {
+            include: {
+              admins: true,
+            },
+          },
           tags: true,
           attendees: true,
         },
@@ -251,7 +323,9 @@ export const eventRouter = createTRPCRouter({
         throw new Error("User not found");
       }
 
-      return user.attends;
+      const sortedEvents = sortUpcomingEvents(user.attends);
+
+      return sortedEvents;
     }),
   getEventsHosting: privateProcedure
     .input(z.object({ id: z.string().optional() }))
@@ -274,7 +348,9 @@ export const eventRouter = createTRPCRouter({
         throw new Error("User not found");
       }
 
-      return user.hostEvents;
+      const sortedEvents = sortUpcomingEvents(user.hostEvents);
+
+      return sortedEvents;
     }),
   getOrgEvents: privateProcedure
     .input(z.object({ orgId: z.string() }))
@@ -453,6 +529,8 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      return events;
+      const sortedEvents = sortUpcomingEvents(events);
+
+      return sortedEvents;
     }),
 });

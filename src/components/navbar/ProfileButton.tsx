@@ -74,15 +74,6 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
               Profile
             </Link>
           </p>
-          <p className="py-2 text-lg text-muted-foreground">
-            <Link
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-muted-foreground/70"
-              href="/settings"
-            >
-              Settings
-            </Link>
-          </p>
 
           <div className="py-2 text-lg text-muted-foreground">
             <button

@@ -13,9 +13,9 @@ export const organizationRouter = createTRPCRouter({
         description: z.string().min(50),
         image: z.string().url(),
         email: z.string().min(1),
-        instagram: z.string().min(1).optional().nullable(),
-        discord: z.string().min(1).optional().nullable(),
-        facebook: z.string().min(1).optional().nullable(),
+        instagram: z.string().url().optional().nullable(),
+        discord: z.string().url().optional().nullable(),
+        facebook: z.string().url().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -63,9 +63,9 @@ export const organizationRouter = createTRPCRouter({
         type: z.nativeEnum(OrganizationType),
         description: z.string(),
         image: z.string(),
-        instagram: z.string(),
-        facebook: z.string(),
-        discord: z.string(),
+        instagram: z.string().url().optional().nullable(),
+        discord: z.string().url().optional().nullable(),
+        facebook: z.string().url().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
