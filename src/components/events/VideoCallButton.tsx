@@ -6,22 +6,36 @@ import { VideoCameraIcon, MicrophoneIcon } from "@heroicons/react/24/outline";
 import VideoCall from "./VideoCall";
 import { api } from "@/trpc/react";
 import { type UserData } from "@/lib/interfaces/userData";
+import { getDisplayName } from "@/lib/utils";
+import { type EventData } from "@/lib/interfaces/eventData";
 
 interface VideoCallButtonProps {
   type: "ONLINE_VIDEO" | "ONLINE_AUDIO";
-  eventId: string;
+  event: EventData;
   user: UserData;
 }
 
 export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
   type,
-  eventId,
+  event,
   user,
 }) => {
-  const { data: roomUrl } = api.dailyapi.fetchEventRoom.useQuery({
-    eventId,
+  const [meetingToken, setMeetingToken] = useState<string | null>(null);
+
+  const { data: room } = api.dailyapi.fetchEventRoom.useQuery({
+    eventId: event.id,
+    eventDuration: event.duration,
   });
-  const [shouldJoinCall, setShouldJoinCall] = useState<boolean>(false);
+  const createMeetingToken = api.dailyapi.createMeetingToken.useMutation();
+
+  const handleJoinCall = async () => {
+    const token = await createMeetingToken.mutateAsync({
+      userId: user.id,
+      username: getDisplayName(user, true),
+      roomName: room?.name ?? "",
+    });
+    setMeetingToken(token);
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -29,7 +43,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
       <Button
         variant="default"
         className="text-md h-auto w-auto flex-row"
-        onClick={() => setShouldJoinCall(true)}
+        onClick={handleJoinCall}
       >
         {type === "ONLINE_VIDEO" ? (
           <VideoCameraIcon className="mr-2 h-5 w-5" />
@@ -40,11 +54,12 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
       </Button>
 
       {/* Render VideoCall component if roomUrl is valid */}
-      {roomUrl && (
+      {room && (
         <VideoCall
-          roomUrl={roomUrl}
-          user={user}
-          shouldJoinCall={shouldJoinCall}
+          roomUrl={room?.url}
+          roomName={room?.name}
+          meetingToken={meetingToken}
+          userId={user.id}
         />
       )}
     </div>

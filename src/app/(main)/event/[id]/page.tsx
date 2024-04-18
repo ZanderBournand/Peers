@@ -248,7 +248,7 @@ export default async function EventPage({
                         />
                         <VideoCallButton
                           type={event.type}
-                          eventId={event.id}
+                          event={event}
                           user={user}
                         />
                       </>
