@@ -2,14 +2,28 @@
 
 import { useEffect, useRef } from "react";
 import { DailyProvider, useCallFrame } from "@daily-co/daily-react";
+import { type UserData } from "@/lib/interfaces/userData";
+import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
 
 interface VideoCallProps {
   roomUrl: string;
-  userName: string; // Receive the userName prop
+  user: UserData;
+  shouldJoinCall: boolean;
 }
 
-const VideoCall: React.FC<VideoCallProps> = ({ roomUrl, userName }) => {
+const VideoCall: React.FC<VideoCallProps> = ({
+  roomUrl,
+  user,
+  shouldJoinCall,
+}) => {
   const callRef = useRef<HTMLDivElement>(null);
+  const meetingUsername = user.firstName
+    ? `${user.firstName} ${user.lastName} (@${user.username})`
+    : `@${user.username}`;
+
+  const updateUserPointsMutation = api.dailyapi.updateUserPoints.useMutation();
+  const router = useRouter();
 
   const callFrame = useCallFrame({
     parentEl: callRef.current,
@@ -29,18 +43,34 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomUrl, userName }) => {
         },
       },
       showLeaveButton: true,
-      userName: userName, // Use the provided userName
+      userName: meetingUsername,
     },
   });
 
   useEffect(() => {
-    if (callFrame) {
+    if (callFrame && shouldJoinCall) {
       callFrame.join().catch((error) => {
         console.error("Error joining call:", error);
         // additional handling if needed
       });
     }
-  }, [callFrame]);
+  }, [callFrame, shouldJoinCall]);
+
+  useEffect(() => {
+    if (callFrame) {
+      // Set up the 'left-meeting' event handler
+      const handleLeftMeeting = () => {
+        router.push("/");
+        updateUserPointsMutation.mutate({ userId: user.id });
+      };
+      callFrame.on("left-meeting", handleLeftMeeting);
+
+      // Clean up the event handler when the component unmounts
+      return () => {
+        callFrame.off("left-meeting", handleLeftMeeting);
+      };
+    }
+  }, [callFrame, router, updateUserPointsMutation, user.id]);
 
   return (
     <DailyProvider callObject={callFrame}>
