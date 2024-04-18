@@ -1,28 +1,28 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DailyProvider, useCallFrame } from "@daily-co/daily-react";
-import { type UserData } from "@/lib/interfaces/userData";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 
 interface VideoCallProps {
   roomUrl: string;
-  user: UserData;
-  shouldJoinCall: boolean;
+  roomName: string;
+  meetingToken: string | null;
+  userId: string;
 }
 
 const VideoCall: React.FC<VideoCallProps> = ({
   roomUrl,
-  user,
-  shouldJoinCall,
+  roomName,
+  meetingToken,
+  userId,
 }) => {
   const callRef = useRef<HTMLDivElement>(null);
-  const meetingUsername = user.firstName
-    ? `${user.firstName} ${user.lastName} (@${user.username})`
-    : `@${user.username}`;
+  const [participantId, setParticipantId] = useState<string | null>(null);
 
   const updateUserPointsMutation = api.dailyapi.updateUserPoints.useMutation();
+
   const router = useRouter();
 
   const callFrame = useCallFrame({
@@ -43,25 +43,32 @@ const VideoCall: React.FC<VideoCallProps> = ({
         },
       },
       showLeaveButton: true,
-      userName: meetingUsername,
     },
   });
 
   useEffect(() => {
-    if (callFrame && shouldJoinCall) {
-      callFrame.join().catch((error) => {
-        console.error("Error joining call:", error);
-        // additional handling if needed
-      });
+    if (callFrame && meetingToken) {
+      callFrame
+        .join({ token: meetingToken })
+        .then((result) => {
+          setParticipantId(result?.local?.session_id ?? null);
+        })
+        .catch((error) => {
+          console.error("Error joining call:", error);
+        });
     }
-  }, [callFrame, shouldJoinCall]);
+  }, [callFrame, meetingToken]);
 
   useEffect(() => {
     if (callFrame) {
       // Set up the 'left-meeting' event handler
       const handleLeftMeeting = () => {
         router.push("/");
-        updateUserPointsMutation.mutate({ userId: user.id });
+        const meetingId = callFrame.meetingSessionSummary().id;
+
+        if (userId && participantId && meetingId) {
+          updateUserPointsMutation.mutate({ userId, participantId, meetingId });
+        }
       };
       callFrame.on("left-meeting", handleLeftMeeting);
 
@@ -70,7 +77,14 @@ const VideoCall: React.FC<VideoCallProps> = ({
         callFrame.off("left-meeting", handleLeftMeeting);
       };
     }
-  }, [callFrame, router, updateUserPointsMutation, user.id]);
+  }, [
+    callFrame,
+    router,
+    updateUserPointsMutation,
+    userId,
+    participantId,
+    roomName,
+  ]);
 
   return (
     <DailyProvider callObject={callFrame}>
