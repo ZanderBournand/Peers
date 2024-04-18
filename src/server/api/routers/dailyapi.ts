@@ -146,8 +146,8 @@ export const dailyApiRouter = createTRPCRouter({
         timeInEvents = Math.floor(timeInEvents / 60);
 
         // Point system thresholds and points
-        const pointsPerInterval = 5;
-        const intervalInMinutes = 10;
+        const pointsPerInterval = 1;
+        const intervalInMinutes = 2;
 
         // Calculate the number of intervals in the timeInMeetings value
         const intervals = Math.floor(timeInEvents / intervalInMinutes);
