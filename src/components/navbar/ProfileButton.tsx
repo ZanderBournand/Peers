@@ -1,3 +1,9 @@
+/*
+  File -> Profile button used in navigation bar (top right) to dropdown more information about the user
+  - Contains the user's logo, name, and email
+  - Options to go to the user's profile or sign out
+*/
+
 "use client";
 
 import React, { useEffect, useState } from "react";

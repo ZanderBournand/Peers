@@ -1,3 +1,8 @@
+/*
+  File -> Login page, allowing users to sign into Peers
+  - Supports both "native" authentcation (via email & password), as well as OAuth (currently Google & GitHub)
+*/
+
 "use client";
 
 import Link from "next/link";

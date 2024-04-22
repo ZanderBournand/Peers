@@ -1,3 +1,8 @@
+/*
+  File -> Component from ShadcnUI library
+  - Imported from (https://ui.shadcn.com/)
+*/
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

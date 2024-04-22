@@ -1,3 +1,9 @@
+/*
+  File -> Component used to control "authentication" status within the navigtion bar
+  - Shows the user's profile when logged in
+  - Contains redirects to login and signup pages when not logged in
+*/
+
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import Link from "next/link";

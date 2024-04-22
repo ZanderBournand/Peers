@@ -1,3 +1,7 @@
+/*
+  File -> Form validator used for new tag creation / updates
+*/
+
 import { z } from "zod";
 import { TagCategory } from "@prisma/client";
 

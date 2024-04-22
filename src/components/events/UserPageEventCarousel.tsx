@@ -1,3 +1,9 @@
+/*
+  File -> Carousel component used in the user page to display events
+  - Given a list of events, it displays them in a responsive carousel format
+  - Used for both user's hosting events, and events they are attending
+*/
+
 "use client";
 
 import React from "react";

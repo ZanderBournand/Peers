@@ -1,3 +1,9 @@
+/*
+  File -> Home page of Peers, displaying recommendations, event calendar & a countdown to the user's next event
+  - Recommendations include (1) recommended events, (2) events from the user's university (3) event categories & (4) recommended hosts
+  - Event calendar displays the user's upcoming events
+*/
+
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { api } from "@/trpc/server";

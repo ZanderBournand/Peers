@@ -1,3 +1,8 @@
+/*
+  File -> Main file for all E2E tests (uses Playwright)
+  - Includes basic setup & tests for all of Peers
+*/
+
 import { test, expect, type Page } from "@playwright/test";
 import { type SupabaseClient, type Session } from "@supabase/supabase-js";
 import {

@@ -1,3 +1,9 @@
+/*
+  File -> Suite of helper functions used for testing setup (in both E2E & unit tests)
+  - Interacts with database (via Supabase) to setup test users, delete them, etc...
+  - Contains test user "dummy data"
+*/
+
 import { type SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
 

@@ -1,4 +1,11 @@
+/*
+  File -> Page displaying search results based on user's input fields
+  - Search results are categorized into "events", "organizations", and "users"
+  - Users can swtich between categories to view search results
+*/
+
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import EventPreview from "@/components/events/EventPreview";

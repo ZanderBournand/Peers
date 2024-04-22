@@ -1,3 +1,8 @@
+/*
+  File -> Custom extension from a component from ShadcnUI library
+  - Imported from (https://ui.shadcn.com/)
+*/
+
 import * as React from "react";
 import { DateTime } from "luxon";
 import { Calendar as CalendarIcon } from "lucide-react";

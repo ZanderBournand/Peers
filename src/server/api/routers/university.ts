@@ -1,3 +1,9 @@
+/*
+  File -> Backend API functions for interacting with university data
+  - Uses TRPC for API definition
+  - Interacts with database via Prisma (& Supabase)
+*/
+
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { v4 as uuidv4 } from "uuid";

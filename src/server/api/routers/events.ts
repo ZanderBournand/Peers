@@ -1,3 +1,9 @@
+/*
+  File -> Backend API functions for interacting with event data
+  - Uses TRPC for API definition
+  - Interacts with database via Prisma (& Supabase)
+*/
+
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "../../../lib/validators/Tag";
@@ -221,6 +227,13 @@ export const eventRouter = createTRPCRouter({
                 { orgHost: { admins: { some: { id: userId } } } },
               ],
             },
+          ],
+        };
+      } else {
+        queryOptions.where = {
+          NOT: [
+            { userHostId: userId },
+            { orgHost: { admins: { some: { id: userId } } } },
           ],
         };
       }

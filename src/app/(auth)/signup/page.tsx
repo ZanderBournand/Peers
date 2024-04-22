@@ -1,3 +1,9 @@
+/*
+  File -> Sign-up page, allowing users to sign up for an account within Peers
+  - Supports both "native" sign-up (via email & password) -> verification code sent to email
+  - Also supports OAuth (no verification code), currently Google & GitHub
+*/
+
 "use client";
 
 import Link from "next/link";

@@ -1,3 +1,8 @@
+/*
+  File -> Grid component used on the home page to display a certain "section" of events
+  - Examples include "recommended events" & "university events"
+*/
+
 import Link from "next/link";
 import React from "react";
 import EventPreview from "./EventPreview";

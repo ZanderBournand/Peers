@@ -1,3 +1,9 @@
+/*
+  File -> Modal used within the organization page, allowing user's to view OR modify the organization's admins
+  - Admins can add or remove other admins
+  - Updates the organization's admin list in real-time (within the database)
+*/
+
 "use client";
 
 import { Button } from "@/components/ui/button";

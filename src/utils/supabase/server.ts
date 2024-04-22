@@ -1,3 +1,8 @@
+/*
+  File -> Functions to create Supabase on the server side
+  - Supabase is the service we use for our database hosting
+*/
+
 import { env } from "@/env";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";

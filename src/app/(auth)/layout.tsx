@@ -1,3 +1,8 @@
+/*
+  File -> Layout (base template) for all pages within "authentication" (sign-in, sign-up, etc.)
+  - Redirects users to "home page" if already logged-in
+*/
+
 import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";

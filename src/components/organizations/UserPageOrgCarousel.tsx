@@ -1,3 +1,8 @@
+/*
+  File -> Carousel component used on the user page to display a user's organizations (where they are an admin)
+  - Given a list of organizations, displays them in a carousel format (responsive)
+*/
+
 "use client";
 
 import React from "react";

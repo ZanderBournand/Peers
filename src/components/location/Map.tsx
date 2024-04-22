@@ -1,3 +1,9 @@
+/*
+  File -> Component to display a map using Google Maps API
+  - Shows the user's selected location on the map
+  - Used in event creation to display the event location
+*/
+
 "use client";
 
 import React, { useEffect, useState } from "react";

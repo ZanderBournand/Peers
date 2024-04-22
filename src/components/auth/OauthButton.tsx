@@ -1,3 +1,7 @@
+/*
+  File -> Button for sign-in / sign-up with OAuth providers (Google, GitHub, etc.)
+*/
+
 "use client";
 
 import { Button } from "@/components/ui/button";

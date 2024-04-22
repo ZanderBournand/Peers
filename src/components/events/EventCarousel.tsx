@@ -1,3 +1,8 @@
+/*
+  File -> Carousel component used to display events in the "My Events" page
+  - Given a list of events, it displays them in a responsive carousel format
+*/
+
 import React from "react";
 import EventPreview from "@/components/events/EventPreview";
 import {

@@ -1,3 +1,8 @@
+/*
+  File -> Define our Mailgun object for sending emails
+  - Used to send student verification emails
+*/
+
 import formData from "form-data";
 import Mailgun from "mailgun.js";
 

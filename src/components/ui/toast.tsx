@@ -1,3 +1,8 @@
+/*
+  File -> Component from ShadcnUI library
+  - Imported from (https://ui.shadcn.com/)
+*/
+
 import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"

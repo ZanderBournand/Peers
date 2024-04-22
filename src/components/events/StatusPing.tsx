@@ -1,3 +1,10 @@
+/*
+  File -> CSS animation used throughout application to show the status, and typeo of an event
+  - Blue for online video events
+  - Purple for online audio events
+  - Green for in-person events
+*/
+
 import React from "react";
 
 interface StatusPingProps {

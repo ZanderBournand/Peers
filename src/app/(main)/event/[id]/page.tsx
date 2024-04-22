@@ -1,3 +1,9 @@
+/*
+  File -> Display page for a specific event
+  - Includes event info, host (user & org), countdown timer, map for in-person events
+  - Actions include joining the event, sharing the event, marking attendance & editing the event (if)
+*/
+
 import React from "react";
 import { api } from "@/trpc/server";
 import Image from "next/image";

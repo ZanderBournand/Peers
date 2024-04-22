@@ -1,3 +1,10 @@
+/*
+  File -> Context used throughout the application for the student verification process
+  - Asks user for their institution email, and sends the user a verification code
+  - Upon completion, marks the user as a verified
+  - Uses a modal
+*/
+
 "use client";
 
 import React, {

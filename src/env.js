@@ -1,3 +1,8 @@
+/*
+  File -> Setup for our project's environment variables
+  - Comes with the T3 stack project setup
+*/
+
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 

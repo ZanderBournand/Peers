@@ -1,3 +1,8 @@
+/*
+  File -> Button to create an event
+  - Uses a "verifciation" wrapper to ensure only verified students can navigate to the event creation page
+*/
+
 "use client";
 
 import { PlusIcon } from "@heroicons/react/24/outline";

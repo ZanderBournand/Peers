@@ -1,3 +1,7 @@
+/*
+  File -> Form validator used for user edit
+*/
+
 import { z } from "zod";
 import { TagSchema } from "./Tag";
 

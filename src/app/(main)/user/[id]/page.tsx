@@ -1,3 +1,10 @@
+/*
+  File -> Display page for a user's profile
+  - Displays user's profile information, including PeerPoints earned, bio, interests, socials, verified student status & more
+  - Also shows the user's organiations, events they are hosting & attending (through small carousels)
+  - Actions include editing the user's profile, verifying student status & creating organizations/events
+*/
+
 import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -26,6 +33,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { getDisplayName } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function PeerPage({ params }: { params: { id: string } }) {
   const actualUser = await api.users.getUser.query({});
@@ -323,36 +331,52 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="my-4 ml-4 flex w-max flex-row items-center rounded-lg bg-gray-100/50 px-2 py-1 font-medium">
-                  <HomeIcon className="mr-1 h-6 w-6" />
-                  Hosting
-                </div>
-                {eventsHosting.length !== 0 ? (
-                  <div className="flex justify-center">
-                    <UserPageEventCarousel events={eventsHosting} />
-                  </div>
-                ) : (
-                  <p className="my-6 text-center">
-                    This user is not hosting any events
-                  </p>
-                )}
-              </CardContent>
-              <Separator className="mx-auto -mt-6 mb-6 w-5/6 bg-gray-400" />
-              <CardContent>
-                <div className="ml-4 mt-8 flex w-max flex-row items-center rounded-lg bg-gray-100/50 px-2 py-1 font-medium">
-                  <CheckCircleIcon className="mr-1 h-6 w-6" />
-                  Attending
-                </div>
-                {eventsAttending.length !== 0 ? (
-                  <div className="flex justify-center">
-                    <UserPageEventCarousel events={eventsAttending} />
-                  </div>
-                ) : (
-                  <p className="my-6 text-center">
-                    This user is not attending any events
-                  </p>
-                )}
+              <CardContent className="mt-2 flex w-full flex-col items-center justify-center">
+                <Tabs
+                  defaultValue="hosting"
+                  className="flex w-full max-w-[550px] flex-col items-center"
+                >
+                  <TabsList className="grid w-full max-w-[400px] grid-cols-2">
+                    <TabsTrigger value="hosting">
+                      <div className="flex flex-row items-center">
+                        <HomeIcon className="mr-1 h-5 w-5" />
+                        Hosting
+                      </div>
+                    </TabsTrigger>
+                    <TabsTrigger value="attending">
+                      <div className="flex flex-row items-center">
+                        <CheckCircleIcon className="mr-1 h-5 w-5" />
+                        Attending
+                      </div>
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="hosting" className="mt-2 w-full">
+                    <div className="flex w-full flex-col items-center">
+                      {eventsHosting.length !== 0 ? (
+                        <div className="flex w-full justify-center">
+                          <UserPageEventCarousel events={eventsHosting} />
+                        </div>
+                      ) : (
+                        <p className="my-6 text-center">
+                          This user is not hosting any events
+                        </p>
+                      )}
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="attending" className="mt-2 w-full">
+                    <div className="flex w-full flex-col items-center">
+                      {eventsAttending.length !== 0 ? (
+                        <div className="flex w-full justify-center">
+                          <UserPageEventCarousel events={eventsAttending} />
+                        </div>
+                      ) : (
+                        <p className="my-6 text-center">
+                          This user is not attending any events
+                        </p>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>

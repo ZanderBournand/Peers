@@ -1,3 +1,8 @@
+/*
+  File -> Define our database object for Prisma
+  - Interacts with the database via Prisma ORM
+*/
+
 import { PrismaClient } from "@prisma/client";
 
 import { env } from "@/env";

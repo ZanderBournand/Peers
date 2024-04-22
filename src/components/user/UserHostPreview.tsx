@@ -1,3 +1,9 @@
+/*
+  File -> Preview card used for display user hosts
+  - Used throughout the application to provide a preview of a user's profile
+  - Redirects to the user's profile page when clicked
+*/
+
 import { type UserData } from "@/lib/interfaces/userData";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";

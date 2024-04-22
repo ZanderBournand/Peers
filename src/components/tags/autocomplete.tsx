@@ -1,3 +1,9 @@
+/*
+  File -> Autocomplete functionality for the tag-input component
+  - Supports both tags with categories and tags without categories
+  - Built on top of (https://shadcn-tag-input.vercel.app/)
+*/
+
 import React from "react";
 import {
   Command,

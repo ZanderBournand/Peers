@@ -1,3 +1,8 @@
+/*
+  File -> Leaderboard page, showing the top 25 users based on earned PeerPoints
+  - 2 different leaderboards are supported: (1) all users & (2) users from the same university
+*/
+
 import { api } from "@/trpc/server";
 import { type UserData } from "@/lib/interfaces/userData";
 import { getDisplayName } from "@/lib/utils";

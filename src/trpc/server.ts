@@ -1,3 +1,8 @@
+/*
+  File -> Define TRPC client for server-side components.
+  - Used to make API calls from "server" components on the frontend
+*/
+
 import "server-only";
 
 import {

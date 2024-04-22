@@ -1,3 +1,8 @@
+/*
+  File -> Define the TRPC react client
+  - Used to make API calls from "client" components on the frontend
+*/
+
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

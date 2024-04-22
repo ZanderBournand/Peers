@@ -1,3 +1,8 @@
+/*
+  File -> Component to search for a location using Google Places API
+  - Used in event creation to autocomplete the location field
+*/
+
 import React, { useEffect } from "react";
 import { useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete from "use-places-autocomplete";

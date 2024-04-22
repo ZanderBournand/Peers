@@ -1,3 +1,7 @@
+/*
+  File -> Form validator used for event creation / updates
+*/
+
 import { z } from "zod";
 import { EventType } from "@prisma/client";
 import { TagSchema } from "./Tag";

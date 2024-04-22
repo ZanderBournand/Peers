@@ -1,3 +1,8 @@
+/*
+  File -> Button for users to mark themselves as attending an event (or remove their attendance)
+  - Interacts with backend to mark user accordingly in the database
+*/
+
 "use client";
 
 import React, { useEffect, useState } from "react";

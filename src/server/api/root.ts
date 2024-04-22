@@ -1,3 +1,8 @@
+/*
+  File -> Main router for the application
+  - Imports all routers and creates the main router
+*/
+
 import { userRouter } from "@/server/api/routers/users";
 import { eventRouter } from "@/server/api/routers/events";
 import { verifyStudentRouter } from "@/server/api/routers/verifyStudent";

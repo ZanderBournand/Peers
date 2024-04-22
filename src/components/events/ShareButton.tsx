@@ -1,3 +1,8 @@
+/*
+  File -> Button to copy the event link to the user's clipboard
+  - Used on the event page
+*/
+
 "use client";
 
 import React from "react";

@@ -1,4 +1,11 @@
+/*
+  File -> Navigation bar component used throughout the appliation's main pages
+  - Contains links to different pages, search bar, and user profile dropdown
+  - Contains mobile menu for smaller screens
+*/
+
 "use client";
+
 import Link from "next/link";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";

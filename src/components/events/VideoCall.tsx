@@ -1,3 +1,9 @@
+/*
+  File -> Component used to display an event's live video/audio call
+  - Uses the Daily.co API to create a video call iframe
+  - Displays an event attendance summary upon leaving the call
+*/
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -143,7 +149,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
                     <div className="mt-6 flex flex-col gap-y-4">
                       <div className="flex flex-row items-center text-base">
                         Time in meeting:
-                        <div className="ml-2 mt-1 flex w-max flex-row items-center justify-center rounded-lg bg-blue-100/30 px-2 py-1 text-blue-900">
+                        <div className="ml-2 mt-1 flex w-max flex-row items-center justify-center rounded-lg bg-gray-100/50 px-2 py-1 text-slate-600">
                           <ClockIcon className="mr-1 h-5 w-5" />
                           <p
                             style={{

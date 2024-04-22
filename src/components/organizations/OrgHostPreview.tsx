@@ -1,3 +1,9 @@
+/*
+  File -> Preview card used for organization hosts
+  - Used throughout the application to provide a sneak peek of the organization
+  - Redirects to the organization page when clicked
+*/
+
 import { type OrganizationData } from "@/lib/interfaces/organizationData";
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";

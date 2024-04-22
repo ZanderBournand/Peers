@@ -1,3 +1,10 @@
+/*
+  File -> Event creatiion page
+  - Includes form with fields such as title, description, date/time, type of event, tags, event thumnbail, etc.
+  - Contains "conditional" fields for in-person events (location, location details)
+  - Users can select host (either themselves, or one of their organizations)
+*/
+
 "use client";
 
 import { useState } from "react";

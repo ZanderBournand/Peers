@@ -1,3 +1,9 @@
+/*
+  File -> Preview card that displays information about an event emitted
+  - Uses throughout the application to display events in a grid format
+  - Redirects to the event page when clicked
+*/
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";

@@ -1,3 +1,8 @@
+/*
+  File -> Component from ShadcnUI library
+  - Imported from (https://ui.shadcn.com/)
+*/
+
 // Inspired by react-hot-toast library
 import * as React from "react"
 

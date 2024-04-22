@@ -1,3 +1,8 @@
+/*
+  File -> Button to control access to event live video/audio room
+  - Used on the event page (only for ONLINE_VIDEO and ONLINE_AUDIO events)
+*/
+
 "use client";
 
 import React, { useState } from "react";

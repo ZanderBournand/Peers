@@ -1,3 +1,7 @@
+/*
+  File -> Wrapper component used on icons of the user page to ensure that user's are verified prior to being redirect to a given link
+*/
+
 "use client";
 
 import { useVerificationAlert } from "../../lib/context/VerificationContext";

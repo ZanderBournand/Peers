@@ -1,3 +1,7 @@
+/*
+  File -> Edit page for an organization's profile
+*/
+
 "use client";
 
 import { useEffect, useState } from "react";

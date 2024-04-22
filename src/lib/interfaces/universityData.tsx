@@ -1,3 +1,7 @@
+/*
+  File -> Typescript type for university data
+*/
+
 import { type UserData } from "./userData";
 
 export interface UniversityData {

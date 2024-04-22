@@ -1,3 +1,9 @@
+/*
+  File -> Backend API functions for interacting with user data
+  - Uses TRPC for API definition
+  - Interacts with database via Prisma (& Supabase)
+*/
+
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "@/lib/validators/Tag";

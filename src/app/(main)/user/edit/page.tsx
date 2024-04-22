@@ -1,3 +1,7 @@
+/*
+  File -> Edit page for a user, allowing them to update their profile's info
+*/
+
 "use client";
 
 import { Button } from "@/components/ui/button";

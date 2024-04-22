@@ -1,3 +1,9 @@
+/*
+  File -> Popover component for displaying tags
+  - Used within the tag-input component
+  - Built on top of (https://shadcn-tag-input.vercel.app/)
+*/
+
 import React from "react";
 import {
   Popover,

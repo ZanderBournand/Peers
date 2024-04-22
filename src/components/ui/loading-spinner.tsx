@@ -1,3 +1,7 @@
+/*
+  File -> Custom compoent for loading spinner
+*/
+
 import { cn } from "@/lib/utils";
 
 export interface ISVGProps extends React.SVGProps<SVGSVGElement> {

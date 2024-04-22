@@ -1,3 +1,7 @@
+/*
+  File -> Setup for the theme of the application (from Next.js)
+*/
+
 "use client";
 
 import * as React from "react";

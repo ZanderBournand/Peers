@@ -1,3 +1,9 @@
+/*
+  File -> Display page for a specific organization & their upcoming events
+  - Incldues the organiazation's info, social media redirects, university affiliation & more
+  - Actions include admin management, sharing the organization, editing the organization & creating events
+*/
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";

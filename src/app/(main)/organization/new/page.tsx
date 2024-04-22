@@ -1,3 +1,8 @@
+/*
+  File -> Form page to create a new organization
+  - Fiels include organization name, type, description, email, socials (optional), and image
+*/
+
 "use client";
 
 import { useState } from "react";

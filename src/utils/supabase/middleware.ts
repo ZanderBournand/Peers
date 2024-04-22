@@ -1,3 +1,8 @@
+/*
+  File -> Any middleware used throughout our Supabase server objects
+  - Supabase is the service we use for our database hosting
+*/
+
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { env } from "@/env";

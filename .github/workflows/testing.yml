@@ -1,7 +1,10 @@
+# File -> Defines the testing pipeline to be ran inside of GitHub Actions
+# - Runs 4 different tests (+ dependencies setup): Prettier, ESLint, Unit Tests, E2E Tests
+
 name: Testing pipeline
 run-name: Testing new changes...
 
-# This action works with pull requests and pushes to main
+# This pipeline run with pull requests and pushes to main
 on:
   pull_request:
     branches:

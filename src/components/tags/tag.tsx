@@ -1,3 +1,9 @@
+/*
+  File -> Component to display a tag (singular)
+  - Used within the tag-input component
+  - Built on top of (https://shadcn-tag-input.vercel.app/)
+*/
+
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
 import { type TagInputProps, type Tag as TagType } from "./tag-input";

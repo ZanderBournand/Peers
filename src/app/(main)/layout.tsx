@@ -1,3 +1,8 @@
+/*
+  File -> Layout, base template for all pages within the "main" section of the app (anything but "authentication")
+  - Includes the navigation bar at the top of the screen
+*/
+
 import React from "react";
 import Navbar from "@/components/navbar/Navbar";
 import AuthComponent from "@/components/navbar/AuthComponent";
