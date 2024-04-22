@@ -1,8 +1,8 @@
 # Peers
 
-Peers is a web-application designed to improve peer-to-peer learning among university students. At its core, Peers is a social network platform, where students and organizations can host events not only in-person, but also directly online!
+Peers is a web application designed to improve peer-to-peer learning among university students. At its core, Peers is a social network platform, where students and organizations can host events not only in-person but also directly online!
 
-With its clever use of gamification, and personalized recommendations, Peers is designed as the next generation knowledge transfer platform.
+With its clever use of gamification, and personalized recommendations, Peers is designed as the next-generation knowledge transfer platform.
 
 The project is currently deployed at: https://peers-uf.vercel.app/
 
@@ -20,9 +20,9 @@ The project is currently deployed at: https://peers-uf.vercel.app/
 #### Instructions
 
 1. Clone the project locally (https://github.com/ZanderBournand/Peers)
-2. Run `npm install` in root folder
+2. Run `npm install` in the root folder
 3. Add a `.env` folder at the root level, and include the following [variables](#env-project-setup)
-4. Start the web-server via `npm run dev`
+4. Start the web server via `npm run dev`
 
 #### Testing
 
@@ -30,7 +30,7 @@ Tests are split into four different sections:
 
 - Prettier - checks for code formatting
   - `npm run test:prettier`
-- Eslint - checks for programmatic error and stylistic errors
+- Eslint - checks for programmatic and stylistic errors
   - `npm run test:eslint`
 - Unit - runs tests on backend API functions
   - `npm run test:prettier`
@@ -81,8 +81,8 @@ This project also uses a starter template created by Isaac Dyor, which can be fo
 | Variable                              | Details                                  |
 | ------------------------------------- | ---------------------------------------- |
 | `NODE_ENV`                            | Sets the Node.js application environment |
-| `DIRECT_URL`                          | Direct connection stringto SQL DB        |
-| `DATABASE_URL`                        | Connection string to the SQL DB          |
+| `DIRECT_URL`                          | Direct connection string for SQL DB      |
+| `DATABASE_URL`                        | Connection string for SQL DB             |
 | `NEXT_PUBLIC_SUPABASE_URL`            | URL of your Supabase project             |
 | `NEXT_PUBLIC_SUPABASE_STORAGE_URL`    | Baser URL for Supabase storage service   |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY`       | Public anonymous API key for Supabase    |
