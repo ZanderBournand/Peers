@@ -13,7 +13,6 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { PiStudentFill } from "react-icons/pi";
 import UserPageEventCarousel from "@/components/events/UserPageEventCarousel";
-import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MdEdit } from "react-icons/md";

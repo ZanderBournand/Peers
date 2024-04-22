@@ -4,7 +4,7 @@
 name: Testing pipeline
 run-name: Testing new changes...
 
-# This pipeline run with pull requests and pushes to main
+# This pipeline runs on pull requests and pushes to main
 on:
   pull_request:
     branches:

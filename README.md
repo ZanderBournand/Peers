@@ -30,7 +30,7 @@ Tests are split into four different sections:
 
 - Prettier - checks for code formatting
   - `npm run test:prettier`
-- Eslint - checks for programmatic error, and stylistic errors
+- Eslint - checks for programmatic error and stylistic errors
   - `npm run test:eslint`
 - Unit - runs tests on backend API functions
   - `npm run test:prettier`
