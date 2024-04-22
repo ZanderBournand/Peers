@@ -17,6 +17,7 @@ import {
   CheckCircleIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export default function SearchPage() {
   const [searchInput, setSearchInput] = useState<string>("");
@@ -79,7 +80,10 @@ export default function SearchPage() {
         <Separator className="mt-6" style={{ margin: "15px 15px" }} />
 
         {isLoading ? (
-          <p className="text-lg font-semibold">Loading...</p>
+          <div className="mt-48 flex flex-row items-center justify-center">
+            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+            <p>Searching results...</p>
+          </div>
         ) : (
           <>
             {searchCategory === "users" &&
@@ -91,7 +95,9 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <p>No users found.</p>
+                <div className="mt-48 flex flex-row items-center justify-center">
+                  <p>No users found :(</p>
+                </div>
               ))}
 
             {searchCategory === "organizations" &&
@@ -103,7 +109,9 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <p>No organizations found.</p>
+                <div className="mt-48 flex flex-row items-center justify-center">
+                  <p>No organizations found :(</p>
+                </div>
               ))}
 
             {searchCategory === "events" &&
@@ -115,7 +123,9 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <p>No events found.</p>
+                <div className="mt-48 flex flex-row items-center justify-center">
+                  <p>No events found :(</p>
+                </div>
               ))}
           </>
         )}

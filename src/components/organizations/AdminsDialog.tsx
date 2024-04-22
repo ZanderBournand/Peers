@@ -24,10 +24,10 @@ import Image from "next/image";
 import { getDisplayName } from "@/lib/utils";
 import Link from "next/link";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/trpc/react";
 import { type UserData } from "@/lib/interfaces/userData";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface AdminsDialogProps {
   user: UserData;
@@ -38,12 +38,12 @@ export default function AdminsDialog({
   user,
   organization,
 }: AdminsDialogProps) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [organizationData, setOrganizationData] = useState(organization);
 
   const addAdminMutation = api.organizations.addAdmin.useMutation({
-    onSuccess: () => {
-      router.refresh();
+    onSuccess: (data) => {
+      setOrganizationData(data);
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -52,8 +52,8 @@ export default function AdminsDialog({
   });
 
   const removeAdminMutation = api.organizations.removeAdmin.useMutation({
-    onSuccess: () => {
-      router.refresh();
+    onSuccess: (data) => {
+      setOrganizationData(data);
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -62,7 +62,9 @@ export default function AdminsDialog({
   });
 
   const isLoading = addAdminMutation.isLoading || removeAdminMutation.isLoading;
-  const isAdmin = organization?.admins?.some((admin) => admin.id === user.id);
+  const isAdmin = organizationData?.admins?.some(
+    (admin) => admin.id === user.id,
+  );
 
   return (
     <Dialog>
@@ -73,7 +75,7 @@ export default function AdminsDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{organization.name}&apos;s admins</DialogTitle>
+          <DialogTitle>{organizationData.name}&apos;s admins</DialogTitle>
           <DialogDescription>
             Here are all the people that make this organization a reality!
           </DialogDescription>
@@ -91,7 +93,7 @@ export default function AdminsDialog({
               variant="outline"
               onClick={() => {
                 addAdminMutation.mutate({
-                  orgId: organization.id,
+                  orgId: organizationData.id,
                   adminEmail: email,
                 });
               }}
@@ -105,14 +107,11 @@ export default function AdminsDialog({
         <ScrollArea className="h-72 w-full pb-4">
           {isLoading ? (
             <div className="mt-24 flex flex-col items-center justify-center">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="h-5 w-5 animate-bounce rounded-full bg-gray-300/50 [animation-delay:-0.3s]" />
-                <div className="h-5 w-5 animate-bounce rounded-full bg-gray-300/50 [animation-delay:-0.15s]" />
-                <div className="h-5 w-5 animate-bounce rounded-full bg-gray-300/50" />
-              </div>
+              <ReloadIcon className="h-5 w-5 animate-spin" />
+              <p className="mt-2 text-sm">Updating admins...</p>
             </div>
           ) : (
-            organization?.admins?.map((admin) => (
+            organizationData?.admins?.map((admin) => (
               <div
                 key={admin.id}
                 className="flex flex-row items-center justify-between p-2"
@@ -147,7 +146,7 @@ export default function AdminsDialog({
                     color="grey"
                     onClick={() => {
                       removeAdminMutation.mutate({
-                        orgId: organization.id,
+                        orgId: organizationData.id,
                         adminEmail: admin.email,
                       });
                     }}

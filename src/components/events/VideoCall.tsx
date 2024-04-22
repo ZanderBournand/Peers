@@ -18,19 +18,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import {
   BoltIcon,
   ClockIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { LoadingSpinner } from "../ui/loading-spinner";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { type UserData } from "@/lib/interfaces/userData";
+import Image from "next/image";
 
 interface VideoCallProps {
   roomUrl: string;
   roomName: string;
   meetingToken: string | null;
-  userId: string;
+  user: UserData;
 }
 
 interface EventSummaryData {
@@ -42,7 +43,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
   roomUrl,
   roomName,
   meetingToken,
-  userId,
+  user,
 }) => {
   const callRef = useRef<HTMLDivElement>(null);
   const [participantId, setParticipantId] = useState<string | null>(null);
@@ -95,9 +96,9 @@ const VideoCall: React.FC<VideoCallProps> = ({
         setEventSummaryOpen(true);
         const meetingId = callFrame.meetingSessionSummary().id;
 
-        if (userId && participantId && meetingId) {
+        if (user.id && participantId && meetingId) {
           updateUserPointsMutation.mutate(
-            { userId, participantId, meetingId },
+            { userId: user.id, participantId, meetingId },
             {
               onSuccess: (data) => {
                 setEventSummaryData({
@@ -116,7 +117,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
         callFrame.off("left-meeting", handleLeftMeeting);
       };
     }
-  }, [callFrame, updateUserPointsMutation, userId, participantId, roomName]);
+  }, [callFrame, updateUserPointsMutation, user.id, participantId, roomName]);
 
   return (
     <>
@@ -130,14 +131,23 @@ const VideoCall: React.FC<VideoCallProps> = ({
             <AlertDialogHeader>
               <AlertDialogTitle>
                 <div className="flex flex-row items-center">
-                  <CheckCircleIcon className="mr-2 h-8 w-8 text-green-500" />
+                  <Image
+                    src={user.image}
+                    alt="selected image"
+                    width={35}
+                    height={35}
+                    style={{
+                      objectFit: "cover",
+                    }}
+                    className="mr-3 rounded-full transition-opacity duration-500 group-hover:opacity-70"
+                  />
                   Your Attendance Summary
                 </div>
               </AlertDialogTitle>
               <AlertDialogDescription>
                 {updateUserPointsMutation.isLoading ? (
                   <div className="my-16 flex flex-col items-center justify-center">
-                    <LoadingSpinner size={24} />
+                    <ReloadIcon className="h-5 w-5 animate-spin" />
                     <p className="mt-2">Gathering your attendance data...</p>
                   </div>
                 ) : (

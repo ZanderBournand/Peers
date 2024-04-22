@@ -519,7 +519,10 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const searchWords = input.searchInput.split(" ");
+      const searchWords = input.searchInput
+        .split(" ")
+        .map((word) => word.trim())
+        .filter(Boolean);
 
       const events = await ctx.db.event.findMany({
         where: {

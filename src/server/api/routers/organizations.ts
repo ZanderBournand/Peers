@@ -146,6 +146,13 @@ export const organizationRouter = createTRPCRouter({
             },
           },
         },
+        include: {
+          admins: {
+            include: {
+              university: true,
+            },
+          },
+        },
       });
       return org;
     }),
@@ -182,6 +189,13 @@ export const organizationRouter = createTRPCRouter({
           admins: {
             disconnect: {
               id: admin.id,
+            },
+          },
+        },
+        include: {
+          admins: {
+            include: {
+              university: true,
             },
           },
         },

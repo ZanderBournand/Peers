@@ -64,7 +64,7 @@ export const VideoCallButton: React.FC<VideoCallButtonProps> = ({
           roomUrl={room?.url}
           roomName={room?.name}
           meetingToken={meetingToken}
-          userId={user.id}
+          user={user}
         />
       )}
     </div>
