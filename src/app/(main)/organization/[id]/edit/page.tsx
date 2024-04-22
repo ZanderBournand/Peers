@@ -86,9 +86,9 @@ export default function CreateOrganization({
         email: org.email ?? "",
         type: org.type ?? "",
         description: org.description ?? "",
-        instagram: org.instagram ?? "",
-        facebook: org.facebook ?? "",
-        discord: org.discord ?? "",
+        instagram: org.instagram ?? undefined,
+        facebook: org.facebook ?? undefined,
+        discord: org.discord ?? undefined,
       });
       setTimeout(() => setIsLoading(false), 500);
     }
@@ -126,9 +126,9 @@ export default function CreateOrganization({
       description: data.description,
       type: data.type,
       image: orgImage ? orgImage : org?.image ?? "",
-      instagram: data?.instagram ?? "",
-      facebook: data?.facebook ?? "",
-      discord: data?.discord ?? "",
+      instagram: data?.instagram ?? null,
+      facebook: data?.facebook ?? null,
+      discord: data?.discord ?? null,
     });
   };
 
@@ -293,7 +293,7 @@ export default function CreateOrganization({
                         <Input
                           {...field}
                           placeholder="Instagram"
-                          value={field?.value ?? ""}
+                          value={field?.value ?? undefined}
                         />
                       </FormControl>
                       <FormMessage />
@@ -310,7 +310,7 @@ export default function CreateOrganization({
                         <Input
                           {...field}
                           placeholder="Facebook"
-                          value={field?.value ?? ""}
+                          value={field?.value ?? undefined}
                         />
                       </FormControl>
                       <FormMessage />
@@ -328,7 +328,7 @@ export default function CreateOrganization({
                         <Input
                           {...field}
                           placeholder="Discord"
-                          value={field?.value ?? ""}
+                          value={field?.value ?? undefined}
                         />
                       </FormControl>
                       <FormMessage />

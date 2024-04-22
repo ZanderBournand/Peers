@@ -135,7 +135,11 @@ export const dailyApiRouter = createTRPCRouter({
           },
         });
 
-        return updatedUser;
+        return {
+          user: updatedUser,
+          points: totalPoints,
+          duration: timeInEvent,
+        };
       } catch (error) {
         console.error("Error fetching user's time in events:", error);
         throw new Error("Failed to fetch user's time in eventss");

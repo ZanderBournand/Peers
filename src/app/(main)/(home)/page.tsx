@@ -86,7 +86,7 @@ export default async function AuthButton() {
               )}
               {universityEvents && universityEvents?.length > 0 && (
                 <EventSection
-                  title="University of Florida"
+                  title={userData?.universityName ?? ""}
                   events={universityEvents}
                   redirect="/feed/university"
                   titleIcon={

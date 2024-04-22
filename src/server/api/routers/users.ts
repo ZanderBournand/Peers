@@ -33,9 +33,9 @@ export const userRouter = createTRPCRouter({
         lastName: z.string(),
         interests: TagSchema.array(),
         bio: z.string(),
-        github: z.string(),
-        linkedin: z.string(),
-        website: z.union([z.literal(""), z.string().trim().url()]),
+        github: z.string().url().optional().nullable(),
+        linkedin: z.string().url().optional().nullable(),
+        website: z.string().url().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

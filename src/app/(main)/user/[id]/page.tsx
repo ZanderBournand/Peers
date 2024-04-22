@@ -13,7 +13,12 @@ import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import VerifyStudentButton from "@/components/user/verifyStudentButton";
 import UserPageOrganizationCarousel from "@/components/organizations/UserPageOrgCarousel";
-import { BoltIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  BoltIcon,
+  CheckCircleIcon,
+  HomeIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
 import VerifyOrNavigateContainer from "@/components/user/VerifyOrNavigateContainer";
 import {
   HoverCard,
@@ -21,14 +26,6 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { getDisplayName } from "@/lib/utils";
-
-const cardStyle = {
-  width: "580px",
-  padding: 10,
-  borderRadius: 10,
-  border: "1px solid grey",
-  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-};
 
 export default async function PeerPage({ params }: { params: { id: string } }) {
   const actualUser = await api.users.getUser.query({});
@@ -52,41 +49,54 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
     <>
       <div className="flex flex-col items-center justify-center pb-32 pt-8 lg:flex-row lg:items-start">
         <div className="flex-col">
-          <div
-            className="mt-4 flex h-64 w-80 flex-col items-center justify-center border-2"
-            style={{
-              border: "1px solid grey",
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              borderBottomLeftRadius: 0,
-              borderBottomRightRadius: 0,
-            }}
-          >
+          <div className="mt-4 flex h-64 w-80 flex-col items-center justify-center rounded-t-xl border border-slate-300">
             <Avatar className="size-20 hover:cursor-pointer">
               <AvatarImage src={user.image ?? ""} />
               <AvatarFallback>Peer</AvatarFallback>
             </Avatar>
-            <div
-              className="mt-2 flex flex-row items-center"
-              style={{
-                fontSize: "1.75rem",
-                fontWeight: "bold",
-              }}
-            >
-              {user.firstName} {user.lastName}
-              <CheckBadgeIcon
-                className="blue blue-500 ml-1 h-6 w-6"
-                color="#6e13c8"
-              />
-            </div>
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "gray",
-              }}
-            >
-              {user.username}
-            </p>
+            {user.firstName && user.lastName ? (
+              <>
+                <div
+                  className="mt-2 flex flex-row items-center"
+                  style={{
+                    fontSize: "1.75rem",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {user.firstName} {user.lastName}
+                  {user.isVerifiedStudent && (
+                    <CheckBadgeIcon
+                      className="blue blue-500 ml-1 h-6 w-6"
+                      color="#6e13c8"
+                    />
+                  )}
+                </div>
+                <p
+                  style={{
+                    fontSize: "1rem",
+                    color: "gray",
+                  }}
+                >
+                  {user.username}
+                </p>
+              </>
+            ) : (
+              <div
+                className="mt-2 flex flex-row items-center"
+                style={{
+                  fontSize: "1.25rem",
+                  color: "gray",
+                }}
+              >
+                {user.username}
+                {user.isVerifiedStudent && (
+                  <CheckBadgeIcon
+                    className="blue blue-500 ml-1 h-6 w-6"
+                    color="#6e13c8"
+                  />
+                )}
+              </div>
+            )}
             <div className="mt-4 flex flex-col items-center">
               {user.isVerifiedStudent && (
                 <div>
@@ -126,19 +136,17 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-          <div
-            className="w-80 border-2 px-2 py-3"
-            style={{
-              marginTop: "-1px",
-              border: "1px solid grey",
-              borderTop: "0px",
-            }}
-          >
-            <div className="px-3">
+          <div className="w-80 border border-t-0 border-slate-300 px-2 py-3">
+            <div className="flex justify-center">
+              <b style={{ fontSize: "1.25rem" }}>Bio</b>
+            </div>
+            <div className="mt-2 px-3">
               {user.bio ? (
                 <p>{user.bio}</p>
               ) : (
-                <p>This user has not provided a bio.</p>
+                <p className="text-center" style={{ fontSize: "0.8rem" }}>
+                  This user has not provided a bio
+                </p>
               )}
             </div>
             <div className="mt-4 flex flex-row flex-wrap gap-y-2">
@@ -178,24 +186,15 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
               )}
             </div>
           </div>
-          <div
-            className="flex w-80 flex-col items-center justify-center border-2 py-2"
-            style={{
-              marginTop: "-1px",
-              border: "1px solid grey",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              borderTop: "1px",
-              borderTopLeftRadius: 0,
-              borderTopRightRadius: 0,
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-            }}
-          >
+          <div className="flex w-80 flex-col items-center justify-center rounded-b-xl border border-t-0 border-slate-300 py-2 shadow-sm">
             <b style={{ fontSize: "1.25rem" }}>Links</b>
-            <div style={{ fontSize: "0.8rem" }}>
+            <div
+              style={{ fontSize: "0.8rem" }}
+              className="mt-2 flex w-full flex-col items-start justify-start px-6"
+            >
               {!user.github && !user.linkedin && !user.website ? (
                 <div className="mt-2">
-                  This user has not provided any personal links.
+                  This user has not provided any personal links
                 </div>
               ) : null}
               <div className="mb-2 mt-2 flex">
@@ -246,7 +245,7 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                       }}
                       href={user.website}
                     >
-                      Personal Website
+                      Website
                     </a>
                   </div>
                 )}
@@ -273,9 +272,9 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
           )}
         </div>
 
-        <div className="mt-8 flex-col lg:ml-20 lg:mt-4">
-          <div className="flex items-center justify-center">
-            <Card style={cardStyle}>
+        <div className="mt-8 w-full flex-col lg:ml-20 lg:mt-4 lg:w-[600px]">
+          <div className="flex items-center justify-center px-4">
+            <Card className="w-full max-w-[600px] rounded-xl border border-slate-300 p-4 shadow-sm">
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
                 <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
@@ -293,12 +292,11 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                 </div>
               </CardHeader>
               {userOrganizations.length == 0 ? (
-                <CardContent className="text-center">
-                  This user is not part of any organizations.
+                <CardContent className="mt-4 text-center">
+                  This user is not part of any organizations
                 </CardContent>
               ) : (
-                <CardContent>
-                  <div className="-ml-4 font-bold">Their orgs:</div>
+                <CardContent className="flex justify-center">
                   <UserPageOrganizationCarousel
                     organizations={userOrganizations}
                   />
@@ -307,8 +305,8 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
             </Card>
           </div>
 
-          <div className="flex items-center justify-center">
-            <Card className="mt-6" style={cardStyle}>
+          <div className="flex items-center justify-center px-4">
+            <Card className="mt-6 w-full max-w-[600px] rounded-xl border border-slate-300 p-4 shadow-sm">
               <CardHeader className="ml-5 flex items-center justify-center p-4 text-center text-xl font-bold">
                 <div className="flex flex-row items-center">
                   <span style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
@@ -325,27 +323,37 @@ export default async function PeerPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
               </CardHeader>
-              {eventsHosting.length == 0 ? (
-                <CardContent className="text-center">
-                  This user is not hosting any events.
-                </CardContent>
-              ) : (
-                <CardContent>
-                  <div className="mb-4 font-bold">Hosting Events:</div>
-                  <UserPageEventCarousel events={eventsHosting} />
-                </CardContent>
-              )}
+              <CardContent>
+                <div className="my-4 ml-4 flex w-max flex-row items-center rounded-lg bg-gray-100/50 px-2 py-1 font-medium">
+                  <HomeIcon className="mr-1 h-6 w-6" />
+                  Hosting
+                </div>
+                {eventsHosting.length !== 0 ? (
+                  <div className="flex justify-center">
+                    <UserPageEventCarousel events={eventsHosting} />
+                  </div>
+                ) : (
+                  <p className="my-6 text-center">
+                    This user is not hosting any events
+                  </p>
+                )}
+              </CardContent>
               <Separator className="mx-auto -mt-6 mb-6 w-5/6 bg-gray-400" />
-              {eventsAttending.length == 0 ? (
-                <CardContent className="mb-1 text-center">
-                  This user is not registered for any events.
-                </CardContent>
-              ) : (
-                <CardContent>
-                  <div className="mb-4 font-bold">Attending Events:</div>
-                  <UserPageEventCarousel events={eventsAttending} />
-                </CardContent>
-              )}
+              <CardContent>
+                <div className="ml-4 mt-8 flex w-max flex-row items-center rounded-lg bg-gray-100/50 px-2 py-1 font-medium">
+                  <CheckCircleIcon className="mr-1 h-6 w-6" />
+                  Attending
+                </div>
+                {eventsAttending.length !== 0 ? (
+                  <div className="flex justify-center">
+                    <UserPageEventCarousel events={eventsAttending} />
+                  </div>
+                ) : (
+                  <p className="my-6 text-center">
+                    This user is not attending any events
+                  </p>
+                )}
+              </CardContent>
             </Card>
           </div>
         </div>

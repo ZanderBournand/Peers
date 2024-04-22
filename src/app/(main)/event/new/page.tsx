@@ -90,8 +90,8 @@ export default function CreateEvent() {
   const router = useRouter();
 
   const { mutate } = api.events.create.useMutation({
-    onSuccess: () => {
-      router.push("/");
+    onSuccess: (data) => {
+      window.location.href = `/event/${data.id}`;
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;

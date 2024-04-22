@@ -67,8 +67,12 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
           <hr className="my-2 border-t-2 border-slate-600" />
           <p className="py-2 text-lg text-muted-foreground">
             <Link
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-muted-foreground/70"
+              onClick={() => {
+                if (userData) setMenuOpen(false);
+              }}
+              className={`${
+                !userData && "pointer-events-none"
+              } hover:text-muted-foreground/70`}
               href={"/user/" + userData?.id}
             >
               Profile

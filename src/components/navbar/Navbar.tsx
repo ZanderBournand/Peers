@@ -54,7 +54,9 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             ))}
             <Link
               href={"/user/" + user?.id}
-              className={`inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
+              className={`${
+                !user && "pointer-events-none"
+              } inline-flex h-10 w-full items-center px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
             >
               {"Profile"}
             </Link>
@@ -64,7 +66,8 @@ const Navbar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 className="py-flex-row ml-2 mt-1 flex h-8 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
               >
                 <BellAlertIcon className="mr-1 h-5 w-5" />
-                Complete your profile!
+                <span className="hidden lg:inline">Complete your profile!</span>
+                <span className="lg:hidden">1</span>
               </Link>
             )}
             <form
@@ -110,9 +113,22 @@ const MobileMenu: React.FC<{
   user: UserData | null;
   children: React.ReactNode;
 }> = ({ toggleMenu, user, children }) => {
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSearchSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (searchValue) {
+      window.location.href = `/search?input=${searchValue}`;
+    }
+  };
+
   return (
-    <div className="absolute right-0 top-16 flex h-[calc(100vh-64px)] w-full flex-col">
-      <div className="flex  w-full grow flex-col gap-1 bg-background px-4 pb-2 sm:hidden">
+    <div className="absolute right-0 top-16 z-50 flex h-[calc(100vh-64px)] w-full flex-col">
+      <div className="flex w-full grow flex-col gap-1 bg-background px-4 pb-2 sm:hidden">
         {routes.map((route, index) => (
           <Link
             key={index}
@@ -126,7 +142,9 @@ const MobileMenu: React.FC<{
         {user && (
           <Link
             href={"/user/" + user?.id}
-            className={`inline-flex h-10 w-full items-center text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
+            className={`${
+              !user && "pointer-events-none"
+            } inline-flex h-10 w-full items-center text-sm text-muted-foreground transition-colors hover:text-accent-foreground sm:w-auto`}
           >
             {"Profile"}
           </Link>
@@ -134,12 +152,27 @@ const MobileMenu: React.FC<{
         {user && !user?.firstName && !user?.lastName && (
           <Link
             href="/user/edit"
-            className="py-flex-row mt-1 flex h-8 w-48 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
+            className="py-flex-row mb-2 flex h-8 w-48 items-center rounded-md bg-purple-50 px-2 text-sm text-purple-900"
           >
             <BellAlertIcon className="mr-1 h-5 w-5" />
             Complete your profile!
           </Link>
         )}
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex w-10/12 items-center"
+        >
+          <div className="flex w-full items-center space-x-2 rounded-lg border border-gray-300">
+            <MagnifyingGlassIcon className="ml-3 mr-1 h-5 w-5" />
+            <Input
+              className="w-full border-0 p-0 focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0"
+              placeholder="Search..."
+              type="text"
+              value={searchValue}
+              onChange={handleSearchChange}
+            />
+          </div>
+        </form>
         {children}
       </div>
       <div className="h-screen w-full bg-background/60 sm:hidden" />

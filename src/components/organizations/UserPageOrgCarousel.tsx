@@ -22,10 +22,13 @@ export default function UserPageOrganizationCarousel({
   organizations,
 }: UserPageOrganizationCarouselProps) {
   return (
-    <Carousel className="my-2 ml-6 w-11/12 items-center justify-center">
+    <Carousel className="my-2 w-10/12 items-center justify-center">
       <CarouselContent className="mx-2 mt-2">
         {organizations.map((organization) => (
-          <CarouselItem key={organization.id} className="mr-4 basis-1/2 pl-4">
+          <CarouselItem
+            key={organization.id}
+            className="mr-4 basis-full pl-4 sm:basis-3/5"
+          >
             <Link
               href={`/organization/${organization.id}`}
               className="flex flex-row items-center transition-all duration-200 hover:scale-105"
