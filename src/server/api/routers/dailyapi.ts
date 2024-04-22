@@ -1,3 +1,9 @@
+/*
+  File -> Backend API functions for interacting with Daily.co service/API
+  - Uses TRPC for API definition
+  - Interacts with database via Prisma (& Supabase)
+*/
+
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import axios from "axios";
@@ -135,7 +141,11 @@ export const dailyApiRouter = createTRPCRouter({
           },
         });
 
-        return updatedUser;
+        return {
+          user: updatedUser,
+          points: totalPoints,
+          duration: timeInEvent,
+        };
       } catch (error) {
         console.error("Error fetching user's time in events:", error);
         throw new Error("Failed to fetch user's time in eventss");

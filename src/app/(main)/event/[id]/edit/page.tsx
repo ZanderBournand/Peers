@@ -1,3 +1,7 @@
+/*
+  File -> Edit page for an event, allowing the user to update the event details
+*/
+
 "use client";
 
 import { useEffect, useState } from "react";

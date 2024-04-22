@@ -1,3 +1,9 @@
+/*
+  File -> Input field for tags
+  - Wrapper component for the tags component as a whole
+  - Built on top of (https://shadcn-tag-input.vercel.app/)
+*/
+
 "use client";
 
 import React from "react";

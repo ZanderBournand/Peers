@@ -1,3 +1,7 @@
+/*
+  File -> Typescript type for organization data
+*/
+
 import { type UniversityData } from "./universityData";
 import { type OrganizationType } from "@prisma/client";
 import { type UserData } from "./userData";

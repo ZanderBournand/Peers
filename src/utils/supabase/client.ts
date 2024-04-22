@@ -1,3 +1,8 @@
+/*
+  File -> Functions to create Supabase on the client side
+  - Supabase is the service we use for our database hosting
+*/
+
 import { createBrowserClient } from "@supabase/ssr";
 import { env } from "@/env";
 

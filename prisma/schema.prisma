@@ -1,3 +1,6 @@
+// File -> Defines our database schemas (models) and relationships between them
+// - This uses "Prisma", and ORM (Object Relational Mapping) tool that allows us to more easily interact with our database (PortgreSQL via Supabase)
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -91,6 +94,8 @@ model Event {
   attendees User[] @relation("Attendees")
 }
 
+// Tags are used to connect topics to events and users
+// Notably used for the recommendation system
 model Tag {
   id       String      @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
   category TagCategory
@@ -99,6 +104,7 @@ model Tag {
   users    User[]      @relation("Interests")
 }
 
+// Used in student university verification process
 model Verification_Code {
   userId    String   @id
   createdAt DateTime

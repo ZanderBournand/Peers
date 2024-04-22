@@ -1,3 +1,8 @@
+/*
+  File -> Layout, base template, for every single screen of the application
+  - Includes several providers for global state management, and API calls
+*/
+
 import "@/styles/globals.css";
 
 import { Inter } from "next/font/google";

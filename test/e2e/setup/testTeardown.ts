@@ -1,3 +1,8 @@
+/*
+  File -> Helper file for tearing down E2E setup once tests are done
+  - Delete test users, etc...
+*/
+
 import {
   createTestSupabaseClient,
   deleteTestAuthUser,

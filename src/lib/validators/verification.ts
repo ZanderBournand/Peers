@@ -1,3 +1,7 @@
+/*
+  File -> Form validator used in the student verification process
+*/
+
 import { z } from "zod";
 
 export const verifyCodeSchema = z.object({

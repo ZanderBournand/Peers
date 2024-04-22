@@ -1,3 +1,10 @@
+/*
+  File -> Event creatiion page
+  - Includes form with fields such as title, description, date/time, type of event, tags, event thumnbail, etc.
+  - Contains "conditional" fields for in-person events (location, location details)
+  - Users can select host (either themselves, or one of their organizations)
+*/
+
 "use client";
 
 import { useState } from "react";
@@ -90,8 +97,8 @@ export default function CreateEvent() {
   const router = useRouter();
 
   const { mutate } = api.events.create.useMutation({
-    onSuccess: () => {
-      router.push("/");
+    onSuccess: (data) => {
+      window.location.href = `/event/${data.id}`;
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;

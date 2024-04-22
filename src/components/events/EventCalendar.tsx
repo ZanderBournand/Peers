@@ -1,3 +1,9 @@
+/*
+  File -> Calendar component used in home page to display the user's events (events they marked as "attending")
+  - Extends the Calendar component from ShadcnUI
+  - Displays the events under the calendar for the selected date
+*/
+
 "use client";
 
 import React from "react";

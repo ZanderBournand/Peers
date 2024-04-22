@@ -1,3 +1,9 @@
+/*
+  File -> Page to search events by categories
+  - Extends the home page preview of categories
+  - Can multi-select categories to filter events
+*/
+
 "use client";
 
 import EventPreview from "@/components/events/EventPreview";

@@ -1,3 +1,7 @@
+/*
+  File -> Setup file for TRPC base functions
+*/
+
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 

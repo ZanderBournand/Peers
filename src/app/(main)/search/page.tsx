@@ -1,4 +1,11 @@
+/*
+  File -> Page displaying search results based on user's input fields
+  - Search results are categorized into "events", "organizations", and "users"
+  - Users can swtich between categories to view search results
+*/
+
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import EventPreview from "@/components/events/EventPreview";
@@ -48,7 +55,7 @@ export default function SearchPage() {
         <p className="mb-4 text-2xl font-bold">
           Search Results for &lsquo;{searchInput}&rsquo;
         </p>
-        <div className="my-2 flex flex-row items-center">
+        <div className="my-2 flex flex-row flex-wrap items-center gap-y-4">
           {categories.map((category) => (
             <Button
               key={category}
@@ -65,7 +72,6 @@ export default function SearchPage() {
               ) : (
                 <MagnifyingGlassIcon className="mr-2 h-5 w-5 text-purple-950" />
               )}
-              {/* {searchCategory === category ? "✔️ " : "⬜️ "} */}
               {category.charAt(0).toUpperCase() + category.slice(1)}
             </Button>
           ))}

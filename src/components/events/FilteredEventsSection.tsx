@@ -1,3 +1,9 @@
+/*
+  File -> Wrapper component for event carousels in the "My Events" page
+  - Contains logic for dispalying events according to each section (current week, next week, upcoming)
+  - Uses the user's local time to display events accordingly
+*/
+
 "use client";
 
 import React from "react";

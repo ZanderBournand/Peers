@@ -1,3 +1,9 @@
+/*
+  File -> Component used on the Home page to display the top hosts recommended for the user to
+  - Includes both individual user hosts & organization hosts
+  - Redirect users to host pages when clicked
+*/
+
 import { type OrganizationData } from "@/lib/interfaces/organizationData";
 import { type UserData } from "@/lib/interfaces/userData";
 import { shuffle } from "lodash";

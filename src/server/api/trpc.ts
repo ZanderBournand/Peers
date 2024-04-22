@@ -1,3 +1,8 @@
+/*
+  File -> Setup for TRPC backend API
+  - Constructs the context for our TRPC object (used in the API)
+*/
+
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";

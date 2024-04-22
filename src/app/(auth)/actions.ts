@@ -1,3 +1,8 @@
+/*
+  File -> Actions used for authentication within Peers (uses Supabase Auth service)
+  - Currently supports sign-up and sign-in
+*/
+
 "use server";
 
 import { createClient } from "@/utils/supabase/server";

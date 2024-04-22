@@ -1,3 +1,8 @@
+/*
+  File -> Page to view more recommended events based on user's data
+  - Extends the home page preview of recommended events
+*/
+
 import React from "react";
 import { api } from "@/trpc/server";
 import { Separator } from "@/components/ui/separator";

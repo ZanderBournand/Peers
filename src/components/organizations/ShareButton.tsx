@@ -1,3 +1,8 @@
+/*
+  File -> Button to copy the organization link to the clipboard
+  - Used on the organization page
+*/
+
 "use client";
 
 import React from "react";

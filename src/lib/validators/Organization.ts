@@ -1,3 +1,7 @@
+/*
+  File -> Form validator used for organization creation / updates
+*/
+
 import { z } from "zod";
 import { OrganizationType } from "@prisma/client";
 

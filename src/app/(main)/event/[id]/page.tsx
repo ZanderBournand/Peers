@@ -1,3 +1,9 @@
+/*
+  File -> Display page for a specific event
+  - Includes event info, host (user & org), countdown timer, map for in-person events
+  - Actions include joining the event, sharing the event, marking attendance & editing the event (if)
+*/
+
 import React from "react";
 import { api } from "@/trpc/server";
 import Image from "next/image";
@@ -55,6 +61,7 @@ export default async function EventPage({
   const isHost =
     event.orgHost?.admins?.some((admin) => admin.id === user.id) ??
     event.userHost?.id === user.id;
+  const host = event.userHost ?? event.orgHost;
 
   return (
     <div className="flex items-center justify-center pb-32">
@@ -139,9 +146,17 @@ export default async function EventPage({
                 </div>
               </div>
               <p className="text-md my-5 whitespace-pre-line font-normal">
-                {event.userHost
-                  ? event.userHost?.bio
-                  : event.orgHost?.description}
+                {event.userHost ? (
+                  event.userHost?.bio ? (
+                    event.userHost?.bio
+                  ) : (
+                    <span className="text-center text-sm">
+                      {"The host didn't provide a bio"}
+                    </span>
+                  )
+                ) : (
+                  event.orgHost?.description
+                )}
               </p>
             </div>
             {event.tags && event.tags.length > 0 && (
@@ -211,21 +226,23 @@ export default async function EventPage({
                     />
                   </div>
                   <div className="mt-2 flex flex-row items-center">
-                    {user?.university?.isLogoUploaded ? (
-                      <Image
-                        src={user?.university?.logo ?? ""}
-                        alt="selected image"
-                        width={23}
-                        height={23}
-                        style={{
-                          objectFit: "cover",
-                        }}
-                        className="mr-1.5 rounded-sm transition-opacity duration-500 group-hover:opacity-70"
-                      />
-                    ) : (
-                      <PiStudentFill className="mr-2" />
-                    )}
-                    <p className="text-gray-600">{user.university?.name}</p>
+                    <>
+                      {host?.university?.isLogoUploaded ? (
+                        <Image
+                          src={host?.university?.logo ?? ""}
+                          alt="selected image"
+                          width={23}
+                          height={23}
+                          style={{
+                            objectFit: "cover",
+                          }}
+                          className="mr-1.5 rounded-sm transition-opacity duration-500 group-hover:opacity-70"
+                        />
+                      ) : (
+                        <PiStudentFill className="mr-2" />
+                      )}
+                      <p className="text-gray-600">{host?.university?.name}</p>
+                    </>
                   </div>
                 </div>
               </Link>

@@ -1,3 +1,8 @@
+/*
+  File -> Form page to create a new organization
+  - Fiels include organization name, type, description, email, socials (optional), and image
+*/
+
 "use client";
 
 import { useState } from "react";
@@ -32,7 +37,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newOrgSchema } from "@/lib/validators/Organization";
-import { useRouter } from "next/navigation";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/utils/supabase/client";
 import { api } from "@/trpc/react";
@@ -74,11 +78,9 @@ export default function CreateOrganization() {
     },
   });
 
-  const router = useRouter();
-
   const { mutate } = api.organizations.create.useMutation({
-    onSuccess: () => {
-      router.push("/");
+    onSuccess: (data) => {
+      window.location.href = `/organization/${data?.id}`;
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -263,7 +265,7 @@ export default function CreateOrganization() {
                         <Input
                           {...field}
                           placeholder="Instagram"
-                          value={field?.value ?? ""}
+                          value={field?.value ?? undefined}
                         />
                       </FormControl>
                       <FormMessage />
@@ -280,7 +282,7 @@ export default function CreateOrganization() {
                         <Input
                           {...field}
                           placeholder="Facebook"
-                          value={field?.value ?? ""}
+                          value={field?.value ?? undefined}
                         />
                       </FormControl>
                       <FormMessage />
@@ -298,7 +300,7 @@ export default function CreateOrganization() {
                         <Input
                           {...field}
                           placeholder="Discord"
-                          value={field?.value ?? ""}
+                          value={field?.value ?? undefined}
                         />
                       </FormControl>
                       <FormMessage />

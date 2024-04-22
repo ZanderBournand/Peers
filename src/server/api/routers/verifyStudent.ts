@@ -1,3 +1,9 @@
+/*
+  File -> Backend API functions for dealing with student verification
+  - Uses TRPC for API definition
+  - Interacts with database via Prisma (& Supabase)
+*/
+
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 

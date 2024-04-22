@@ -1,3 +1,9 @@
+/*
+  File -> Backend API functions for interacting with user data
+  - Uses TRPC for API definition
+  - Interacts with database via Prisma (& Supabase)
+*/
+
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "@/lib/validators/Tag";
@@ -33,9 +39,9 @@ export const userRouter = createTRPCRouter({
         lastName: z.string(),
         interests: TagSchema.array(),
         bio: z.string(),
-        github: z.string(),
-        linkedin: z.string(),
-        website: z.union([z.literal(""), z.string().trim().url()]),
+        github: z.string().url().optional().nullable(),
+        linkedin: z.string().url().optional().nullable(),
+        website: z.string().url().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

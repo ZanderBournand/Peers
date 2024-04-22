@@ -1,3 +1,9 @@
+/*
+  File -> Grid of categories displayed on the home page to discover events based on category
+  - Each category is represented by an image (stored in code) and a name
+  - Categories are taken from the Prisma DB schema enum
+*/
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";

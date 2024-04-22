@@ -1,3 +1,9 @@
+/*
+  File -> List of tags for the tags-input component
+  - Given a list of tags, renders them in a flex container
+  - Built on top of (https://shadcn-tag-input.vercel.app/)
+*/
+
 import React from "react";
 import { type Tag as TagType } from "./tag-input";
 import { Tag, type TagProps } from "./tag";

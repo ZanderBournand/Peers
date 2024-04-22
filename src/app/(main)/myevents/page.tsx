@@ -1,3 +1,9 @@
+/*
+  File -> Page showing the user's events (events they marked as "attending")
+  - Split in 3 sections: (1) events happening this week, (2) events happening next week, (3) upcoming events beyond that
+  - Uses "carousels" to display the events
+*/
+
 import React from "react";
 import { api } from "@/trpc/server";
 import type { EventData } from "@/lib/interfaces/eventData";

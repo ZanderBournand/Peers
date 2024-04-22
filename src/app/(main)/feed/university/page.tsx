@@ -1,3 +1,8 @@
+/*
+  File -> Page to view more events from a user's university
+  - Extends the home page preview of university events
+*/
+
 import React from "react";
 import { api } from "@/trpc/server";
 import { Separator } from "@/components/ui/separator";

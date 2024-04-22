@@ -1,3 +1,8 @@
+/*
+  File -> Utility functions used throughout the application
+  - Ensures that common logic is re-usable
+*/
+
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { UserData } from "@/lib/interfaces/userData";

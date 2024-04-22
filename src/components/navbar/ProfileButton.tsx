@@ -1,3 +1,9 @@
+/*
+  File -> Profile button used in navigation bar (top right) to dropdown more information about the user
+  - Contains the user's logo, name, and email
+  - Options to go to the user's profile or sign out
+*/
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -67,8 +73,12 @@ const ProfileButton: React.FC<{ user: User }> = ({ user }) => {
           <hr className="my-2 border-t-2 border-slate-600" />
           <p className="py-2 text-lg text-muted-foreground">
             <Link
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-muted-foreground/70"
+              onClick={() => {
+                if (userData) setMenuOpen(false);
+              }}
+              className={`${
+                !userData && "pointer-events-none"
+              } hover:text-muted-foreground/70`}
               href={"/user/" + userData?.id}
             >
               Profile

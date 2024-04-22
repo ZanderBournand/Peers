@@ -1,3 +1,8 @@
+/*
+  File -> Component from ShadcnUI library
+  - Imported from (https://ui.shadcn.com/)
+*/
+
 import { cn } from "@/lib/utils"
 
 function Skeleton({

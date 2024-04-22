@@ -1,3 +1,8 @@
+/*
+  File -> Main file for all unit tests (uses Vitest)
+  - Includes basic setup, teardown & tests for all of Peers
+*/
+
 import { afterAll, beforeAll, expect, test } from "vitest";
 
 import { appRouter } from "@/server/api/root";

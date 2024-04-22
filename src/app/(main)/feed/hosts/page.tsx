@@ -1,3 +1,9 @@
+/*
+  File -> Page to view recommended hosts based on user's interests / activity
+  - Extends the home page preview of recommended hosts
+  - Displays a list of recommended hosts, and some events by these hosts
+*/
+
 import React from "react";
 import { api } from "@/trpc/server";
 import { Separator } from "@/components/ui/separator";

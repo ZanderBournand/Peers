@@ -1,3 +1,9 @@
+/*
+  File -> Button to coordinate the display of the "extended" map component when selecting a location for events
+  - Allows users to input their event location using a map interface
+  - Used in event creation
+*/
+
 "use client";
 
 import React, { useEffect, useState } from "react";

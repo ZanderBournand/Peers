@@ -1,3 +1,8 @@
+/*
+  File -> Middleware used for our Next.js application requests
+  - Manages Supabase session & adds URL to request headers
+*/
+
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/middleware";
 

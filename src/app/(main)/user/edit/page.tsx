@@ -1,3 +1,7 @@
+/*
+  File -> Edit page for a user, allowing them to update their profile's info
+*/
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -62,9 +66,9 @@ export default function NewUserForm() {
       lastName: "",
       interests: [],
       bio: "",
-      github: "",
-      linkedin: "",
-      website: "",
+      github: undefined,
+      linkedin: undefined,
+      website: undefined,
     },
   });
 
@@ -75,9 +79,9 @@ export default function NewUserForm() {
         lastName: user.lastName ?? "",
         interests: user.interests ?? [],
         bio: user.bio ?? "",
-        github: user.github ?? "",
-        linkedin: user.linkedin ?? "",
-        website: user.website ?? "",
+        github: user.github ?? undefined,
+        linkedin: user.linkedin ?? undefined,
+        website: user.website ?? undefined,
       });
       setTimeout(() => setIsLoading(false), 500);
     }
@@ -271,9 +275,13 @@ export default function NewUserForm() {
                   name="github"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Github Username</FormLabel>
+                      <FormLabel>Github</FormLabel>
                       <FormControl>
-                        <Input placeholder="Your github username" {...field} />
+                        <Input
+                          placeholder="Your github link"
+                          {...field}
+                          value={field.value ?? undefined}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -284,11 +292,12 @@ export default function NewUserForm() {
                   name="linkedin"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Linkedin Username</FormLabel>
+                      <FormLabel>Linkedin</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Your linkedin username"
+                          placeholder="Your linkedin link"
                           {...field}
+                          value={field.value ?? undefined}
                         />
                       </FormControl>
                       <FormMessage />
@@ -303,7 +312,11 @@ export default function NewUserForm() {
                   <FormItem>
                     <FormLabel>Website</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your website url" {...field} />
+                      <Input
+                        placeholder="Your website url"
+                        {...field}
+                        value={field.value ?? undefined}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

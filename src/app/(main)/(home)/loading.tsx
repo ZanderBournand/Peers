@@ -1,3 +1,8 @@
+/*
+  File -> Used to display "temporary" loading skeletons while the home page data is being fetched
+  - This is a "placeholder" for the actual home page
+*/
+
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 

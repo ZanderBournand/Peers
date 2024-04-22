@@ -1,3 +1,9 @@
+/*
+  File -> Modal that allows users to select default images for events
+  - Around 15 images are provided, one for each event category
+  - Images are fetched from a Supabase image storage bucket
+*/
+
 "use client";
 
 import React, { useEffect, useState } from "react";

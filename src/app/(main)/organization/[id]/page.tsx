@@ -1,3 +1,9 @@
+/*
+  File -> Display page for a specific organization & their upcoming events
+  - Incldues the organiazation's info, social media redirects, university affiliation & more
+  - Actions include admin management, sharing the organization, editing the organization & creating events
+*/
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,9 +39,12 @@ export default async function OrgPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="flex items-center justify-center pb-32">
-      <div className="mt-12 flex w-full max-w-screen-2xl flex-col px-12">
-        <div className="flex flex-row">
-          <div className="flex items-center" style={{ minWidth: "200px" }}>
+      <div className="mt-12 flex w-full max-w-screen-2xl flex-col px-2 pr-12 lg:px-12">
+        <div className="flex flex-col lg:flex-row">
+          <div
+            className="ml-8 flex items-center lg:ml-0"
+            style={{ minWidth: "200px" }}
+          >
             <Image
               src={organization.image}
               alt="selected image"
@@ -47,15 +56,15 @@ export default async function OrgPage({ params }: { params: { id: string } }) {
               className="mr-3 rounded-lg transition-opacity duration-500 group-hover:opacity-70"
             />
           </div>
-          <div className="ml-8 flex w-9/12 flex-col">
-            <div className="flex flex-row items-center justify-between">
+          <div className="ml-8 mt-8 flex w-full flex-col lg:mt-0 lg:w-9/12">
+            <div className="flex flex-col justify-between lg:flex-row lg:items-center">
               <div className="flex flex-row items-center">
                 <p className="text-2xl font-bold">{organization.name}</p>
                 <div className="ml-4 rounded-lg bg-purple-100/50 px-4 py-1 text-sm text-slate-800">
                   {formatEnumName(organization.type)}
                 </div>
               </div>
-              <div className="flex flex-row items-center">
+              <div className="mt-2 flex flex-row items-center lg:mt-0">
                 {organization.email && (
                   <a href={`mailto:${organization.email}`} className="mx-2">
                     <FaEnvelope className="h-7 w-7" color="darkgrey" />
@@ -94,7 +103,7 @@ export default async function OrgPage({ params }: { params: { id: string } }) {
               </div>
             </div>
             <p
-              className="ml-1 mt-2 flex items-center"
+              className="ml-1 mt-4 flex items-center lg:mt-2"
               style={{
                 fontSize: "1.01rem",
               }}
@@ -116,7 +125,7 @@ export default async function OrgPage({ params }: { params: { id: string } }) {
               {organization?.university?.name}
             </p>
             <p className="mt-6">{organization.description} </p>
-            <div className="mt-8 flex flex-row items-center justify-between">
+            <div className="mt-8 flex flex-col justify-between md:flex-row lg:items-center">
               <div className="flex flex-row items-center">
                 <AdminsDialog user={user} organization={organization} />
                 <div className="mx-2">
@@ -124,8 +133,8 @@ export default async function OrgPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
               {isAdmin && (
-                <div className="flex flex-row items-center">
-                  <Link href={`/event/new`} className="mx-2">
+                <div className="mt-4 flex flex-row items-center lg:mt-0">
+                  <Link href={`/event/new`} className="mr-2">
                     <Button>
                       <PlusIcon color="white" className="mr-2 h-5 w-5" />
                       Create Event
@@ -144,14 +153,14 @@ export default async function OrgPage({ params }: { params: { id: string } }) {
         </div>
         <Separator className="mt-12" />
         {events?.length > 0 ? (
-          <>
+          <div className="mx-4 lg:mx-0">
             <h2 className="mt-8 text-2xl font-bold">Upcoming Events</h2>
             <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {events.map((event) => (
                 <EventPreview key={event.id} event={event} />
               ))}
             </div>
-          </>
+          </div>
         ) : (
           <div className="mt-48 flex flex-col items-center justify-center">
             <p className="mb-2">:(</p>

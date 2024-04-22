@@ -1,3 +1,9 @@
+/*
+  File -> Backend API functions for interacting with event data
+  - Uses TRPC for API definition
+  - Interacts with database via Prisma (& Supabase)
+*/
+
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { TagSchema } from "../../../lib/validators/Tag";
@@ -164,6 +170,7 @@ export const eventRouter = createTRPCRouter({
           orgHost: {
             include: {
               admins: true,
+              university: true,
             },
           },
           tags: true,
@@ -215,8 +222,18 @@ export const eventRouter = createTRPCRouter({
               ],
             },
             {
-              NOT: [{ userHostId: userId }],
+              NOT: [
+                { userHostId: userId },
+                { orgHost: { admins: { some: { id: userId } } } },
+              ],
             },
+          ],
+        };
+      } else {
+        queryOptions.where = {
+          NOT: [
+            { userHostId: userId },
+            { orgHost: { admins: { some: { id: userId } } } },
           ],
         };
       }
@@ -391,6 +408,7 @@ export const eventRouter = createTRPCRouter({
         include: {
           attends: true,
           interests: true,
+          adminOf: true,
         },
       });
 
@@ -400,11 +418,13 @@ export const eventRouter = createTRPCRouter({
 
       const attendedEventIds = user.attends.map((event) => event.id);
       const interestIds = user.interests.map((interest) => interest.id);
+      const adminOfOrgIds = user.adminOf.map((org) => org.id);
 
       const organizations = await ctx.db.organization.findMany({
         where: {
           AND: [
             { hostEvents: { some: {} } },
+            { id: { notIn: adminOfOrgIds } },
             {
               OR: [
                 { hostEvents: { some: { id: { in: attendedEventIds } } } },

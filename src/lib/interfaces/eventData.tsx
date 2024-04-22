@@ -1,3 +1,7 @@
+/*
+  File -> Typescript type for event data
+*/
+
 import { type EventType } from "@prisma/client";
 import { type TagData } from "./tagData";
 import { type OrganizationData } from "./organizationData";

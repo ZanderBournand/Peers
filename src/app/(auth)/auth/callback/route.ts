@@ -1,3 +1,8 @@
+/*
+  File -> Callback used on the server side to exchange an "auth code" for a session
+  - Also used on the sign-up flow, creating a user instance in the DB if not done already
+*/
+
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";

@@ -1,3 +1,8 @@
+/*
+  File -> Helper file for setting up the E2E tests
+  - Sets up the database connection, test users, etc...
+*/
+
 import {
   baseTestUser,
   createTestAuthUser,

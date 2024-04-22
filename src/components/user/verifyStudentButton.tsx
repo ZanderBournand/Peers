@@ -1,3 +1,8 @@
+/*
+  File -> Button used on user page to begin the student verification process
+  - Uses the verification context
+*/
+
 "use client";
 
 import { Button } from "@/components/ui/button";

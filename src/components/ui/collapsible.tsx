@@ -1,3 +1,8 @@
+/*
+  File -> Component from ShadcnUI library
+  - Imported from (https://ui.shadcn.com/)
+*/
+
 "use client"
 
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"

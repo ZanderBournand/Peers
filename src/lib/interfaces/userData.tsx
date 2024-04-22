@@ -1,3 +1,7 @@
+/*
+  File -> Typescript type for user data
+*/
+
 import { type TagData } from "./tagData";
 import { type UniversityData } from "./universityData";
 
