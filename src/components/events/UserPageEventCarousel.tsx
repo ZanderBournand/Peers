@@ -19,22 +19,13 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import type { EventData } from "@/lib/interfaces/eventData";
+import EventTime from "./EventTime";
 
 interface EventCarouselProps {
   events: EventData[];
 }
 
 export default function UserPageEventCarousel({ events }: EventCarouselProps) {
-  function formatEventDateTime(eventDate: Date) {
-    const formattedDate = eventDate.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "2-digit",
-    });
-
-    return `${formattedDate}`;
-  }
-
   return (
     <Carousel className="my-2 w-10/12 items-center justify-center">
       <CarouselContent className="mx-2 py-2">
@@ -72,15 +63,11 @@ export default function UserPageEventCarousel({ events }: EventCarouselProps) {
                   <p className="truncate text-sm font-bold">{event.title}</p>
                   <p className="mt-1 flex flex-row items-center text-xs text-slate-800">
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formatEventDateTime(event.date)}
+                    <EventTime date={event.date} mode="day" />
                   </p>
                   <p className="mt-1 flex flex-row items-center text-xs text-slate-800">
                     <IoTimeOutline className="mr-2 h-4 w-4" />
-                    {event.date.toLocaleString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}
+                    <EventTime date={event.date} mode="time" />
                   </p>
                 </div>
               </div>

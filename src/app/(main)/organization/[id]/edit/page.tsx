@@ -52,7 +52,6 @@ export default function CreateOrganization({
 }: {
   params: { id: string };
 }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
 
@@ -98,19 +97,18 @@ export default function CreateOrganization({
     }
   }, [org, isOrgLoading, form]);
 
-  const { mutate } = api.organizations.update.useMutation({
-    onSuccess: () => {
-      window.location.href = "/organization/" + org?.id;
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.error("Error creating investment:", errorMessage);
-    },
-  });
+  const { mutate, isLoading: isUpdateLoading } =
+    api.organizations.update.useMutation({
+      onSuccess: () => {
+        window.location.href = "/organization/" + org?.id;
+      },
+      onError: (e) => {
+        const errorMessage = e.data?.zodError?.fieldErrors.content;
+        console.error("Error creating investment:", errorMessage);
+      },
+    });
 
   const onSubmit = async (data: NewOrgInputWithFile) => {
-    setIsSubmitting(true);
-
     let orgImage = null;
     if (data.image) {
       const orgImageId: string = uuidv4();
@@ -261,7 +259,7 @@ export default function CreateOrganization({
                     <FormControl>
                       <Textarea
                         placeholder="Tell us about the organization"
-                        className="resize-none"
+                        className="h-32"
                         {...field}
                       />
                     </FormControl>
@@ -345,9 +343,9 @@ export default function CreateOrganization({
                   variant="default"
                   className="my-4 w-1/2 justify-center"
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isUpdateLoading}
                 >
-                  {isSubmitting && (
+                  {isUpdateLoading && (
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Submit

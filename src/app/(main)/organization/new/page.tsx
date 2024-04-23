@@ -5,7 +5,6 @@
 
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -49,7 +48,6 @@ import { formatEnumName } from "@/lib/utils";
 export type NewOrgInput = z.infer<typeof newOrgSchema>;
 
 export default function CreateOrganization() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClient();
 
   // Overriding existing schemas to include file input for image ("File" type is translated into "string" on submit)
@@ -78,18 +76,18 @@ export default function CreateOrganization() {
     },
   });
 
-  const { mutate } = api.organizations.create.useMutation({
-    onSuccess: (data) => {
-      window.location.href = `/organization/${data?.id}`;
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.error("Error creating organization:", errorMessage);
-    },
-  });
+  const { mutate, isLoading: isCreateLoading } =
+    api.organizations.create.useMutation({
+      onSuccess: (data) => {
+        window.location.href = `/organization/${data?.id}`;
+      },
+      onError: (e) => {
+        const errorMessage = e.data?.zodError?.fieldErrors.content;
+        console.error("Error creating organization:", errorMessage);
+      },
+    });
 
   const onSubmit = async (data: NewOrgInputWithFile) => {
-    setIsSubmitting(true);
     const newOrgData: NewOrgInput = {
       name: data.name,
       email: data.email,
@@ -229,7 +227,7 @@ export default function CreateOrganization() {
                     <FormControl>
                       <Textarea
                         placeholder="Tell us about the organization"
-                        className="resize-none"
+                        className="h-32"
                         {...field}
                       />
                     </FormControl>
@@ -313,9 +311,9 @@ export default function CreateOrganization() {
                   variant="default"
                   className="my-4 w-1/2 justify-center"
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isCreateLoading}
                 >
-                  {isSubmitting && (
+                  {isCreateLoading && (
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Submit

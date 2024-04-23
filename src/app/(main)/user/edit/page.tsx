@@ -37,6 +37,7 @@ import { TagInput } from "@/components/tags/tag-input";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "@/env";
 import { type TagData } from "@/lib/interfaces/tagData";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export type NewUserInput = z.infer<typeof newUserSchema>;
 
@@ -94,7 +95,7 @@ export default function NewUserForm() {
     }
   };
 
-  const { mutate } = api.users.update.useMutation({
+  const { mutate, isLoading: isUpdateLoading } = api.users.update.useMutation({
     onSuccess: () => {
       window.location.href = "/user/" + user?.id;
     },
@@ -232,7 +233,7 @@ export default function NewUserForm() {
                     <FormControl>
                       <Textarea
                         placeholder="Tell us a little bit about yourself"
-                        className="resize-none"
+                        className="h-32"
                         {...field}
                       />
                     </FormControl>
@@ -322,10 +323,19 @@ export default function NewUserForm() {
                   </FormItem>
                 )}
               />
-
-              <Button variant="default" className="my-4 w-full" type="submit">
-                Submit
-              </Button>
+              <div className="flex justify-center">
+                <Button
+                  variant="default"
+                  className="my-4 w-1/2 justify-center"
+                  type="submit"
+                  disabled={isUpdateLoading}
+                >
+                  {isUpdateLoading && (
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Submit
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>

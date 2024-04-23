@@ -35,6 +35,7 @@ import { PiStudentFill } from "react-icons/pi";
 import StatusPing from "@/components/events/StatusPing";
 import { Button } from "@/components/ui/button";
 import { MdEdit } from "react-icons/md";
+import EventTime from "@/components/events/EventTime";
 
 export default async function EventPage({
   params,
@@ -45,14 +46,6 @@ export default async function EventPage({
   const user: UserData = await api.users.getUser.query({});
 
   const duration = getFormattedDuration(event.duration);
-  const formattedDate = event.date.toLocaleString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
 
   const eventLink = headers().get("x-url");
   const eventJoinStatus = shouldDisplayJoinButton(event.date, event.duration);
@@ -250,7 +243,7 @@ export default async function EventPage({
                 <div className="my-4 flex w-full flex-row items-center px-4">
                   <ClockIcon className="mr-4 h-6 w-6" color="gray" />
                   <div>
-                    <p>{formattedDate}</p>
+                    <EventTime date={event.date} mode="full" />
                     <p className="text-sm text-gray-500">Aprox. {duration}</p>
                   </div>
                 </div>

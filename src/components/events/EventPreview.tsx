@@ -19,21 +19,12 @@ import {
 import type { EventData } from "@/lib/interfaces/eventData";
 import moment from "moment";
 import { getDisplayName } from "@/lib/utils";
+import EventTime from "./EventTime";
 
 export default function EventPreview({ event }: { event: EventData }) {
   const eventDate = new Date(event.date);
   const eventEndDate = moment(eventDate).add(event.duration, "minutes");
   const isEventPassed = moment().isAfter(eventEndDate);
-
-  const formattedDate = eventDate.toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "2-digit",
-  });
-  const formattedTime = eventDate.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
   return (
     <Link href={`/event/${event.id}`}>
@@ -65,7 +56,7 @@ export default function EventPreview({ event }: { event: EventData }) {
           <p className="truncate text-lg font-bold">{event.title}</p>
           <p className="my-2 flex flex-row items-center text-slate-800">
             <CalendarIcon className="mr-2 h-5 w-5" />
-            {formattedDate} • {formattedTime}
+            <EventTime date={eventDate} mode="preview" />
           </p>
           <div className="text-md flex flex-row items-center text-sm text-slate-600">
             <div className="flex-none">Hosted by:</div>

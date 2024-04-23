@@ -21,6 +21,7 @@ import {
 import { getDisplayName } from "@/lib/utils";
 import Link from "next/link";
 import "@/styles/other.css";
+import EventTime from "./EventTime";
 
 interface EventCalendarProps {
   events: EventData[];
@@ -38,15 +39,6 @@ export default function EventCalendar({ events }: EventCalendarProps) {
 
   const EventCard = ({ event }: { event: EventData }) => {
     const eventDate = new Date(event.date);
-    const formattedDate = eventDate.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "2-digit",
-    });
-    const formattedTime = eventDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
 
     return (
       <Link href={`/event/${event.id}`}>
@@ -54,7 +46,7 @@ export default function EventCalendar({ events }: EventCalendarProps) {
           <p className="truncate text-sm font-semibold">{event.title}</p>
           <p className="mb-2 mt-1 flex flex-row items-center text-sm text-slate-800">
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {formattedDate} • {formattedTime}
+            <EventTime date={eventDate} mode="preview" />
           </p>
           <div className="flex flex-row items-center">
             {event.type === "ONLINE_VIDEO" && (

@@ -61,7 +61,6 @@ export type NewEventInput = z.infer<typeof newEventSchema>;
 export default function CreateEvent() {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
   const [orgSelected, setOrgSelected] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -96,7 +95,7 @@ export default function CreateEvent() {
 
   const router = useRouter();
 
-  const { mutate } = api.events.create.useMutation({
+  const { mutate, isLoading: isCreateLoading } = api.events.create.useMutation({
     onSuccess: (data) => {
       window.location.href = `/event/${data.id}`;
     },
@@ -107,7 +106,6 @@ export default function CreateEvent() {
   });
 
   const onSubmit = async (data: NewEventInput) => {
-    setIsSubmitting(true);
     const newEventData: NewEventInput = {
       title: data.title,
       date: data.date,
@@ -139,7 +137,6 @@ export default function CreateEvent() {
     }
 
     mutate(newEventData);
-    setIsSubmitting(false);
   };
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,7 +184,7 @@ export default function CreateEvent() {
             className="mt-4 flex flex-col justify-between gap-6 text-muted-foreground lg:flex-row"
           >
             <div className="flex-start mt-4 flex w-full max-w-screen-md flex-col">
-              <div className="flex flex-row gap-6">
+              <div className="flex flex-col gap-6 md:flex-row">
                 <FormField
                   control={form.control}
                   name="title"
@@ -205,7 +202,7 @@ export default function CreateEvent() {
                   control={form.control}
                   name="type"
                   render={({ field }) => (
-                    <FormItem className="w-5/12 min-w-[250px]">
+                    <FormItem className="mb-6 w-5/12 min-w-[250px] md:mb-0">
                       <FormLabel>Type of event</FormLabel>
                       <div className="flex flex-row items-center">
                         <div
@@ -278,7 +275,7 @@ export default function CreateEvent() {
                     <FormControl>
                       <Textarea
                         placeholder="Tell us a little bit about the event"
-                        className="resize-none"
+                        className="h-32"
                         {...field}
                       />
                     </FormControl>
@@ -607,7 +604,7 @@ export default function CreateEvent() {
                   variant="outline"
                   className="mx-4 my-4 w-1/3 justify-center"
                   type="button"
-                  disabled={isSubmitting}
+                  disabled={isCreateLoading}
                   onClick={() => router.push("/")}
                 >
                   Cancel
@@ -616,9 +613,9 @@ export default function CreateEvent() {
                   variant="default"
                   className="mx-4 my-4 w-1/3 justify-center"
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isCreateLoading}
                 >
-                  {isSubmitting && (
+                  {isCreateLoading && (
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Submit

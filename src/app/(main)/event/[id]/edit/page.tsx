@@ -59,7 +59,6 @@ export type NewEventInput = z.infer<typeof newEventSchema>;
 export default function EditEvent({ params }: { params: { id: string } }) {
   const [isOrgEvent, setIsOrgEvent] = useState(false);
   const [orgSelected, setOrgSelected] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [needLocationDetails, setNeedLocationDetails] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -135,7 +134,7 @@ export default function EditEvent({ params }: { params: { id: string } }) {
 
   const router = useRouter();
 
-  const { mutate } = api.events.update.useMutation({
+  const { mutate, isLoading: isUpdateLoading } = api.events.update.useMutation({
     onSuccess: () => {
       window.location.href = `/event/${params.id}`;
     },
@@ -146,8 +145,6 @@ export default function EditEvent({ params }: { params: { id: string } }) {
   });
 
   const onSubmit = async (data: NewEventInput) => {
-    setIsSubmitting(true);
-
     const updatedEventData: NewEventInput = {
       title: data.title,
       date: data.date,
@@ -181,7 +178,6 @@ export default function EditEvent({ params }: { params: { id: string } }) {
     }
 
     mutate({ ...updatedEventData, id: params.id });
-    setIsSubmitting(false);
   };
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,7 +233,7 @@ export default function EditEvent({ params }: { params: { id: string } }) {
             className="mt-4 flex flex-col justify-between gap-6 text-muted-foreground lg:flex-row"
           >
             <div className="flex-start mt-4 flex w-full max-w-screen-md flex-col">
-              <div className="flex flex-row gap-6">
+              <div className="flex flex-col gap-6 md:flex-row">
                 <FormField
                   control={form.control}
                   name="title"
@@ -255,7 +251,7 @@ export default function EditEvent({ params }: { params: { id: string } }) {
                   control={form.control}
                   name="type"
                   render={({ field }) => (
-                    <FormItem className="w-5/12 min-w-[250px]">
+                    <FormItem className="mb-6 w-5/12 min-w-[250px] md:mb-0">
                       <FormLabel>Type of event</FormLabel>
                       <div className="flex flex-row items-center">
                         <div
@@ -328,7 +324,7 @@ export default function EditEvent({ params }: { params: { id: string } }) {
                     <FormControl>
                       <Textarea
                         placeholder="Tell us a little bit about the event"
-                        className="resize-none"
+                        className="h-32"
                         {...field}
                       />
                     </FormControl>
@@ -660,7 +656,7 @@ export default function EditEvent({ params }: { params: { id: string } }) {
                   variant="outline"
                   className="mx-4 my-4 w-1/3 justify-center"
                   type="button"
-                  disabled={isSubmitting}
+                  disabled={isUpdateLoading}
                   onClick={() => router.push(`/event/${params.id}`)}
                 >
                   Cancel
@@ -669,9 +665,9 @@ export default function EditEvent({ params }: { params: { id: string } }) {
                   variant="default"
                   className="mx-4 my-4 w-1/3 justify-center"
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isUpdateLoading}
                 >
-                  {isSubmitting && (
+                  {isUpdateLoading && (
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Update
